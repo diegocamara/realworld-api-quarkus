@@ -1,12 +1,11 @@
 package org.example.realworldapi.web.resource;
 
-import org.apache.http.HttpStatus;
 import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.service.UsersService;
 import org.example.realworldapi.web.dto.NewUserDTO;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -17,7 +16,6 @@ import java.util.UUID;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Response.class)
@@ -30,7 +28,6 @@ public class UsersResourceTest {
     public void beforeEach() {
         usersService = mock(UsersService.class);
         usersResource = new UsersResource(usersService);
-        mockStatic(Response.class);
     }
 
     @Test
@@ -47,14 +44,23 @@ public class UsersResourceTest {
         when(usersService.create(newUser.getUsername(), newUser.getEmail(), newUser.getPassword()))
                 .thenReturn(createdUser);
 
-        Response response = Response.ok(createdUser).status(HttpStatus.SC_CREATED).build();
+        Response response = Response.ok(createdUser).status(Response.Status.CREATED).build();
 
-        when(Response.ok(createdUser).status(HttpStatus.SC_CREATED).build()).thenReturn(response);
+        Response.ResponseBuilder responseBuilder = mock(Response.ResponseBuilder.class);
 
-        usersResource.create(newUser);
+        when(responseBuilder.status(Response.Status.CREATED)).thenReturn(responseBuilder);
 
-        verifyStatic(Response.class);
-        Response.ok(createdUser).status(HttpStatus.SC_CREATED).build();
+        when(responseBuilder.build()).thenReturn(response);
+
+        mockStatic(Response.class);
+
+        when(Response.ok(createdUser)).thenReturn(responseBuilder);
+
+        Response resultResponse = usersResource.create(newUser);
+        User resultUser = (User) resultResponse.getEntity();
+
+        Assert.assertEquals(createdUser, resultUser);
+        Assert.assertNotNull(resultUser.getToken());
 
     }
 }

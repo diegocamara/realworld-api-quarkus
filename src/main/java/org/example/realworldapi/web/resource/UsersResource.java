@@ -10,7 +10,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.UUID;
 
 @Path("/users")
 public class UsersResource {
@@ -18,14 +17,15 @@ public class UsersResource {
     private UsersService usersService;
 
     UsersResource(UsersService usersService) {
-        usersService = usersService;
+        this.usersService = usersService;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(NewUserDTO newUserDTO) {
-        return Response.ok().status(Response.Status.CREATED).build();
+        User createdUser = usersService.create(newUserDTO.getUsername(), newUserDTO.getEmail(), newUserDTO.getPassword());
+        return Response.ok(createdUser).status(Response.Status.CREATED).build();
     }
 
 }
