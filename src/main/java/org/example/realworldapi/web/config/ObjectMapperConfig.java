@@ -1,4 +1,4 @@
-package org.example.realworldapi;
+package org.example.realworldapi.web.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

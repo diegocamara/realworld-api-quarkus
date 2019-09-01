@@ -1,4 +1,4 @@
-package org.example.realworldapi.dto;
+package org.example.realworldapi.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;

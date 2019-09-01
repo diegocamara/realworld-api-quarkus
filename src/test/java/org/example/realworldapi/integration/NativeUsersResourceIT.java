@@ -1,4 +1,4 @@
-package org.example.realworldapi;
+package org.example.realworldapi.integration;
 
 import io.quarkus.test.junit.SubstrateTest;
 

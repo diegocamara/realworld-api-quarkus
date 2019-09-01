@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain;
+package org.example.realworldapi.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
