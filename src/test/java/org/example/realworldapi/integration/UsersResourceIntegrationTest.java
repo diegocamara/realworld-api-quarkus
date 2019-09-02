@@ -3,6 +3,8 @@ package org.example.realworldapi.integration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.Mock;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.domain.service.UsersService;
@@ -16,7 +18,8 @@ import javax.ws.rs.core.MediaType;
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
-public class UsersResourceTest {
+@QuarkusTestResource(H2DatabaseTestResource.class)
+public class UsersResourceIntegrationTest {
 
     private final String USERS_RESOURCE_PATH = "/api/users";
 

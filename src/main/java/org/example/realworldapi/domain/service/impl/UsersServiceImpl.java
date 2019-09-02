@@ -6,6 +6,7 @@ import org.example.realworldapi.domain.service.UsersService;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -18,6 +19,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    @Transactional
     public User create(String username, String email, String password) {
 
         User user = new User();
