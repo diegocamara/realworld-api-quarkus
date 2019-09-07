@@ -1,12 +1,14 @@
 package org.example.realworldapi.domain.service.impl;
 
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.exception.UnauthorizedException;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.service.UsersService;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -24,10 +26,28 @@ public class UsersServiceImpl implements UsersService {
 
         User user = new User();
         user.setUsername(username);
-        user.setEmail(email);
+        user.setEmail(email.toUpperCase().trim());
         user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
         user.setToken(UUID.randomUUID().toString());
 
         return usersRepository.create(user);
     }
+
+    @Override
+    @Transactional
+    public User login(String email, String password) {
+
+        Optional<User> resultUser = usersRepository.findByEmail(email);
+
+        if(!resultUser.isPresent() || isPasswordInvalid(password, resultUser.get())){
+            throw new UnauthorizedException();
+        }
+
+        return resultUser.get();
+    }
+
+    private boolean isPasswordInvalid(String password, User user) {
+        return !BCrypt.checkpw(password, user.getPassword());
+    }
+
 }

@@ -1,12 +1,15 @@
 package org.example.realworldapi.web.resource;
 
+import org.apache.http.HttpStatus;
 import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.service.UsersService;
+import org.example.realworldapi.web.dto.LoginDTO;
 import org.example.realworldapi.web.dto.NewUserDTO;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mindrot.jbcrypt.BCrypt;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -63,4 +66,41 @@ public class UsersResourceTest {
         Assert.assertNotNull(resultUser.getToken());
 
     }
+
+    @Test
+    public void givenAnExistingUser_whenExecuteLogin_thenReturnUser(){
+
+        String userPassword = "123";
+
+        User existingUser = new User();
+        existingUser.setUsername("user1");
+        existingUser.setEmail("user1@mail.com");
+        existingUser.setPassword(BCrypt.hashpw(userPassword, BCrypt.gensalt()));
+        existingUser.setToken(UUID.randomUUID().toString());
+
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setEmail(existingUser.getEmail());
+        loginDTO.setPassword(userPassword);
+
+        when(usersService.login(loginDTO.getEmail(), loginDTO.getPassword())).thenReturn(existingUser);
+
+        Response response = Response.ok(existingUser).status(HttpStatus.SC_UNPROCESSABLE_ENTITY).build();
+
+        Response.ResponseBuilder responseBuilder = mock(Response.ResponseBuilder.class);
+
+        when(responseBuilder.status(HttpStatus.SC_UNPROCESSABLE_ENTITY)).thenReturn(responseBuilder);
+
+        when(responseBuilder.build()).thenReturn(response);
+
+        mockStatic(Response.class);
+
+        when(Response.ok(existingUser)).thenReturn(responseBuilder);
+
+        Response resultResponse = usersResource.login(loginDTO);
+
+        User resultUser = (User) resultResponse.getEntity();
+
+        Assert.assertEquals(existingUser, resultUser);
+    }
+
 }

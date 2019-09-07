@@ -1,13 +1,17 @@
 package org.example.realworldapi.domain.service;
 
+import org.apache.http.HttpStatus;
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.exception.UnauthorizedException;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.service.impl.UsersServiceImpl;
+import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -46,6 +50,58 @@ public class UsersServiceImplTest {
         Assertions.assertNotNull(resultUser.getEmail());
         Assertions.assertNotNull(resultUser.getPassword());
         Assertions.assertNotNull(resultUser.getToken());
+
+    }
+
+    @Test
+    public void givenAnValidLoginInfo_thenReturnsAUser(){
+
+        String email = "user1@mail.com";
+        String password = "123";
+
+        Optional<User> existingUser = Optional.of(UserUtils.create("user1", email, password));
+
+        when(usersRepository.findByEmail(email)).thenReturn(existingUser);
+
+        User resultUser = usersService.login(email, password);
+
+        Assertions.assertEquals(existingUser.get(), resultUser);
+
+    }
+
+    @Test
+    public void givenAInvalidEmail_thenReturnsAUnauthorizedException(){
+
+        String email = "user1@mail.com";
+        String password = "123";
+
+        when(usersRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        UnauthorizedException unauthorizedException = Assertions.assertThrows(UnauthorizedException.class, () -> {
+            usersService.login(email, password);
+        });
+
+        Assertions.assertEquals(HttpStatus.SC_UNAUTHORIZED, unauthorizedException.getStatusCode());
+        Assertions.assertEquals("Unauthorized", unauthorizedException.getMessage());
+
+    }
+
+    @Test
+    public void givenAValidEmailAndAInvalidPassword_thenReturnsAUnauthorizedException(){
+
+        String email = "user1@mail.com";
+        String password = "123";
+
+       Optional<User> existingUser = Optional.of(UserUtils.create("user1", email, password));
+
+        when(usersRepository.findByEmail(email)).thenReturn(existingUser);
+
+        UnauthorizedException unauthorizedException = Assertions.assertThrows(UnauthorizedException.class, () -> {
+            usersService.login(email, "158");
+        });
+
+        Assertions.assertEquals(HttpStatus.SC_UNAUTHORIZED, unauthorizedException.getStatusCode());
+        Assertions.assertEquals("Unauthorized", unauthorizedException.getMessage());
 
     }
 
