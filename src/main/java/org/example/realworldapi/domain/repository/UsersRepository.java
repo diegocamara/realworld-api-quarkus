@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface UsersRepository {
     User create(User user);
     Optional<User> findByEmail(String email);
+    boolean exists(String email);
 }

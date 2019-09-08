@@ -41,7 +41,7 @@ public abstract class AbstractRepository<T, ID> {
         }
     }
 
-    protected final Session getHibernateSession(){
+    protected Session getHibernateSession(){
         return getEntityManager().unwrap(Session.class);
     }
 

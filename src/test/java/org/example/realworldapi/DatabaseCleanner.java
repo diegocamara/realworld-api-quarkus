@@ -13,17 +13,15 @@ public class DatabaseCleanner {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private DataSource dataSource;
-    private Connection connection;
-    private Statement statement;
+    private List<String> tableNames;
 
     public DatabaseCleanner(DataSource dataSource) {
-        try {
-            this.dataSource = dataSource;
-            this.connection = this.dataSource.getConnection();
-            this.statement = buildSqlStatement(tableNames());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+        this.dataSource = dataSource;
+
+        try{
+            this.tableNames = tableNames(newConnection());
+        }catch(SQLException ex){
+            throw new RuntimeException(ex);
         }
 
     }
@@ -31,13 +29,15 @@ public class DatabaseCleanner {
     public void clear(){
         try{
             logger.info("Cleaning up data");
-            this.statement.executeBatch();
+            Connection connection = newConnection();
+            Statement statement = buildSqlStatement(this.tableNames, connection);
+            statement.executeBatch();
         }catch(SQLException ex){
             throw new RuntimeException(ex);
         }
     }
 
-    private List<String> tableNames() throws SQLException {
+    private List<String> tableNames(Connection connection) throws SQLException {
         List<String> tableNames = new LinkedList<>();
         DatabaseMetaData databaseMetaData = connection.getMetaData();
         ResultSet resultSet = databaseMetaData.getTables(connection.getCatalog(), null, null, new String[]{"TABLE"});
@@ -47,12 +47,16 @@ public class DatabaseCleanner {
         return tableNames;
     }
 
-    private Statement buildSqlStatement(List<String> tableNames) throws SQLException {
+    private Statement buildSqlStatement(List<String> tableNames, Connection connection) throws SQLException {
         Statement statement = connection.createStatement();
         statement.addBatch(sql("SET FOREIGN_KEY_CHECKS = 0"));
         addDeleteSatements(tableNames, statement);
         statement.addBatch(sql("SET FOREIGN_KEY_CHECKS = 1"));
         return statement;
+    }
+
+    private Connection newConnection() throws SQLException{
+        return this.dataSource.getConnection();
     }
 
     private void addDeleteSatements(List<String> tableNames, Statement statement) {

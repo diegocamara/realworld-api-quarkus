@@ -1,10 +1,12 @@
 package org.example.realworldapi.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.validation.constraints.NotBlank;
 
 @JsonRootName("user")
+@RegisterForReflection
 public class LoginDTO {
 
     @NotBlank(message = "email must be not blank")

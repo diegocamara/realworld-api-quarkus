@@ -1,11 +1,13 @@
 package org.example.realworldapi.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @JsonRootName("errors")
+@RegisterForReflection
 public class BeanValidationResponseDTO {
 
     private List<String> body;

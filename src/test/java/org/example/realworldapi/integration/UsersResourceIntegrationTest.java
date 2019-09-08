@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 
 @QuarkusTest
 public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
@@ -57,6 +58,31 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
     }
 
     @Test
+    public void givenAPersistedUser_whenCallingRegisterUserEndpointWithExistingEmail_thenReturnConflitWithCode409() throws JsonProcessingException {
+
+        String userPassword = "123";
+
+        User user = UserUtils.create("user1", "user1@mail.com", userPassword);
+
+        transaction(() -> entityManager.persist(user));
+
+        NewUserDTO newUser = new NewUserDTO();
+        newUser.setUsername("user2");
+        newUser.setEmail(user.getEmail());
+        newUser.setPassword("user123");
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(newUser))
+                .when()
+                .post(USERS_RESOURCE_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_CONFLICT)
+                .body(is("Conflict"));
+
+    }
+
+    @Test
     public void givenAnInvalidUser_thenReturnErrorsWith422Code() throws JsonProcessingException{
 
         NewUserDTO newUser = new NewUserDTO();
@@ -75,11 +101,11 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
     }
 
     @Test
-    public void givenAValidUser_thenReturnExistingUser() throws JsonProcessingException{
+    public void givenAValidLogin_whenExecuteLoginEndpoint_shouldReturnExistingUser() throws JsonProcessingException{
 
         String userPassword = "123";
 
-        User user = UserUtils.create("user1", "user1@mail.com".toUpperCase(), userPassword);
+        User user = UserUtils.create("user1", "user1@mail.com", userPassword);
 
         transaction(() -> entityManager.persist(user));
 
@@ -99,6 +125,68 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
                 "user.username", Matchers.notNullValue(),
                 "user.email", Matchers.notNullValue(),
                 "user.token", Matchers.notNullValue());
+
+    }
+
+    @Test
+    public void givenAInvalidLogin_whenExecuteLoginEndpoint_shouldReturnErrorsWith422Code() throws JsonProcessingException{
+
+        LoginDTO loginDTO = new LoginDTO();
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(loginDTO))
+                .when()
+                .post(LOGIN_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+                .body("errors.body",hasItems("email must be not blank", "password must be not blank"));
+
+    }
+
+    @Test
+    public void givenAInvalidLoginEmail_whenExecuteLoginEndpoint_shouldReturnUnauthorized() throws JsonProcessingException{
+
+        String userPassword = "123";
+
+        User user = UserUtils.create("user1", "user1@mail.com", userPassword);
+
+        transaction(() -> entityManager.persist(user));
+
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setEmail("user2@mail.com");
+        loginDTO.setPassword(userPassword);
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(loginDTO))
+                .when()
+                .post(LOGIN_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_UNAUTHORIZED)
+                .body(is("Unauthorized"));
+
+    }
+
+    @Test
+    public void givenAInvalidLoginPassword_whenExecuteLoginEndpoint_shouldReturnUnauthorized() throws JsonProcessingException{
+
+        User user = UserUtils.create("user1", "user1@mail.com", "123");
+
+        transaction(() -> entityManager.persist(user));
+
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setEmail(user.getEmail());
+        loginDTO.setPassword("145");
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(loginDTO))
+                .when()
+                .post(LOGIN_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_UNAUTHORIZED)
+                .body(is("Unauthorized"));
 
     }
 

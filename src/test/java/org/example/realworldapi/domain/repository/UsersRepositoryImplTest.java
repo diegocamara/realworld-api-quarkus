@@ -68,4 +68,26 @@ public class UsersRepositoryImplTest {
 
     }
 
+    @Test
+    @Transactional
+    public void givenAExistingEmail_shouldReturnTrue(){
+
+        User existingUser = UserUtils.create("user1", "user@mail.com", "123");
+
+        entityManager.persist(existingUser);
+
+        Assertions.assertTrue(usersRepository.exists(existingUser.getEmail()));
+
+    }
+
+    @Test
+    @Transactional
+    public void givenANonexistentEmail_shouldReturnFalse(){
+
+        String email = "user@mail.com";
+
+        Assertions.assertFalse(usersRepository.exists(email));
+
+    }
+
 }

@@ -2,6 +2,7 @@ package org.example.realworldapi.domain.service;
 
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.exception.ConflictException;
 import org.example.realworldapi.domain.exception.UnauthorizedException;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.service.impl.UsersServiceImpl;
@@ -50,6 +51,24 @@ public class UsersServiceImplTest {
         Assertions.assertNotNull(resultUser.getEmail());
         Assertions.assertNotNull(resultUser.getPassword());
         Assertions.assertNotNull(resultUser.getToken());
+
+    }
+
+    @Test
+    public void whenExecuteCreateWithExistingEmail_shouldThrowsConflictException(){
+
+        String username = "user";
+        String email = "user@email.com";
+        String password = "user123";
+
+       when(usersRepository.exists(email)).thenReturn(true);
+
+        ConflictException conflictException = Assertions.assertThrows(ConflictException.class, ()->{
+           usersService.create(username, email, password);
+        });
+
+        Assertions.assertEquals(HttpStatus.SC_CONFLICT, conflictException.getStatusCode());
+        Assertions.assertEquals("Conflict", conflictException.getMessage());
 
     }
 

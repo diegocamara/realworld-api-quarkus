@@ -1,6 +1,7 @@
 package org.example.realworldapi.domain.service.impl;
 
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.exception.ConflictException;
 import org.example.realworldapi.domain.exception.UnauthorizedException;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.service.UsersService;
@@ -24,6 +25,8 @@ public class UsersServiceImpl implements UsersService {
     @Transactional
     public User create(String username, String email, String password) {
 
+        checkExistingEmail(email);
+
         User user = new User();
         user.setUsername(username);
         user.setEmail(email.toUpperCase().trim());
@@ -31,6 +34,12 @@ public class UsersServiceImpl implements UsersService {
         user.setToken(UUID.randomUUID().toString());
 
         return usersRepository.create(user);
+    }
+
+    private void checkExistingEmail(String email) {
+        if(usersRepository.exists(email)){
+            throw new ConflictException();
+        }
     }
 
     @Override
