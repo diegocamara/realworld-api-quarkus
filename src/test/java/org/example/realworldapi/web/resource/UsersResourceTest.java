@@ -84,11 +84,11 @@ public class UsersResourceTest {
 
         when(usersService.login(loginDTO.getEmail(), loginDTO.getPassword())).thenReturn(existingUser);
 
-        Response response = Response.ok(existingUser).status(HttpStatus.SC_UNPROCESSABLE_ENTITY).build();
+        Response response = Response.ok(existingUser).status(HttpStatus.SC_OK).build();
 
         Response.ResponseBuilder responseBuilder = mock(Response.ResponseBuilder.class);
 
-        when(responseBuilder.status(HttpStatus.SC_UNPROCESSABLE_ENTITY)).thenReturn(responseBuilder);
+        when(responseBuilder.status(HttpStatus.SC_OK)).thenReturn(responseBuilder);
 
         when(responseBuilder.build()).thenReturn(response);
 

@@ -4,10 +4,12 @@ import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.repository.UsersRepository;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.sql.DataSource;
 import java.util.Optional;
 
 @ApplicationScoped

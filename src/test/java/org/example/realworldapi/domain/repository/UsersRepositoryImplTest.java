@@ -1,32 +1,43 @@
 package org.example.realworldapi.domain.repository;
 
-import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.repository.impl.UsersRepositoryImpl;
 import org.example.realworldapi.util.UserUtils;
+import org.example.realworldapi.DatabaseCleanner;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import javax.transaction.Transactional;
+import java.sql.SQLException;
 import java.util.Optional;
 
 @QuarkusTest
-@QuarkusTestResource(H2DatabaseTestResource.class)
 public class UsersRepositoryImplTest {
 
-    @Inject
     EntityManager entityManager;
-
+    DataSource dataSource;
+    private DatabaseCleanner databaseCleanner;
     private UsersRepository usersRepository;
+
+    public UsersRepositoryImplTest(EntityManager entityManager, DataSource dataSource) throws SQLException {
+        this.entityManager = entityManager;
+        this.dataSource = dataSource;
+        this.databaseCleanner = new DatabaseCleanner(dataSource);
+    }
 
     @BeforeEach
     public void beforeEach() {
         usersRepository = new UsersRepositoryImpl(entityManager);
+    }
+
+    @AfterEach
+    public void afterEach(){
+        this.databaseCleanner.clear();
     }
 
     @Test

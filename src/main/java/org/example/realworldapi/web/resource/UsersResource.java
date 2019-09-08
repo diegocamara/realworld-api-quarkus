@@ -36,6 +36,6 @@ public class UsersResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Valid LoginDTO loginDTO) {
         User existingUser = usersService.login(loginDTO.getEmail(), loginDTO.getPassword());
-        return Response.ok(existingUser).status(422).build();
+        return Response.ok(existingUser).status(200).build();
     }
 }
