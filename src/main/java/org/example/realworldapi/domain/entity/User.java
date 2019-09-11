@@ -2,12 +2,14 @@ package org.example.realworldapi.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.persistence.*;
 
 @JsonRootName("user")
 @Entity
 @Table(name = "USERS")
+@RegisterForReflection
 public class User {
 
     @Id

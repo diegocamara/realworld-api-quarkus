@@ -22,9 +22,9 @@ public class UsersRepositoryImpl extends AbstractRepository<User, Long> implemen
     }
 
     @Override
-    public User create(User user) {
+    public Optional<User> create(User user) {
         getEntityManager().persist(user);
-        return user;
+        return Optional.of(user);
     }
 
     @Override
@@ -43,6 +43,11 @@ public class UsersRepositoryImpl extends AbstractRepository<User, Long> implemen
         Root<User> user = getRoot(criteriaQuery, User.class);
         criteriaQuery.select(builder.count(user)).where(builder.equal(builder.upper(user.get("email")), email.toUpperCase().trim()));
         return getSingleResult(criteriaQuery).intValue() > 0;
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return Optional.empty();
     }
 
 

@@ -14,6 +14,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
@@ -59,7 +60,7 @@ public class UsersResourceTest {
 
         when(Response.ok(createdUser)).thenReturn(responseBuilder);
 
-        Response resultResponse = usersResource.create(newUser);
+        Response resultResponse = usersResource.create(newUser, null);
         User resultUser = (User) resultResponse.getEntity();
 
         Assert.assertEquals(createdUser, resultUser);
@@ -82,7 +83,7 @@ public class UsersResourceTest {
         loginDTO.setEmail(existingUser.getEmail());
         loginDTO.setPassword(userPassword);
 
-        when(usersService.login(loginDTO.getEmail(), loginDTO.getPassword())).thenReturn(existingUser);
+        when(usersService.login(loginDTO.getEmail(), loginDTO.getPassword())).thenReturn(Optional.of(existingUser));
 
         Response response = Response.ok(existingUser).status(HttpStatus.SC_OK).build();
 

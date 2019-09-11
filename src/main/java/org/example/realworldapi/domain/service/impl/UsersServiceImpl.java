@@ -1,8 +1,10 @@
 package org.example.realworldapi.domain.service.impl;
 
 import org.example.realworldapi.domain.entity.User;
-import org.example.realworldapi.domain.exception.ConflictException;
-import org.example.realworldapi.domain.exception.UnauthorizedException;
+import org.example.realworldapi.domain.exception.ExistingEmailException;
+import org.example.realworldapi.domain.exception.InvalidPasswordException;
+import org.example.realworldapi.domain.exception.UserNotCreatedException;
+import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.service.UsersService;
 import org.mindrot.jbcrypt.BCrypt;
@@ -33,27 +35,38 @@ public class UsersServiceImpl implements UsersService {
         user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
         user.setToken(UUID.randomUUID().toString());
 
-        return usersRepository.create(user);
+        return usersRepository.create(user).orElseThrow(UserNotCreatedException::new);
     }
 
     private void checkExistingEmail(String email) {
         if(usersRepository.exists(email)){
-            throw new ConflictException();
+            throw new ExistingEmailException();
         }
     }
 
     @Override
     @Transactional
-    public User login(String email, String password) {
+    public Optional<User> login(String email, String password) {
 
         Optional<User> resultUser = usersRepository.findByEmail(email);
 
-        if(!resultUser.isPresent() || isPasswordInvalid(password, resultUser.get())){
-            throw new UnauthorizedException();
+        if(!resultUser.isPresent()){
+            throw new UserNotFoundException();
         }
 
-        return resultUser.get();
+        if(isPasswordInvalid(password, resultUser.get())){
+           throw new InvalidPasswordException();
+        }
+
+        return resultUser;
     }
+
+    @Override
+    @Transactional
+    public Optional<User> findById(Long id) {
+        return usersRepository.findById(id);
+    }
+
 
     private boolean isPasswordInvalid(String password, User user) {
         return !BCrypt.checkpw(password, user.getPassword());

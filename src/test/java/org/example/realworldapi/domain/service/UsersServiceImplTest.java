@@ -1,9 +1,9 @@
 package org.example.realworldapi.domain.service;
 
-import org.apache.http.HttpStatus;
 import org.example.realworldapi.domain.entity.User;
-import org.example.realworldapi.domain.exception.ConflictException;
-import org.example.realworldapi.domain.exception.UnauthorizedException;
+import org.example.realworldapi.domain.exception.ExistingEmailException;
+import org.example.realworldapi.domain.exception.InvalidPasswordException;
+import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.service.impl.UsersServiceImpl;
 import org.example.realworldapi.util.UserUtils;
@@ -43,7 +43,7 @@ public class UsersServiceImplTest {
         createdUser.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
         createdUser.setToken(UUID.randomUUID().toString());
 
-        when(usersRepository.create(any(User.class))).thenReturn(createdUser);
+        when(usersRepository.create(any(User.class))).thenReturn(Optional.of(createdUser));
 
         User resultUser = usersService.create(username, email, password);
 
@@ -55,7 +55,7 @@ public class UsersServiceImplTest {
     }
 
     @Test
-    public void whenExecuteCreateWithExistingEmail_shouldThrowsConflictException(){
+    public void whenExecuteCreateWithExistingEmail_shouldThrowsExistingEmailException(){
 
         String username = "user";
         String email = "user@email.com";
@@ -63,12 +63,9 @@ public class UsersServiceImplTest {
 
        when(usersRepository.exists(email)).thenReturn(true);
 
-        ConflictException conflictException = Assertions.assertThrows(ConflictException.class, ()->{
-           usersService.create(username, email, password);
-        });
-
-        Assertions.assertEquals(HttpStatus.SC_CONFLICT, conflictException.getStatusCode());
-        Assertions.assertEquals("Conflict", conflictException.getMessage());
+        Assertions.assertThrows(ExistingEmailException.class, ()->
+                usersService.create(username, email, password)
+        );
 
     }
 
@@ -82,31 +79,29 @@ public class UsersServiceImplTest {
 
         when(usersRepository.findByEmail(email)).thenReturn(existingUser);
 
-        User resultUser = usersService.login(email, password);
+        Optional<User> resultUser = usersService.login(email, password);
 
-        Assertions.assertEquals(existingUser.get(), resultUser);
+        Assertions.assertTrue(resultUser.isPresent());
+        Assertions.assertEquals(existingUser.get(), resultUser.get());
 
     }
 
     @Test
-    public void givenAInvalidEmail_thenReturnsAUnauthorizedException(){
+    public void givenAInvalidEmail_thenUserNotFoundException(){
 
         String email = "user1@mail.com";
         String password = "123";
 
         when(usersRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-        UnauthorizedException unauthorizedException = Assertions.assertThrows(UnauthorizedException.class, () -> {
-            usersService.login(email, password);
-        });
-
-        Assertions.assertEquals(HttpStatus.SC_UNAUTHORIZED, unauthorizedException.getStatusCode());
-        Assertions.assertEquals("Unauthorized", unauthorizedException.getMessage());
+        Assertions.assertThrows(UserNotFoundException.class, ()->
+            usersService.login(email, password)
+        );
 
     }
 
     @Test
-    public void givenAValidEmailAndAInvalidPassword_thenReturnsAUnauthorizedException(){
+    public void givenAValidEmailAndAInvalidPassword_thenThrowsInvalidPasswordException(){
 
         String email = "user1@mail.com";
         String password = "123";
@@ -115,13 +110,42 @@ public class UsersServiceImplTest {
 
         when(usersRepository.findByEmail(email)).thenReturn(existingUser);
 
-        UnauthorizedException unauthorizedException = Assertions.assertThrows(UnauthorizedException.class, () -> {
-            usersService.login(email, "158");
-        });
-
-        Assertions.assertEquals(HttpStatus.SC_UNAUTHORIZED, unauthorizedException.getStatusCode());
-        Assertions.assertEquals("Unauthorized", unauthorizedException.getMessage());
+        Assertions.assertThrows(InvalidPasswordException.class, ()->
+            usersService.login(email, "158")
+        );
 
     }
+
+    @Test
+    public void givenAPersistedUser_whenExecuteFindById_shouldRetrieveUser(){
+
+        User user = UserUtils.create("User1", "user1@mail.com", "user123");
+        user.setId(1L);
+
+        Optional<User> userResponse = Optional.of(user);
+
+        when(usersRepository.findById(user.getId())).thenReturn(userResponse);
+
+        Optional<User> result = usersService.findById(user.getId());
+
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(user.getId(), result.get().getId());
+
+    }
+
+    @Test
+    public void givenANotPersistedUser_whenExecuteFindById_shouldThrowsResourceNotFoundException(){
+
+        Long userId = 1L;
+
+        when(usersRepository.findById(userId)).thenReturn(Optional.empty());
+
+        Optional<User> result = usersService.findById(userId);
+
+        Assertions.assertFalse(result.isPresent());
+
+    }
+
+
 
 }

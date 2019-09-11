@@ -46,11 +46,11 @@ public class UsersRepositoryImplTest {
 
         User user = UserUtils.create("user", "user@mail.com", "123");
 
-        User createdUser = usersRepository.create(user);
+        Optional<User> result = usersRepository.create(user);
 
-        User persistedUser = entityManager.find(User.class, createdUser.getId());
-
-        Assertions.assertNotNull(persistedUser);
+        result.ifPresent(createdUser ->
+            Assertions.assertNotNull(entityManager.find(User.class, createdUser.getId()))
+        );
 
     }
 

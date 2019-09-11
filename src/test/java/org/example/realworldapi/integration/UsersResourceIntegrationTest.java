@@ -6,11 +6,14 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.DatabaseIntegrationTest;
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.util.UserUtils;
 import org.example.realworldapi.web.dto.LoginDTO;
 import org.example.realworldapi.web.dto.NewUserDTO;
+import org.example.realworldapi.web.util.JWTUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -78,7 +81,7 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
                 .post(USERS_RESOURCE_PATH)
                 .then()
                 .statusCode(HttpStatus.SC_CONFLICT)
-                .body(is("Conflict"));
+                .body(is("CONFLICT"));
 
     }
 
@@ -164,7 +167,7 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
                 .post(LOGIN_PATH)
                 .then()
                 .statusCode(HttpStatus.SC_UNAUTHORIZED)
-                .body(is("Unauthorized"));
+                .body(is("UNAUTHORIZED"));
 
     }
 
@@ -186,7 +189,33 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
                 .post(LOGIN_PATH)
                 .then()
                 .statusCode(HttpStatus.SC_UNAUTHORIZED)
-                .body(is("Unauthorized"));
+                .body(is("UNAUTHORIZED"));
+
+    }
+
+    @Test
+    @Disabled
+    public void givenAValidToken_whenExecuteGetUserEndpoint_shouldReturnLoggedInUser(){
+
+        User user = UserUtils.create("user1", "user1@mail.com", "123");
+
+        transaction(() -> entityManager.persist(user));
+
+        String jwt = JWTUtils.sign(user.getId(), 10, Role.USER);
+
+        String authorizationHeader = "Token " + jwt;
+
+        given()
+                .header("Authorization", authorizationHeader)
+                .contentType(MediaType.APPLICATION_JSON)
+                .get(USERS_RESOURCE_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body("user.id", Matchers.nullValue(),
+                        "user.password", Matchers.nullValue(),
+                        "user.username", Matchers.notNullValue(),
+                        "user.email", Matchers.notNullValue(),
+                        "user.token", Matchers.notNullValue());
 
     }
 
