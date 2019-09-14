@@ -2,14 +2,14 @@ package org.example.realworldapi.domain.repository.impl;
 
 import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.repository.UsersRepository;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.sql.DataSource;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -23,7 +23,7 @@ public class UsersRepositoryImpl extends AbstractRepository<User, Long> implemen
 
     @Override
     public Optional<User> create(User user) {
-        getEntityManager().persist(user);
+        entityManager.persist(user);
         return Optional.of(user);
     }
 
@@ -47,9 +47,26 @@ public class UsersRepositoryImpl extends AbstractRepository<User, Long> implemen
 
     @Override
     public Optional<User> findById(Long id) {
-        return Optional.empty();
+        return findBy("id", id);
     }
 
+    @Override
+    public User update(User user) {
+        User managedUser = entityManager.find(User.class, user.getId());
+        managedUser.setUsername(user.getUsername());
+        managedUser.setBio(user.getBio());
+        managedUser.setImage(user.getImage());
+        managedUser.setEmail(user.getEmail());
+        return entityManager.merge(managedUser);
+    }
+
+    private Optional<User> findBy(String field, Object value){
+        CriteriaBuilder builder = getCriteriaBuilder();
+        CriteriaQuery<User> criteriaQuery = getCriteriaQuery(builder);
+        Root<User> user = getRoot(criteriaQuery);
+        criteriaQuery.select(user).where(builder.equal(user.get(field), value));
+        return Optional.ofNullable(getSingleResult(criteriaQuery));
+    }
 
     @Override
     EntityManager getEntityManager() {

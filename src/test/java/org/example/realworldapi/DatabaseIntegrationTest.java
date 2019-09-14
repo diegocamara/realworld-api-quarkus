@@ -11,21 +11,24 @@ import org.reflections.Reflections;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Table;
 import javax.sql.DataSource;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 public class DatabaseIntegrationTest {
 
     public static EntityManagerFactory entityManagerFactory;
     public static EntityManager entityManager;
-    public static DatabaseCleanner databaseCleanner;
     private static DataSource dataSource;
+    private static List<String> entities;
 
     static {
+        entities = new LinkedList<>();
         dataSource = dataSource();
         entityManagerFactory = sessionFactory();
         entityManager = entityManagerFactory.createEntityManager();
-        databaseCleanner = new DatabaseCleanner(dataSource);
     }
 
     private static SessionFactory sessionFactory() {
@@ -65,7 +68,11 @@ public class DatabaseIntegrationTest {
 
     private static void configEntityClasses(Configuration configuration, String packageToScan){
         Reflections reflections = new Reflections(packageToScan);
-        reflections.getTypesAnnotatedWith(Entity.class).forEach(configuration::addAnnotatedClass);
+        reflections.getTypesAnnotatedWith(Entity.class).forEach(entity->{
+            String tableName = entity.getAnnotation(Table.class).name();
+            entities.add(tableName);
+            configuration.addAnnotatedClass(entity);
+        });
     }
 
     private static DataSource dataSource() {
@@ -76,13 +83,30 @@ public class DatabaseIntegrationTest {
         return jdbcDataSource;
     }
 
+    public void clear(){
+        transaction(()->
+            entities.forEach(tableName ->
+                    entityManager.createNativeQuery("DELETE FROM " + tableName).executeUpdate()
+            )
+        );
+    }
+
     public void transaction(Runnable command) {
         entityManager.getTransaction().begin();
         command.run();
-        entityManager.flush();
         entityManager.getTransaction().commit();
+
     }
 
+    public <T> T transaction(TransactionRunnable<T> command){
+        entityManager.getTransaction().begin();
+        T result = command.run();
+        entityManager.getTransaction().commit();
+        return result;
+    }
 
+    public interface TransactionRunnable<T> {
+        T run();
+    }
 
 }

@@ -8,11 +8,11 @@ import java.util.List;
 
 @JsonRootName("errors")
 @RegisterForReflection
-public class BeanValidationResponseDTO {
+public class ErrorResponseDTO {
 
     private List<String> body;
 
-    public BeanValidationResponseDTO(){
+    public ErrorResponseDTO(){
         this.body = new LinkedList<>();
     }
 

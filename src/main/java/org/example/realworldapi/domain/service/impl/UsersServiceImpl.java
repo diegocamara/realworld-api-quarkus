@@ -7,6 +7,8 @@ import org.example.realworldapi.domain.exception.UserNotCreatedException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.service.UsersService;
+import org.example.realworldapi.web.exception.ResourceNotFoundException;
+import org.hibernate.Hibernate;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -46,7 +48,7 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     @Transactional
-    public Optional<User> login(String email, String password) {
+    public User login(String email, String password) {
 
         Optional<User> resultUser = usersRepository.findByEmail(email);
 
@@ -58,13 +60,19 @@ public class UsersServiceImpl implements UsersService {
            throw new InvalidPasswordException();
         }
 
-        return resultUser;
+        return resultUser.get();
     }
 
     @Override
     @Transactional
-    public Optional<User> findById(Long id) {
-        return usersRepository.findById(id);
+    public User findById(Long id) {
+        return usersRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Override
+    @Transactional
+    public User update(User user) {
+        return usersRepository.update(user);
     }
 
 

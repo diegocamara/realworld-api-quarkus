@@ -1,6 +1,8 @@
 package org.example.realworldapi.util;
 
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.security.Role;
+import org.example.realworldapi.web.util.JWTUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;
@@ -12,7 +14,6 @@ public class UserUtils {
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(BCrypt.hashpw(userPassword, BCrypt.gensalt()));
-        user.setToken(UUID.randomUUID().toString());
         return user;
     }
 

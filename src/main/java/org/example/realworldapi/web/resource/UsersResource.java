@@ -1,13 +1,12 @@
 package org.example.realworldapi.web.resource;
 
 import org.example.realworldapi.domain.entity.User;
-import org.example.realworldapi.web.exception.ResourceNotFoundException;
-import org.example.realworldapi.web.exception.UnauthorizedException;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.UsersService;
 import org.example.realworldapi.infrastructure.annotation.Secured;
 import org.example.realworldapi.web.dto.LoginDTO;
 import org.example.realworldapi.web.dto.NewUserDTO;
+import org.example.realworldapi.web.dto.UpdateUserDTO;
 
 import javax.enterprise.context.RequestScoped;
 import javax.validation.Valid;
@@ -40,17 +39,24 @@ public class UsersResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Valid LoginDTO loginDTO) {
-        User existingUser = usersService.login(loginDTO.getEmail(), loginDTO.getPassword())
-                .orElseThrow(UnauthorizedException::new);
+        User existingUser = usersService.login(loginDTO.getEmail(), loginDTO.getPassword());
         return Response.ok(existingUser).status(200).build();
     }
 
     @GET
-    @Secured(Role.USER)
+    @Secured({Role.ADMIN, Role.USER})
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@Context SecurityContext securityContext){
-        User user = usersService.findById(Long.valueOf(securityContext.getUserPrincipal().getName()))
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = usersService.findById(Long.valueOf(securityContext.getUserPrincipal().getName()));
         return Response.ok(user).status(200).build();
+    }
+
+    @PUT
+    @Secured({Role.USER, Role.USER})
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@Context SecurityContext securityContext, @Valid UpdateUserDTO updateUserDTO){
+        User updatedUser = usersService.update(updateUserDTO.toUser(Long.valueOf(securityContext.getUserPrincipal().getName())));
+        return Response.ok(updatedUser).status(Response.Status.OK).build();
     }
 }

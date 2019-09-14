@@ -2,6 +2,7 @@ package org.example.realworldapi.domain.repository;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.builder.UserBuilder;
 import org.example.realworldapi.domain.repository.impl.UsersRepositoryImpl;
 import org.example.realworldapi.util.UserUtils;
 import org.example.realworldapi.DatabaseCleanner;
@@ -87,6 +88,22 @@ public class UsersRepositoryImplTest {
         String email = "user@mail.com";
 
         Assertions.assertFalse(usersRepository.exists(email));
+
+    }
+
+    @Test
+    @Transactional
+    public void shouldReturnAnUpdatedUser(){
+
+        User existingUser = UserUtils.create("user1", "user@mail.com", "123");
+
+        entityManager.persist(existingUser);
+
+        User user = new UserBuilder().id(existingUser.getId()).username("user2").build();
+
+        User result = usersRepository.update(user);
+
+        Assertions.assertEquals(user.getUsername(), result.getUsername());
 
     }
 

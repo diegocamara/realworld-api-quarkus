@@ -1,12 +1,14 @@
 package org.example.realworldapi.domain.service;
 
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.builder.UserBuilder;
 import org.example.realworldapi.domain.exception.ExistingEmailException;
 import org.example.realworldapi.domain.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.service.impl.UsersServiceImpl;
 import org.example.realworldapi.util.UserUtils;
+import org.example.realworldapi.web.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -79,10 +81,9 @@ public class UsersServiceImplTest {
 
         when(usersRepository.findByEmail(email)).thenReturn(existingUser);
 
-        Optional<User> resultUser = usersService.login(email, password);
+        User resultUser = usersService.login(email, password);
 
-        Assertions.assertTrue(resultUser.isPresent());
-        Assertions.assertEquals(existingUser.get(), resultUser.get());
+        Assertions.assertEquals(existingUser.get(), resultUser);
 
     }
 
@@ -126,23 +127,35 @@ public class UsersServiceImplTest {
 
         when(usersRepository.findById(user.getId())).thenReturn(userResponse);
 
-        Optional<User> result = usersService.findById(user.getId());
+        User result = usersService.findById(user.getId());
 
-        Assertions.assertTrue(result.isPresent());
-        Assertions.assertEquals(user.getId(), result.get().getId());
+        Assertions.assertEquals(user.getId(), result.getId());
 
     }
 
     @Test
-    public void givenANotPersistedUser_whenExecuteFindById_shouldThrowsResourceNotFoundException(){
+    public void givenANotPersistedUser_whenExecuteFindById_shouldThrowsUseNotFoundException(){
 
         Long userId = 1L;
 
         when(usersRepository.findById(userId)).thenReturn(Optional.empty());
 
-        Optional<User> result = usersService.findById(userId);
+        Assertions.assertThrows(ResourceNotFoundException.class, () ->
+                usersService.findById(userId)
+        );
 
-        Assertions.assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void givenAExistentUser_whenExecuteUpdate_shouldReturnUpdatedUser(){
+
+        User user = new UserBuilder().username("user1").bio("user1 bio").email("user1@mail.com").build();
+
+        when(usersRepository.update(user)).thenReturn(user);
+
+        User result = usersService.update(user);
+
+        Assertions.assertEquals(user.getEmail(), result.getEmail());
 
     }
 

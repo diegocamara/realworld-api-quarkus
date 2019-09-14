@@ -4,6 +4,8 @@ import org.example.realworldapi.domain.exception.BusinessException;
 import org.example.realworldapi.domain.exception.ExistingEmailException;
 import org.example.realworldapi.domain.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
+import org.example.realworldapi.web.exception.ResourceNotFoundException;
+import org.example.realworldapi.web.exception.UnauthorizedException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -27,8 +29,18 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
         handlerMap.put(ExistingEmailException.class, existingEmailExceptionHandler());
         handlerMap.put(UserNotFoundException.class, userNotFoundExceptionHandler());
         handlerMap.put(InvalidPasswordException.class, invalidPasswordExceptionHandler());
+        handlerMap.put(ResourceNotFoundException.class, resourceNotFoundExceptionHandler());
+        handlerMap.put(UnauthorizedException.class, unauthorizedExceptionHandler());
 
         return handlerMap;
+    }
+
+    private BusinessExceptionHandler unauthorizedExceptionHandler() {
+        return ex -> unauthorizedResponse();
+    }
+
+    private BusinessExceptionHandler resourceNotFoundExceptionHandler() {
+        return ex -> errorResponse(Response.Status.NOT_FOUND.name(), Response.Status.NOT_FOUND.getStatusCode());
     }
 
     private BusinessExceptionHandler invalidPasswordExceptionHandler() {
@@ -39,12 +51,18 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
         return ex -> unauthorizedResponse();
     }
 
-    private Response unauthorizedResponse() {
-        return Response.ok(Response.Status.UNAUTHORIZED.name()).status(Response.Status.UNAUTHORIZED).build();
+    private BusinessExceptionHandler existingEmailExceptionHandler() {
+        return ex -> errorResponse(Response.Status.CONFLICT.name(), Response.Status.CONFLICT.getStatusCode());
     }
 
-    private BusinessExceptionHandler existingEmailExceptionHandler() {
-        return ex -> Response.ok(Response.Status.CONFLICT.name()).status(Response.Status.CONFLICT).build();
+    private Response unauthorizedResponse() {
+        return errorResponse(Response.Status.UNAUTHORIZED.name(), Response.Status.UNAUTHORIZED.getStatusCode());
+    }
+
+
+
+    private Response errorResponse(String name, int code){
+        return Response.ok(name).status(code).build();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.example.realworldapi.web.mapper;
 
-import org.example.realworldapi.web.dto.BeanValidationResponseDTO;
+import org.example.realworldapi.web.dto.ErrorResponseDTO;
 
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
@@ -13,13 +13,13 @@ public class BeanValidationExceptionMapper implements ExceptionMapper<Constraint
     @Override
     public Response toResponse(ConstraintViolationException e) {
 
-        BeanValidationResponseDTO beanValidationResponseDTO = new BeanValidationResponseDTO();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO();
 
         e.getConstraintViolations().iterator().forEachRemaining(contraint -> {
-            beanValidationResponseDTO.getBody().add(contraint.getMessage());
+            errorResponseDTO.getBody().add(contraint.getMessage());
         });
 
-        return Response.ok(beanValidationResponseDTO).status(422).build();
+        return Response.ok(errorResponseDTO).status(422).build();
     }
 
 }
