@@ -1,7 +1,11 @@
 package org.example.realworldapi.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.example.realworldapi.domain.entity.User;
 
+@JsonRootName("user")
+@RegisterForReflection
 public class UpdateUserDTO {
 
     private String username;

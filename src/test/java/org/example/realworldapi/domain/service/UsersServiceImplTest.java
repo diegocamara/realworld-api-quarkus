@@ -6,6 +6,7 @@ import org.example.realworldapi.domain.exception.ExistingEmailException;
 import org.example.realworldapi.domain.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.UsersRepository;
+import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.impl.UsersServiceImpl;
 import org.example.realworldapi.util.UserUtils;
 import org.example.realworldapi.web.exception.ResourceNotFoundException;
@@ -24,12 +25,14 @@ import static org.mockito.Mockito.when;
 public class UsersServiceImplTest {
 
     private UsersRepository usersRepository;
+    private JWTService jwtService;
     private UsersService usersService;
 
     @BeforeEach
     public void beforeEach() {
         usersRepository = mock(UsersRepository.class);
-        usersService = new UsersServiceImpl(usersRepository);
+        jwtService = mock(JWTService.class);
+        usersService = new UsersServiceImpl(usersRepository, jwtService);
     }
 
     @Test
@@ -40,12 +43,14 @@ public class UsersServiceImplTest {
         String password = "user123";
 
         User createdUser = new User();
+        createdUser.setId(1L);
         createdUser.setUsername(username);
         createdUser.setEmail(email);
         createdUser.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
         createdUser.setToken(UUID.randomUUID().toString());
 
         when(usersRepository.create(any(User.class))).thenReturn(Optional.of(createdUser));
+        when(jwtService.sign(createdUser.getId().toString(), Role.USER)).thenReturn("token");
 
         User resultUser = usersService.create(username, email, password);
 
@@ -77,9 +82,11 @@ public class UsersServiceImplTest {
         String email = "user1@mail.com";
         String password = "123";
 
-        Optional<User> existingUser = Optional.of(UserUtils.create("user1", email, password));
+        Optional<User> existingUser = Optional.of(UserUtils.create(1L,"user1", email, password));
 
         when(usersRepository.findByEmail(email)).thenReturn(existingUser);
+        when(usersRepository.update(existingUser.get())).thenReturn(existingUser.get());
+        when(jwtService.sign(existingUser.get().getId().toString(), Role.USER)).thenReturn("token");
 
         User resultUser = usersService.login(email, password);
 
@@ -149,9 +156,9 @@ public class UsersServiceImplTest {
     @Test
     public void givenAExistentUser_whenExecuteUpdate_shouldReturnUpdatedUser(){
 
-        User user = new UserBuilder().username("user1").bio("user1 bio").email("user1@mail.com").build();
+        User user = new UserBuilder().id(1L).username("user1").bio("user1 bio").email("user1@mail.com").build();
 
-        when(usersRepository.update(user)).thenReturn(user);
+        when(usersRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         User result = usersService.update(user);
 

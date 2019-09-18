@@ -17,4 +17,10 @@ public class UserUtils {
         return user;
     }
 
+    public static User create(Long id, String username, String email, String userPassword) {
+        User user = create(username, email, userPassword);
+        user.setId(id);
+        return user;
+    }
+
 }

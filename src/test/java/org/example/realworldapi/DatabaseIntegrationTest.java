@@ -93,6 +93,7 @@ public class DatabaseIntegrationTest {
 
     public void transaction(Runnable command) {
         entityManager.getTransaction().begin();
+        entityManager.flush();
         command.run();
         entityManager.getTransaction().commit();
 
@@ -100,6 +101,7 @@ public class DatabaseIntegrationTest {
 
     public <T> T transaction(TransactionRunnable<T> command){
         entityManager.getTransaction().begin();
+        entityManager.clear();
         T result = command.run();
         entityManager.getTransaction().commit();
         return result;

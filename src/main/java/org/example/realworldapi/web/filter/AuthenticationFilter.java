@@ -2,12 +2,13 @@ package org.example.realworldapi.web.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.example.realworldapi.web.exception.UnauthorizedException;
 import org.example.realworldapi.domain.security.Role;
+import org.example.realworldapi.domain.service.JWTService;
 import org.example.realworldapi.infrastructure.annotation.Secured;
-import org.example.realworldapi.web.util.JWTUtils;
+import org.example.realworldapi.web.exception.UnauthorizedException;
 
 import javax.annotation.Priority;
+import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -25,6 +26,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
     private final String AUTHORIZATION_HEADER_PREFIX = "Token ";
 
+    @Inject
+    private JWTService jwtService;
+
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
 
@@ -38,7 +42,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         try {
 
-            DecodedJWT decodedJWT = JWTUtils.verify(token);
+            DecodedJWT decodedJWT = jwtService.verify(token);
 
             containerRequestContext.setSecurityContext(securityContext(decodedJWT));
 
@@ -56,7 +60,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             }
             @Override
             public boolean isUserInRole(String role) {
-                Role[] tokenRoles = JWTUtils.extractRoles(decodedJWT);
+                Role[] tokenRoles = jwtService.extractRoles(decodedJWT);
                 for(Role tokenRole: tokenRoles){
                     if(role.equals(tokenRole.name())){
                         return true;

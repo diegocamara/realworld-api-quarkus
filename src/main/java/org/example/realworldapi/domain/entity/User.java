@@ -23,6 +23,8 @@ public class User {
     @JsonIgnore
     private String password;
     private String email;
+
+    @Column(length = 500)
     private String token;
 
     public Long getId() {

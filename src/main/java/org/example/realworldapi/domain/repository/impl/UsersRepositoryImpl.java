@@ -47,17 +47,12 @@ public class UsersRepositoryImpl extends AbstractRepository<User, Long> implemen
 
     @Override
     public Optional<User> findById(Long id) {
-        return findBy("id", id);
+        return Optional.ofNullable(entityManager.find(User.class, id));
     }
 
     @Override
     public User update(User user) {
-        User managedUser = entityManager.find(User.class, user.getId());
-        managedUser.setUsername(user.getUsername());
-        managedUser.setBio(user.getBio());
-        managedUser.setImage(user.getImage());
-        managedUser.setEmail(user.getEmail());
-        return entityManager.merge(managedUser);
+        return entityManager.merge(user);
     }
 
     private Optional<User> findBy(String field, Object value){
