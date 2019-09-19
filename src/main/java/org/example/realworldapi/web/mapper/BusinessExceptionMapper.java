@@ -1,9 +1,7 @@
 package org.example.realworldapi.web.mapper;
 
-import org.example.realworldapi.domain.exception.BusinessException;
-import org.example.realworldapi.domain.exception.ExistingEmailException;
-import org.example.realworldapi.domain.exception.InvalidPasswordException;
-import org.example.realworldapi.domain.exception.UserNotFoundException;
+import org.example.realworldapi.domain.exception.*;
+import org.example.realworldapi.web.dto.ErrorResponseDTO;
 import org.example.realworldapi.web.exception.ResourceNotFoundException;
 import org.example.realworldapi.web.exception.UnauthorizedException;
 
@@ -11,6 +9,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @Provider
@@ -26,43 +26,40 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
 
         Map<Class<? extends BusinessException>, BusinessExceptionHandler> handlerMap = new HashMap<>();
 
-        handlerMap.put(ExistingEmailException.class, existingEmailExceptionHandler());
-        handlerMap.put(UserNotFoundException.class, userNotFoundExceptionHandler());
-        handlerMap.put(InvalidPasswordException.class, invalidPasswordExceptionHandler());
-        handlerMap.put(ResourceNotFoundException.class, resourceNotFoundExceptionHandler());
-        handlerMap.put(UnauthorizedException.class, unauthorizedExceptionHandler());
+        handlerMap.put(EmailAlreadyExistsException.class, conflict());
+        handlerMap.put(UserNotFoundException.class, unauthorized());
+        handlerMap.put(InvalidPasswordException.class, unauthorized());
+        handlerMap.put(ResourceNotFoundException.class, notFound());
+        handlerMap.put(UnauthorizedException.class, unauthorized());
+        handlerMap.put(UsernameAlreadyExistsException.class, conflict());
 
         return handlerMap;
     }
 
-    private BusinessExceptionHandler unauthorizedExceptionHandler() {
-        return ex -> unauthorizedResponse();
+    private BusinessExceptionHandler notFound() {
+        return exceptionHandler(Response.Status.NOT_FOUND.name(), Response.Status.NOT_FOUND.getStatusCode());
     }
 
-    private BusinessExceptionHandler resourceNotFoundExceptionHandler() {
-        return ex -> errorResponse(Response.Status.NOT_FOUND.name(), Response.Status.NOT_FOUND.getStatusCode());
+    private BusinessExceptionHandler conflict(){
+        return exceptionHandler(Response.Status.CONFLICT.name(), Response.Status.CONFLICT.getStatusCode());
     }
 
-    private BusinessExceptionHandler invalidPasswordExceptionHandler() {
-        return ex -> unauthorizedResponse();
+    private BusinessExceptionHandler unauthorized() {
+        return exceptionHandler(Response.Status.UNAUTHORIZED.name(), Response.Status.UNAUTHORIZED.getStatusCode());
     }
 
-    private BusinessExceptionHandler userNotFoundExceptionHandler() {
-        return ex -> unauthorizedResponse();
+    private BusinessExceptionHandler exceptionHandler(String message, int httpStatusCode) {
+        return ex -> {
+            String resultMessage = message;
+            if(ex.getMessage() != null && !ex.getMessage().isEmpty()){
+                resultMessage = ex.getMessage();
+            }
+            return errorResponse(resultMessage, httpStatusCode);
+        };
     }
 
-    private BusinessExceptionHandler existingEmailExceptionHandler() {
-        return ex -> errorResponse(Response.Status.CONFLICT.name(), Response.Status.CONFLICT.getStatusCode());
-    }
-
-    private Response unauthorizedResponse() {
-        return errorResponse(Response.Status.UNAUTHORIZED.name(), Response.Status.UNAUTHORIZED.getStatusCode());
-    }
-
-
-
-    private Response errorResponse(String name, int code){
-        return Response.ok(name).status(code).build();
+    private Response errorResponse(String errorMessage, int httpStatusCode){
+        return Response.ok(new ErrorResponseDTO(errorMessage)).status(httpStatusCode).build();
     }
 
     @Override

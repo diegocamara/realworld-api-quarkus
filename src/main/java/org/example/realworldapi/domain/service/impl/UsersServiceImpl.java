@@ -1,23 +1,17 @@
 package org.example.realworldapi.domain.service.impl;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.example.realworldapi.domain.entity.User;
-import org.example.realworldapi.domain.exception.ExistingEmailException;
-import org.example.realworldapi.domain.exception.InvalidPasswordException;
-import org.example.realworldapi.domain.exception.UserNotCreatedException;
-import org.example.realworldapi.domain.exception.UserNotFoundException;
+import org.example.realworldapi.domain.exception.*;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.JWTService;
 import org.example.realworldapi.domain.service.UsersService;
 import org.example.realworldapi.web.exception.ResourceNotFoundException;
-import org.hibernate.Hibernate;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.util.Optional;
-import java.util.UUID;
 
 @ApplicationScoped
 public class UsersServiceImpl implements UsersService {
@@ -56,7 +50,7 @@ public class UsersServiceImpl implements UsersService {
 
     private void checkExistingEmail(String email) {
         if(usersRepository.exists(email)){
-            throw new ExistingEmailException();
+            throw new EmailAlreadyExistsException();
         }
     }
 
@@ -88,6 +82,8 @@ public class UsersServiceImpl implements UsersService {
     @Override
     @Transactional
     public User update(User user) {
+
+        checkValidations(user);
 
         Optional<User> managedUserOptional = usersRepository.findById(user.getId());
 
@@ -121,6 +117,30 @@ public class UsersServiceImpl implements UsersService {
 
     private boolean isPasswordInvalid(String password, User user) {
         return !BCrypt.checkpw(password, user.getPassword());
+    }
+
+    private void checkValidations(User user){
+
+        if(isPresent(user.getUsername())){
+            checkUsername(user.getId(), user.getUsername());
+        }
+
+        if(isPresent(user.getEmail())){
+            checkEmail(user.getId(), user.getEmail());
+        }
+
+    }
+
+    private void checkUsername(Long selfId, String username) {
+        if(usersRepository.existsUsername(selfId, username)){
+            throw new UsernameAlreadyExistsException();
+        }
+    }
+
+    private void checkEmail(Long selfId, String email) {
+        if(usersRepository.existsEmail(selfId, email)){
+            throw new EmailAlreadyExistsException();
+        }
     }
 
 }

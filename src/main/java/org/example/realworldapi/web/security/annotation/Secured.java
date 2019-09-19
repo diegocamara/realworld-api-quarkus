@@ -1,4 +1,4 @@
-package org.example.realworldapi.infrastructure.annotation;
+package org.example.realworldapi.web.security.annotation;
 
 import org.example.realworldapi.domain.security.Role;
 

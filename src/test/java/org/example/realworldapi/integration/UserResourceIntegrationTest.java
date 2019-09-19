@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 @QuarkusTest
@@ -73,7 +74,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
                 .get(USER_RESOURCE_PATH)
                 .then()
                 .statusCode(HttpStatus.SC_NOT_FOUND)
-                .body(is("NOT_FOUND"));
+                .body("errors.body", hasItems("NOT_FOUND"));
 
     }
 
@@ -88,7 +89,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
                 .get(USER_RESOURCE_PATH)
                 .then()
                 .statusCode(HttpStatus.SC_UNAUTHORIZED)
-                .body(is("UNAUTHORIZED"));
+                .body("errors.body", hasItems("UNAUTHORIZED"));
 
     }
 
@@ -121,8 +122,116 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     }
 
+    @Test
+    public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyBody_shouldReturn422() throws JsonProcessingException {
+
+        User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+
+        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION_HEADER, authorizationHeader)
+                .body(objectMapper.writeValueAsString(updateUserDTO))
+                .put(USER_RESOURCE_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+                .body("errors.body", hasItems("At least one field must be not null"));
 
 
+    }
+
+    @Test
+    public void givenAnotherExistingUsername_whenExecuteUpdateUserEndpoint_shouldReturn409() throws JsonProcessingException {
+
+        User otherUser = createUser("user", "user@mail.com", "123", Role.USER);
+
+        User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
+
+        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + currentUser.getToken();
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setUsername(otherUser.getUsername());
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION_HEADER, authorizationHeader)
+                .body(objectMapper.writeValueAsString(updateUserDTO))
+                .put(USER_RESOURCE_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_CONFLICT)
+                .body("errors.body", hasItems("username already exists"));
+
+    }
+
+    @Test
+    public void givenAnotherExistingEmail_whenExecuteUpdateUserEndpoint_shouldReturn409() throws JsonProcessingException {
+
+        User otherUser = createUser("user", "user@mail.com", "123", Role.USER);
+
+        User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
+
+        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + currentUser.getToken();
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setEmail(otherUser.getEmail());
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION_HEADER, authorizationHeader)
+                .body(objectMapper.writeValueAsString(updateUserDTO))
+                .put(USER_RESOURCE_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_CONFLICT)
+                .body("errors.body", hasItems("email already exists"));
+
+    }
+
+    @Test
+    public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyUsername_shouldReturn422() throws JsonProcessingException {
+
+        User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+
+        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setUsername("");
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION_HEADER, authorizationHeader)
+                .body(objectMapper.writeValueAsString(updateUserDTO))
+                .put(USER_RESOURCE_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+                .body("errors.body", hasItems("username must be not blank"));
+
+
+    }
+
+    @Test
+    public void givenAExistentUser_whenExecuteUpdateUserEndpointWithBlankUsername_shouldReturn422() throws JsonProcessingException {
+
+        User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+
+        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setUsername(" ");
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION_HEADER, authorizationHeader)
+                .body(objectMapper.writeValueAsString(updateUserDTO))
+                .put(USER_RESOURCE_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+                .body("errors.body", hasItems("username must be not blank"));
+
+
+    }
 
     private User createUser(String username, String email, String password, Role... role){
         return transaction(()->{

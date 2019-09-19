@@ -20,4 +20,9 @@ public class ErrorResponseDTO {
         this.body = new LinkedList<>();
     }
 
+    public ErrorResponseDTO(String error){
+        this();
+        this.body.add(error);
+    }
+
 }

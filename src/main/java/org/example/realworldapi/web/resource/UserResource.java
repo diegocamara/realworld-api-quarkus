@@ -3,7 +3,7 @@ package org.example.realworldapi.web.resource;
 import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.UsersService;
-import org.example.realworldapi.infrastructure.annotation.Secured;
+import org.example.realworldapi.web.security.annotation.Secured;
 import org.example.realworldapi.web.dto.UpdateUserDTO;
 
 import javax.validation.Valid;

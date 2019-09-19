@@ -10,4 +10,6 @@ public interface UsersRepository {
     boolean exists(String email);
     Optional<User> findById(Long id);
     User update(User user);
+    boolean existsUsername(Long excludeId, String username);
+    boolean existsEmail(Long excludeId, String email);
 }

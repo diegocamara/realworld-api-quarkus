@@ -1,6 +1,7 @@
 package org.example.realworldapi;
 
 import org.h2.jdbcx.JdbcDataSource;
+import org.h2.tools.Server;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -13,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Table;
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -61,7 +63,7 @@ public class DatabaseIntegrationTest {
         properties.put(Environment.SHOW_SQL, true);
         properties.put(Environment.FORMAT_SQL, true);
         properties.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-        properties.put(Environment.HBM2DDL_AUTO, "none");
+        properties.put(Environment.HBM2DDL_AUTO, "create-drop");
         properties.put(Environment.DATASOURCE, dataSource);
         return properties;
     }

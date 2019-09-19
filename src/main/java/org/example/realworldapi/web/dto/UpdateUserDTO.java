@@ -5,13 +5,18 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.web.validation.constraint.AtLeastOneFieldMustBeNotNull;
+
+import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
 @JsonRootName("user")
+@AtLeastOneFieldMustBeNotNull
 @RegisterForReflection
 public class UpdateUserDTO {
 
+    @Pattern(regexp = "\\A(?!\\s*\\Z).+", message = "username must be not blank")
     private String username;
     private String bio;
     private String image;

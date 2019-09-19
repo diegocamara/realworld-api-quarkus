@@ -85,7 +85,7 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
                 .post(USERS_RESOURCE_PATH)
                 .then()
                 .statusCode(HttpStatus.SC_CONFLICT)
-                .body(is("CONFLICT"));
+                .body("errors.body", hasItems("email already exists"));
 
     }
 
@@ -180,7 +180,7 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
                 .post(LOGIN_PATH)
                 .then()
                 .statusCode(HttpStatus.SC_UNAUTHORIZED)
-                .body(is("UNAUTHORIZED"));
+                .body("errors.body", hasItems("UNAUTHORIZED"));
 
     }
 
@@ -200,7 +200,7 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
                 .post(LOGIN_PATH)
                 .then()
                 .statusCode(HttpStatus.SC_UNAUTHORIZED)
-                .body(is("UNAUTHORIZED"));
+                .body("errors.body", hasItems("UNAUTHORIZED"));
 
     }
 

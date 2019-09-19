@@ -1,8 +1,8 @@
-package org.example.realworldapi.web.filter;
+package org.example.realworldapi.web.security.filter;
 
 import org.example.realworldapi.web.exception.ForbiddenException;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.infrastructure.annotation.Secured;
+import org.example.realworldapi.web.security.annotation.Secured;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;

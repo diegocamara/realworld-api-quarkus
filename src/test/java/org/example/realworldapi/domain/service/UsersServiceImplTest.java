@@ -2,9 +2,7 @@ package org.example.realworldapi.domain.service;
 
 import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.entity.builder.UserBuilder;
-import org.example.realworldapi.domain.exception.ExistingEmailException;
-import org.example.realworldapi.domain.exception.InvalidPasswordException;
-import org.example.realworldapi.domain.exception.UserNotFoundException;
+import org.example.realworldapi.domain.exception.*;
 import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.impl.UsersServiceImpl;
@@ -62,7 +60,7 @@ public class UsersServiceImplTest {
     }
 
     @Test
-    public void whenExecuteCreateWithExistingEmail_shouldThrowsExistingEmailException(){
+    public void whenExecuteCreateWithExistingEmail_shouldThrowsEmailAlreadyExistsException(){
 
         String username = "user";
         String email = "user@email.com";
@@ -70,7 +68,7 @@ public class UsersServiceImplTest {
 
        when(usersRepository.exists(email)).thenReturn(true);
 
-        Assertions.assertThrows(ExistingEmailException.class, ()->
+        Assertions.assertThrows(EmailAlreadyExistsException.class, ()->
                 usersService.create(username, email, password)
         );
 
@@ -166,6 +164,30 @@ public class UsersServiceImplTest {
 
     }
 
+    @Test
+    public void givenAExistingUsername_shouldThrowsUsernameAlreadyExistsException(){
 
+        User user = new UserBuilder().id(1L).username("user1").bio("user1 bio").email("user1@mail.com").build();
+
+        when(usersRepository.existsUsername(user.getId(), user.getUsername())).thenReturn(true);
+
+        Assertions.assertThrows(UsernameAlreadyExistsException.class, ()->
+                usersService.update(user)
+        );
+
+    }
+
+    @Test
+    public void givenAExistingEmail_shouldThrowsEmailAlreadyExistsException(){
+
+        User user = new UserBuilder().id(1L).username("user1").bio("user1 bio").email("user1@mail.com").build();
+
+        when(usersRepository.existsEmail(user.getId(), user.getEmail())).thenReturn(true);
+
+        Assertions.assertThrows(EmailAlreadyExistsException.class, ()->
+                usersService.update(user)
+        );
+
+    }
 
 }

@@ -1,10 +1,10 @@
-package org.example.realworldapi.web.filter;
+package org.example.realworldapi.web.security.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.JWTService;
-import org.example.realworldapi.infrastructure.annotation.Secured;
+import org.example.realworldapi.web.security.annotation.Secured;
 import org.example.realworldapi.web.exception.UnauthorizedException;
 
 import javax.annotation.Priority;
