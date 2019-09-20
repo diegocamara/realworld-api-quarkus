@@ -18,229 +18,258 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
-    public static final String AUTHORIZATION_HEADER_PREFIX = "Token ";
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    private final String API_PREFIX = "/api";
-    private final String USER_RESOURCE_PATH = API_PREFIX + "/user";
+  public static final String AUTHORIZATION_HEADER_PREFIX = "Token ";
+  public static final String AUTHORIZATION_HEADER = "Authorization";
+  private final String API_PREFIX = "/api";
+  private final String USER_RESOURCE_PATH = API_PREFIX + "/user";
 
-    @Inject
-    private ObjectMapper objectMapper;
+  @Inject private ObjectMapper objectMapper;
 
-    @Inject
-    private JWTService jwtService;
+  @Inject private JWTService jwtService;
 
-    @AfterEach
-    public void afterEach() {
-        clear();
-    }
+  @AfterEach
+  public void afterEach() {
+    clear();
+  }
 
-    @Test
-    public void givenAValidToken_whenExecuteGetUserEndpoint_shouldReturnLoggedInUser() {
+  @Test
+  public void givenAValidToken_whenExecuteGetUserEndpoint_shouldReturnLoggedInUser() {
 
-        User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
 
-        given()
-                .header(AUTHORIZATION_HEADER, authorizationHeader)
-                .contentType(MediaType.APPLICATION_JSON)
-                .get(USER_RESOURCE_PATH)
-                .then()
-                .statusCode(HttpStatus.SC_OK)
-                .body("user.id", Matchers.nullValue(),
-                        "user.password", Matchers.nullValue(),
-                        "user.username", Matchers.notNullValue(),
-                        "user.email", Matchers.notNullValue(),
-                        "user.token", Matchers.notNullValue(),
-                        "user.bio", Matchers.nullValue(),
-                        "user.image", Matchers.nullValue());
+    given()
+        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .contentType(MediaType.APPLICATION_JSON)
+        .get(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "user.id",
+            Matchers.nullValue(),
+            "user.password",
+            Matchers.nullValue(),
+            "user.username",
+            Matchers.notNullValue(),
+            "user.email",
+            Matchers.notNullValue(),
+            "user.token",
+            Matchers.notNullValue(),
+            "user.bio",
+            Matchers.nullValue(),
+            "user.image",
+            Matchers.nullValue());
+  }
 
-    }
+  @Test
+  public void givenAInexistentUser_whenExecuteGetUserEndpoint_shouldReturn404NotFound() {
 
-    @Test
-    public void givenAInexistentUser_whenExecuteGetUserEndpoint_shouldReturn404NotFound() {
+    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + jwtService.sign("1", Role.USER);
 
-        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + jwtService.sign("1", Role.USER);
+    given()
+        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .contentType(MediaType.APPLICATION_JSON)
+        .get(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_NOT_FOUND)
+        .body("errors.body", hasItems("NOT_FOUND"));
+  }
 
-        given()
-                .header(AUTHORIZATION_HEADER, authorizationHeader)
-                .contentType(MediaType.APPLICATION_JSON)
-                .get(USER_RESOURCE_PATH)
-                .then()
-                .statusCode(HttpStatus.SC_NOT_FOUND)
-                .body("errors.body", hasItems("NOT_FOUND"));
+  @Test
+  public void
+      givenARequestWithoutAuthorizationHeader_whenExecuteGetUserEndpoint_shouldReturnUnauthorized()
+          throws JsonProcessingException {
 
-    }
+    User user = UserUtils.create("user1", "user1@mail.com", "123");
 
-    @Test
-    public void givenARequestWithoutAuthorizationHeader_whenExecuteGetUserEndpoint_shouldReturnUnauthorized() throws JsonProcessingException {
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(objectMapper.writeValueAsString(user))
+        .get(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_UNAUTHORIZED)
+        .body("errors.body", hasItems("UNAUTHORIZED"));
+  }
 
-        User user = UserUtils.create("user1", "user1@mail.com", "123");
+  @Test
+  public void givenAExistentUser_whenExecuteUpdateUserEndpoint_shouldReturnUpdatedUser()
+      throws JsonProcessingException {
 
-        given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(objectMapper.writeValueAsString(user))
-                .get(USER_RESOURCE_PATH)
-                .then()
-                .statusCode(HttpStatus.SC_UNAUTHORIZED)
-                .body("errors.body", hasItems("UNAUTHORIZED"));
+    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-    }
+    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
 
-    @Test
-    public void givenAExistentUser_whenExecuteUpdateUserEndpoint_shouldReturnUpdatedUser() throws JsonProcessingException {
+    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+    updateUserDTO.setUsername("user2");
+    updateUserDTO.setEmail(user.getEmail());
 
-        User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .put(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "user.id",
+            Matchers.nullValue(),
+            "user.password",
+            Matchers.nullValue(),
+            "user.username",
+            is(updateUserDTO.getUsername()),
+            "user.email",
+            Matchers.notNullValue(),
+            "user.token",
+            Matchers.notNullValue(),
+            "user.bio",
+            Matchers.nullValue(),
+            "user.image",
+            Matchers.nullValue());
+  }
 
-        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+  @Test
+  public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyBody_shouldReturn422()
+      throws JsonProcessingException {
 
-        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-        updateUserDTO.setUsername("user2");
-        updateUserDTO.setEmail(user.getEmail());
+    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-        given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION_HEADER, authorizationHeader)
-                .body(objectMapper.writeValueAsString(updateUserDTO))
-                .put(USER_RESOURCE_PATH)
-                .then()
-                .statusCode(HttpStatus.SC_OK)
-                .body("user.id", Matchers.nullValue(),
-                        "user.password", Matchers.nullValue(),
-                        "user.username", is(updateUserDTO.getUsername()),
-                        "user.email", Matchers.notNullValue(),
-                        "user.token", Matchers.notNullValue(),
-                        "user.bio", Matchers.nullValue(),
-                        "user.image", Matchers.nullValue());
+    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
 
+    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
 
-    }
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .put(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+        .body("errors.body", hasItems("At least one field must be not null"));
+  }
 
-    @Test
-    public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyBody_shouldReturn422() throws JsonProcessingException {
+  @Test
+  public void givenAnotherExistingUsername_whenExecuteUpdateUserEndpoint_shouldReturn409()
+      throws JsonProcessingException {
 
-        User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+    User otherUser = createUser("user", "user@mail.com", "123", Role.USER);
 
-        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+    User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
 
-        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + currentUser.getToken();
 
-        given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION_HEADER, authorizationHeader)
-                .body(objectMapper.writeValueAsString(updateUserDTO))
-                .put(USER_RESOURCE_PATH)
-                .then()
-                .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
-                .body("errors.body", hasItems("At least one field must be not null"));
+    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+    updateUserDTO.setUsername(otherUser.getUsername());
 
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .put(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_CONFLICT)
+        .body("errors.body", hasItems("username already exists"));
+  }
 
-    }
+  @Test
+  public void givenAnotherExistingEmail_whenExecuteUpdateUserEndpoint_shouldReturn409()
+      throws JsonProcessingException {
 
-    @Test
-    public void givenAnotherExistingUsername_whenExecuteUpdateUserEndpoint_shouldReturn409() throws JsonProcessingException {
+    User otherUser = createUser("user", "user@mail.com", "123", Role.USER);
 
-        User otherUser = createUser("user", "user@mail.com", "123", Role.USER);
+    User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
 
-        User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
+    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + currentUser.getToken();
 
-        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + currentUser.getToken();
+    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+    updateUserDTO.setEmail(otherUser.getEmail());
 
-        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-        updateUserDTO.setUsername(otherUser.getUsername());
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .put(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_CONFLICT)
+        .body("errors.body", hasItems("email already exists"));
+  }
 
-        given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION_HEADER, authorizationHeader)
-                .body(objectMapper.writeValueAsString(updateUserDTO))
-                .put(USER_RESOURCE_PATH)
-                .then()
-                .statusCode(HttpStatus.SC_CONFLICT)
-                .body("errors.body", hasItems("username already exists"));
+  @Test
+  public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyUsername_shouldReturn422()
+      throws JsonProcessingException {
 
-    }
+    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-    @Test
-    public void givenAnotherExistingEmail_whenExecuteUpdateUserEndpoint_shouldReturn409() throws JsonProcessingException {
+    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
 
-        User otherUser = createUser("user", "user@mail.com", "123", Role.USER);
+    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+    updateUserDTO.setUsername("");
 
-        User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .put(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+        .body("errors.body", hasItems("username must be not blank"));
+  }
 
-        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + currentUser.getToken();
+  @Test
+  public void givenAExistentUser_whenExecuteUpdateUserEndpointWithInvalidEmail_shouldReturn422()
+      throws JsonProcessingException {
 
-        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-        updateUserDTO.setEmail(otherUser.getEmail());
+    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-        given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION_HEADER, authorizationHeader)
-                .body(objectMapper.writeValueAsString(updateUserDTO))
-                .put(USER_RESOURCE_PATH)
-                .then()
-                .statusCode(HttpStatus.SC_CONFLICT)
-                .body("errors.body", hasItems("email already exists"));
+    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
 
-    }
+    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+    updateUserDTO.setEmail("email");
 
-    @Test
-    public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyUsername_shouldReturn422() throws JsonProcessingException {
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .put(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+        .body("errors.body", hasSize(1), "errors.body", hasItems("must be a well-formed email address"));
+  }
 
-        User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+  @Test
+  public void givenAExistentUser_whenExecuteUpdateUserEndpointWithBlankUsername_shouldReturn422()
+      throws JsonProcessingException {
 
-        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-        updateUserDTO.setUsername("");
+    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
 
-        given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION_HEADER, authorizationHeader)
-                .body(objectMapper.writeValueAsString(updateUserDTO))
-                .put(USER_RESOURCE_PATH)
-                .then()
-                .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
-                .body("errors.body", hasItems("username must be not blank"));
+    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+    updateUserDTO.setUsername(" ");
 
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .put(USER_RESOURCE_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+        .body("errors.body", hasItems("username must be not blank"));
+  }
 
-    }
-
-    @Test
-    public void givenAExistentUser_whenExecuteUpdateUserEndpointWithBlankUsername_shouldReturn422() throws JsonProcessingException {
-
-        User user = createUser("user1", "user1@mail.com", "123", Role.USER);
-
-        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
-
-        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-        updateUserDTO.setUsername(" ");
-
-        given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION_HEADER, authorizationHeader)
-                .body(objectMapper.writeValueAsString(updateUserDTO))
-                .put(USER_RESOURCE_PATH)
-                .then()
-                .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
-                .body("errors.body", hasItems("username must be not blank"));
-
-
-    }
-
-    private User createUser(String username, String email, String password, Role... role) {
-        return transaction(() -> {
-            User user = UserUtils.create(username, email, password);
-            entityManager.persist(user);
-            user.setToken(jwtService.sign(user.getId().toString(), role));
-            entityManager.merge(user);
-            return user;
+  private User createUser(String username, String email, String password, Role... role) {
+    return transaction(
+        () -> {
+          User user = UserUtils.create(username, email, password);
+          entityManager.persist(user);
+          user.setToken(jwtService.sign(user.getId().toString(), role));
+          entityManager.merge(user);
+          return user;
         });
-    }
-
+  }
 }

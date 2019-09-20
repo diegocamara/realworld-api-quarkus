@@ -5,6 +5,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Getter
@@ -15,6 +16,7 @@ public class NewUserDTO {
 
     @NotBlank(message = "username must be not blank")
     private String username;
+    @Email
     @NotBlank(message = "email must be not blank")
     private String email;
     @NotBlank(message = "password must be not blank")
