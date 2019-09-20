@@ -67,7 +67,7 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
     }
 
     @Test
-    public void givenAPersistedUser_whenCallingRegisterUserEndpointWithExistingEmail_thenReturnConflitWithCode409() throws JsonProcessingException {
+    public void givenAPersistedUser_whenCallingRegisterUserEndpointWithExistingEmail_thenReturnCode409() throws JsonProcessingException {
 
         String userPassword = "123";
 
@@ -86,6 +86,29 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.SC_CONFLICT)
                 .body("errors.body", hasItems("email already exists"));
+
+    }
+
+    @Test
+    public void givenAPersistedUser_whenCallingRegisterUserEndpointWithExistingUsername_thenReturnCode409() throws JsonProcessingException {
+
+        String userPassword = "123";
+
+        User user = createUser("user1", "user1@mail.com", userPassword, Role.USER);
+
+        NewUserDTO newUser = new NewUserDTO();
+        newUser.setUsername(user.getUsername());
+        newUser.setEmail("user2@mail.com");
+        newUser.setPassword("user123");
+
+        given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(newUser))
+                .when()
+                .post(USERS_RESOURCE_PATH)
+                .then()
+                .statusCode(HttpStatus.SC_CONFLICT)
+                .body("errors.body", hasItems("username already exists"));
 
     }
 

@@ -29,6 +29,7 @@ public class UsersServiceImpl implements UsersService {
     @Transactional
     public User create(String username, String email, String password) {
 
+        checkExistingUsername(username);
         checkExistingEmail(email);
 
         User user = new User();
@@ -44,12 +45,20 @@ public class UsersServiceImpl implements UsersService {
         return resultUser.orElseThrow(UserNotCreatedException::new);
     }
 
+
+
     private String createJWT(User user) {
         return jwtService.sign(user.getId().toString(), Role.USER);
     }
 
+    private void checkExistingUsername(String username) {
+        if(usersRepository.existsBy("username", username)){
+            throw new UsernameAlreadyExistsException();
+        }
+    }
+
     private void checkExistingEmail(String email) {
-        if(usersRepository.exists(email)){
+        if(usersRepository.existsBy("email", email)){
             throw new EmailAlreadyExistsException();
         }
     }
