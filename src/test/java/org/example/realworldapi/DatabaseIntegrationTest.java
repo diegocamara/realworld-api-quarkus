@@ -1,7 +1,6 @@
 package org.example.realworldapi;
 
 import org.h2.jdbcx.JdbcDataSource;
-import org.h2.tools.Server;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -14,7 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Table;
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;

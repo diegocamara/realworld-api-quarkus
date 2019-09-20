@@ -36,12 +36,12 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
     private JWTService jwtService;
 
     @AfterEach
-    public void afterEach(){
+    public void afterEach() {
         clear();
     }
 
     @Test
-    public void givenAValidToken_whenExecuteGetUserEndpoint_shouldReturnLoggedInUser(){
+    public void givenAValidToken_whenExecuteGetUserEndpoint_shouldReturnLoggedInUser() {
 
         User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
@@ -64,7 +64,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
     }
 
     @Test
-    public void givenAInexistentUser_whenExecuteGetUserEndpoint_shouldReturn404NotFound(){
+    public void givenAInexistentUser_whenExecuteGetUserEndpoint_shouldReturn404NotFound() {
 
         String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + jwtService.sign("1", Role.USER);
 
@@ -233,9 +233,9 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     }
 
-    private User createUser(String username, String email, String password, Role... role){
-        return transaction(()->{
-            User user =  UserUtils.create(username, email, password);
+    private User createUser(String username, String email, String password, Role... role) {
+        return transaction(() -> {
+            User user = UserUtils.create(username, email, password);
             entityManager.persist(user);
             user.setToken(jwtService.sign(user.getId().toString(), role));
             entityManager.merge(user);
