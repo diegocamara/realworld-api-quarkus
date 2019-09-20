@@ -13,9 +13,9 @@ import javax.validation.constraints.NotBlank;
 @RegisterForReflection
 public class LoginDTO {
 
-    @NotBlank(message = "email must be not blank")
-    private String email;
-    @NotBlank(message = "password must be not blank")
-    private String password;
+  @NotBlank(message = "email must be not blank")
+  private String email;
 
+  @NotBlank(message = "password must be not blank")
+  private String password;
 }

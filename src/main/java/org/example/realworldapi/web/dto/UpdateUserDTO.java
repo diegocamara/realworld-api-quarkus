@@ -17,21 +17,20 @@ import javax.validation.constraints.Pattern;
 @RegisterForReflection
 public class UpdateUserDTO {
 
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+", message = "username must be not blank")
-    private String username;
-    private String bio;
-    private String image;
-    @Email
-    private String email;
+  @Pattern(regexp = "\\A(?!\\s*\\Z).+", message = "username must be not blank")
+  private String username;
 
-    public User toUser(Long id){
-        User user = new User();
-        user.setId(id);
-        user.setUsername(this.username);
-        user.setBio(this.bio);
-        user.setImage(this.image);
-        user.setEmail(this.email);
-        return user;
-    }
+  private String bio;
+  private String image;
+  @Email private String email;
 
+  public User toUser(Long id) {
+    User user = new User();
+    user.setId(id);
+    user.setUsername(this.username);
+    user.setBio(this.bio);
+    user.setImage(this.image);
+    user.setEmail(this.email);
+    return user;
+  }
 }

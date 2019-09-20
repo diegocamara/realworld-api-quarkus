@@ -14,12 +14,13 @@ import javax.validation.constraints.NotBlank;
 @RegisterForReflection
 public class NewUserDTO {
 
-    @NotBlank(message = "username must be not blank")
-    private String username;
-    @Email
-    @NotBlank(message = "email must be not blank")
-    private String email;
-    @NotBlank(message = "password must be not blank")
-    private String password;
+  @NotBlank(message = "username must be not blank")
+  private String username;
 
+  @Email
+  @NotBlank(message = "email must be not blank")
+  private String email;
+
+  @NotBlank(message = "password must be not blank")
+  private String password;
 }

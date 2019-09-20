@@ -14,15 +14,14 @@ import java.util.List;
 @RegisterForReflection
 public class ErrorResponseDTO {
 
-    private List<String> body;
+  private List<String> body;
 
-    public ErrorResponseDTO(){
-        this.body = new LinkedList<>();
-    }
+  public ErrorResponseDTO() {
+    this.body = new LinkedList<>();
+  }
 
-    public ErrorResponseDTO(String error){
-        this();
-        this.body.add(error);
-    }
-
+  public ErrorResponseDTO(String error) {
+    this();
+    this.body.add(error);
+  }
 }
