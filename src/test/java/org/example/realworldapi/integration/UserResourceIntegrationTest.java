@@ -18,14 +18,12 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
+import static org.example.realworldapi.constants.TestConstants.*;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
-  public static final String AUTHORIZATION_HEADER_PREFIX = "Token ";
-  public static final String AUTHORIZATION_HEADER = "Authorization";
-  private final String API_PREFIX = "/api";
   private final String USER_RESOURCE_PATH = API_PREFIX + "/user";
 
   @Inject private ObjectMapper objectMapper;
@@ -42,7 +40,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+    String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
     given()
         .header(AUTHORIZATION_HEADER, authorizationHeader)
@@ -70,7 +68,8 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
   @Test
   public void givenAInexistentUser_whenExecuteGetUserEndpoint_shouldReturn404NotFound() {
 
-    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + jwtService.sign("1", Role.USER);
+    String authorizationHeader =
+        AUTHORIZATION_HEADER_VALUE_PREFIX + jwtService.sign("1", Role.USER);
 
     given()
         .header(AUTHORIZATION_HEADER, authorizationHeader)
@@ -103,7 +102,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+    String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
     UpdateUserDTO updateUserDTO = new UpdateUserDTO();
     updateUserDTO.setUsername("user2");
@@ -139,7 +138,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+    String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
     UpdateUserDTO updateUserDTO = new UpdateUserDTO();
 
@@ -161,7 +160,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
 
-    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + currentUser.getToken();
+    String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + currentUser.getToken();
 
     UpdateUserDTO updateUserDTO = new UpdateUserDTO();
     updateUserDTO.setUsername(otherUser.getUsername());
@@ -184,7 +183,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
 
-    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + currentUser.getToken();
+    String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + currentUser.getToken();
 
     UpdateUserDTO updateUserDTO = new UpdateUserDTO();
     updateUserDTO.setEmail(otherUser.getEmail());
@@ -205,7 +204,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+    String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
     UpdateUserDTO updateUserDTO = new UpdateUserDTO();
     updateUserDTO.setUsername("");
@@ -226,7 +225,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+    String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
     UpdateUserDTO updateUserDTO = new UpdateUserDTO();
     updateUserDTO.setEmail("email");
@@ -238,7 +237,11 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
         .put(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
-        .body("errors.body", hasSize(1), "errors.body", hasItems("must be a well-formed email address"));
+        .body(
+            "errors.body",
+            hasSize(1),
+            "errors.body",
+            hasItems("must be a well-formed email address"));
   }
 
   @Test
@@ -247,7 +250,7 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
 
     User user = createUser("user1", "user1@mail.com", "123", Role.USER);
 
-    String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + user.getToken();
+    String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
     UpdateUserDTO updateUserDTO = new UpdateUserDTO();
     updateUserDTO.setUsername(" ");

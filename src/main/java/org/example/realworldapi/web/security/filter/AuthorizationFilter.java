@@ -1,7 +1,7 @@
 package org.example.realworldapi.web.security.filter;
 
-import org.example.realworldapi.web.exception.ForbiddenException;
 import org.example.realworldapi.domain.security.Role;
+import org.example.realworldapi.web.exception.ForbiddenException;
 import org.example.realworldapi.web.security.annotation.Secured;
 
 import javax.annotation.Priority;
@@ -25,56 +25,72 @@ import java.util.List;
 @Priority(Priorities.AUTHORIZATION)
 public class AuthorizationFilter implements ContainerRequestFilter {
 
-    @Context
-    private ResourceInfo resourceInfo;
+  @Context private ResourceInfo resourceInfo;
 
-    @Override
-    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+  @Override
+  public void filter(ContainerRequestContext containerRequestContext) throws IOException {
 
-        SecurityContext securityContext = containerRequestContext.getSecurityContext();
+    Class<?> resourceClass = resourceInfo.getResourceClass();
+    Method resourceMethod = resourceInfo.getResourceMethod();
 
-        Class<?> resourceClass = resourceInfo.getResourceClass();
-        List<Role> classRoles = extractRoles(resourceClass);
-        Method resourceMethod = resourceInfo.getResourceMethod();
-        List<Role> methodRoles = extractRoles(resourceMethod);
+    if (!isSecurityOptional(resourceMethod, resourceClass)) {
+      SecurityContext securityContext = containerRequestContext.getSecurityContext();
 
-        try {
-            if (methodRoles.isEmpty()) {
-                checkPermissions(classRoles, securityContext);
-            } else {
-                checkPermissions(methodRoles, securityContext);
-            }
-        } catch (Exception ex) {
-            containerRequestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
-        }
+      List<Role> classRoles = extractRoles(resourceClass);
+      List<Role> methodRoles = extractRoles(resourceMethod);
 
-    }
-
-    private void checkPermissions(List<Role> allowedRoles, SecurityContext securityContext) {
-        if (!isAccessAllowed(allowedRoles, securityContext)) {
-            throw new ForbiddenException();
-        }
-    }
-
-    private boolean isAccessAllowed(List<Role> allowedRoles, SecurityContext securityContext) {
-        for (Role allowedRole : allowedRoles) {
-            if (securityContext.isUserInRole(allowedRole.name())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private List<Role> extractRoles(AnnotatedElement annotatedElement) {
-        if (annotatedElement == null) {
-            return new LinkedList<>();
+      try {
+        if (methodRoles.isEmpty()) {
+          checkPermissions(classRoles, securityContext);
         } else {
-            Secured secured = annotatedElement.getAnnotation(Secured.class);
-            if (secured == null) {
-                return new LinkedList<>();
-            } else {
-                return Arrays.asList(secured.value());
-            }
+          checkPermissions(methodRoles, securityContext);
         }
+      } catch (Exception ex) {
+        containerRequestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
+      }
     }
+  }
+
+  private boolean isSecurityOptional(Method resourceMethod, Class<?> resourceClass) {
+    Secured resourceClassSecured = resourceClass.getAnnotation(Secured.class);
+    Secured resourceMethodSecured = resourceMethod.getAnnotation(Secured.class);
+
+    if (resourceMethodSecured != null) {
+      return resourceMethodSecured.optional();
+    }
+
+    if (resourceClassSecured != null) {
+      return resourceClassSecured.optional();
+    }
+
+    return false;
+  }
+
+  private void checkPermissions(List<Role> allowedRoles, SecurityContext securityContext) {
+    if (!isAccessAllowed(allowedRoles, securityContext)) {
+      throw new ForbiddenException();
+    }
+  }
+
+  private boolean isAccessAllowed(List<Role> allowedRoles, SecurityContext securityContext) {
+    for (Role allowedRole : allowedRoles) {
+      if (securityContext.isUserInRole(allowedRole.name())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private List<Role> extractRoles(AnnotatedElement annotatedElement) {
+    if (annotatedElement == null) {
+      return new LinkedList<>();
+    } else {
+      Secured secured = annotatedElement.getAnnotation(Secured.class);
+      if (secured == null) {
+        return new LinkedList<>();
+      } else {
+        return Arrays.asList(secured.value());
+      }
+    }
+  }
 }

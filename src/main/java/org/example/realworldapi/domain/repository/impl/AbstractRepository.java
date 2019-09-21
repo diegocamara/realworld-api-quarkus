@@ -5,10 +5,12 @@ import org.hibernate.query.Query;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.Serializable;
+import java.util.List;
 
 public abstract class AbstractRepository<T, ID> {
 
@@ -36,6 +38,15 @@ public abstract class AbstractRepository<T, ID> {
         Query<E> query = getHibernateSession().createQuery(criteriaQuery);
         try {
             return query.getSingleResult();
+        } catch (NoResultException noResultException) {
+            return null;
+        }
+    }
+
+    protected <E> List<E> getResultList(CriteriaQuery<E> criteriaQuery){
+        TypedQuery<E> query = getHibernateSession().createQuery(criteriaQuery);
+        try {
+            return query.getResultList();
         } catch (NoResultException noResultException) {
             return null;
         }

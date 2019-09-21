@@ -60,30 +60,60 @@ public class UsersRepositoryImpl extends AbstractRepository<User, Long> implemen
     return existsBy("email", excludeId, email);
   }
 
+  @Override
+  public Optional<User> findByUsername(String username) {
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<User> criteriaQuery = getCriteriaQuery(builder);
+    Root<User> user = getRoot(criteriaQuery);
+
+    criteriaQuery.select(
+        builder.construct(
+            User.class, user.get("id"), user.get("username"), user.get("bio"), user.get("image")));
+
+    criteriaQuery.where(
+        builder.equal(builder.upper(user.get("username")), username.toUpperCase().trim()));
+
+    return Optional.ofNullable(getSingleResult(criteriaQuery));
+  }
+
+  @Override
+  public boolean isFollowing(Long currentUserId, Long followedUserId) {
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
+    Root<User> user = getRoot(criteriaQuery, User.class);
+    ListJoin<User, User> follows = user.joinList("follows");
+    criteriaQuery.select(builder.count(follows));
+    criteriaQuery.where(
+        builder.and(
+            builder.equal(user.get("id"), currentUserId),
+            builder.equal(follows.get("id"), followedUserId)));
+    return getSingleResult(criteriaQuery).intValue() > 0;
+  }
+
   private boolean existsBy(String field, Long excludeId, String value) {
     CriteriaQuery<Long> criteriaQuery = existsByCriteriaQuery(field, excludeId, value);
     return getSingleResult(criteriaQuery).intValue() > 0;
   }
 
-    private CriteriaQuery<Long> existsByCriteriaQuery(String field, Long excludeId, String value) {
+  private CriteriaQuery<Long> existsByCriteriaQuery(String field, Long excludeId, String value) {
 
-        CriteriaBuilder builder = getCriteriaBuilder();
-        CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
-        Root<User> user = getRoot(criteriaQuery, User.class);
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
+    Root<User> user = getRoot(criteriaQuery, User.class);
 
-        Predicate notEqualIdExpression = builder.notEqual(user.get("id"), excludeId);
-        Predicate equalFieldExpression =
-                builder.equal(builder.upper(user.get(field)), value.toUpperCase().trim());
+    Predicate notEqualIdExpression = builder.notEqual(user.get("id"), excludeId);
+    Predicate equalFieldExpression =
+        builder.equal(builder.upper(user.get(field)), value.toUpperCase().trim());
 
-        Expression<Boolean> whereExpression =
-                excludeId != null
-                        ? builder.and(notEqualIdExpression, equalFieldExpression)
-                        : equalFieldExpression;
+    Expression<Boolean> whereExpression =
+        excludeId != null
+            ? builder.and(notEqualIdExpression, equalFieldExpression)
+            : equalFieldExpression;
 
-        criteriaQuery.select(builder.count(user)).where(whereExpression);
+    criteriaQuery.select(builder.count(user)).where(whereExpression);
 
-        return criteriaQuery;
-    }
+    return criteriaQuery;
+  }
 
   @Override
   EntityManager getEntityManager() {

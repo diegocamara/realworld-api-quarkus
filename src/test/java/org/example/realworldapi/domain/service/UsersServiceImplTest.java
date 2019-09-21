@@ -10,7 +10,6 @@ import org.example.realworldapi.domain.repository.UsersRepository;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.impl.UsersServiceImpl;
 import org.example.realworldapi.util.UserUtils;
-import org.example.realworldapi.web.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -150,7 +149,7 @@ public class UsersServiceImplTest {
 
     when(usersRepository.findById(userId)).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(ResourceNotFoundException.class, () -> usersService.findById(userId));
+    Assertions.assertThrows(UserNotFoundException.class, () -> usersService.findById(userId));
   }
 
   @Test
@@ -186,5 +185,42 @@ public class UsersServiceImplTest {
     when(usersRepository.existsEmail(user.getId(), user.getEmail())).thenReturn(true);
 
     Assertions.assertThrows(EmailAlreadyExistsException.class, () -> usersService.update(user));
+  }
+
+  @Test
+  public void givenAExistentUser_whenExecuteFindByUsername_shouldReturnAUser() {
+
+    User user =
+        new UserBuilder().id(1L).username("user1").bio("user1 bio").email("user1@mail.com").build();
+
+    Optional<User> userOptional = Optional.of(user);
+
+    when(usersRepository.findByUsername(user.getUsername())).thenReturn(userOptional);
+
+    User result = usersService.findByUsername(user.getUsername());
+
+    Assertions.assertNotNull(result);
+  }
+
+  @Test
+  public void givenAInexistentUser_whenExecuteFindByUsername_shouldThrowsUserNotFoundException() {
+
+    String username = "user";
+
+    when(usersRepository.findByUsername(username)).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(
+        UserNotFoundException.class, () -> usersService.findByUsername(username));
+  }
+
+  @Test
+  public void shouldReturnTrue_whenExistsFollowedUsers() {
+
+    Long currentUserId = 1L;
+    Long followeduserId = 2L;
+
+    when(usersRepository.isFollowing(currentUserId, followeduserId)).thenReturn(true);
+
+    Assertions.assertTrue(usersService.isFollowing(currentUserId, followeduserId));
   }
 }

@@ -21,12 +21,12 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
+import static org.example.realworldapi.constants.TestConstants.API_PREFIX;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
 
-  private final String API_PREFIX = "/api";
   private final String USERS_RESOURCE_PATH = API_PREFIX + "/users";
   private final String LOGIN_PATH = USERS_RESOURCE_PATH + "/login";
 
