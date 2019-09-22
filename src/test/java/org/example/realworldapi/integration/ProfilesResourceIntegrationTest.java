@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.is;
 @QuarkusTest
 public class ProfilesResourceIntegrationTest extends DatabaseIntegrationTest {
 
-  private final String PROFILE_PATH = API_PREFIX + "/profiles";
+  private final String PROFILES_PATH = API_PREFIX + "/profiles";
 
   @Inject private ObjectMapper objectMapper;
 
@@ -42,7 +42,7 @@ public class ProfilesResourceIntegrationTest extends DatabaseIntegrationTest {
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
-        .get(PROFILE_PATH + "/" + existentUser.getUsername())
+        .get(PROFILES_PATH + "/" + existentUser.getUsername())
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body(
@@ -70,7 +70,7 @@ public class ProfilesResourceIntegrationTest extends DatabaseIntegrationTest {
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-        .get(PROFILE_PATH + "/" + user.getUsername())
+        .get(PROFILES_PATH + "/" + user.getUsername())
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body(
@@ -96,7 +96,7 @@ public class ProfilesResourceIntegrationTest extends DatabaseIntegrationTest {
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-        .get(PROFILE_PATH + "/" + user.getUsername())
+        .get(PROFILES_PATH + "/" + user.getUsername())
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body(
@@ -122,7 +122,7 @@ public class ProfilesResourceIntegrationTest extends DatabaseIntegrationTest {
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-        .post(PROFILE_PATH + "/" + user.getUsername() + "/follow")
+        .post(PROFILES_PATH + "/" + user.getUsername() + "/follow")
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body(
@@ -150,7 +150,7 @@ public class ProfilesResourceIntegrationTest extends DatabaseIntegrationTest {
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-        .delete(PROFILE_PATH + "/" + user.getUsername() + "/follow")
+        .delete(PROFILES_PATH + "/" + user.getUsername() + "/follow")
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body(

@@ -2,7 +2,7 @@ package org.example.realworldapi.domain.service.impl;
 
 import org.example.realworldapi.domain.entity.Profile;
 import org.example.realworldapi.domain.entity.User;
-import org.example.realworldapi.domain.entity.builder.ProfileBuilder;
+import org.example.realworldapi.domain.builder.ProfileBuilder;
 import org.example.realworldapi.domain.service.ProfilesService;
 import org.example.realworldapi.domain.service.UsersFollowersService;
 import org.example.realworldapi.domain.service.UsersService;

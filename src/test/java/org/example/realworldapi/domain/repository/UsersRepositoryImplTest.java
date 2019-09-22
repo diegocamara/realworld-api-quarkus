@@ -2,7 +2,7 @@ package org.example.realworldapi.domain.repository;
 
 import org.example.realworldapi.DatabaseIntegrationTest;
 import org.example.realworldapi.domain.entity.User;
-import org.example.realworldapi.domain.entity.builder.UserBuilder;
+import org.example.realworldapi.domain.builder.UserBuilder;
 import org.example.realworldapi.domain.repository.impl.UsersRepositoryImpl;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.util.UserUtils;

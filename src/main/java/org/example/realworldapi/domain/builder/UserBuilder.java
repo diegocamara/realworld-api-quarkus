@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.entity.builder;
+package org.example.realworldapi.domain.builder;
 
 import org.example.realworldapi.domain.entity.User;
 

@@ -2,7 +2,7 @@ package org.example.realworldapi.domain.service;
 
 import org.example.realworldapi.domain.entity.Profile;
 import org.example.realworldapi.domain.entity.User;
-import org.example.realworldapi.domain.entity.builder.UserBuilder;
+import org.example.realworldapi.domain.builder.UserBuilder;
 import org.example.realworldapi.domain.service.impl.ProfilesServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

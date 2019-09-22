@@ -1,7 +1,7 @@
 package org.example.realworldapi.domain.service;
 
 import org.example.realworldapi.domain.entity.User;
-import org.example.realworldapi.domain.entity.builder.UserBuilder;
+import org.example.realworldapi.domain.builder.UserBuilder;
 import org.example.realworldapi.domain.exception.EmailAlreadyExistsException;
 import org.example.realworldapi.domain.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
