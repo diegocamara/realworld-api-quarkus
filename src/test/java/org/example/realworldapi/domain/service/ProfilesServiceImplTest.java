@@ -14,12 +14,14 @@ import static org.mockito.Mockito.when;
 public class ProfilesServiceImplTest {
 
   private UsersService usersService;
+  private UsersFollowersService usersFollowersService;
   private ProfilesService profilesService;
 
   @BeforeEach
   private void beforeEach() {
     usersService = mock(UsersService.class);
-    profilesService = new ProfilesServiceImpl(usersService);
+    usersFollowersService = mock(UsersFollowersService.class);
+    profilesService = new ProfilesServiceImpl(usersService, usersFollowersService);
   }
 
   @Test
@@ -43,7 +45,7 @@ public class ProfilesServiceImplTest {
 
   @Test
   public void
-      givenValidUsernameAndLoggedUserIdWithFollowingUsers_shouldReturnProfileWithFollowingFieldTrue() {
+      givenValidUsernameAndLoggedUserIdWithFollowers_shouldReturnProfileWithFollowingFieldTrue() {
     String username = "user1";
     Long loggedUserId = 1L;
 
@@ -52,7 +54,7 @@ public class ProfilesServiceImplTest {
 
     when(usersService.findByUsername(username)).thenReturn(existingUser);
 
-    when(usersService.isFollowing(existingUser.getId(), loggedUserId)).thenReturn(true);
+    when(usersFollowersService.isFollowing(loggedUserId, existingUser.getId())).thenReturn(true);
 
     Profile result = profilesService.getProfile(username, loggedUserId);
 

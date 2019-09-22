@@ -76,20 +76,6 @@ public class UsersRepositoryImpl extends AbstractRepository<User, Long> implemen
     return Optional.ofNullable(getSingleResult(criteriaQuery));
   }
 
-  @Override
-  public boolean isFollowing(Long currentUserId, Long followedUserId) {
-    CriteriaBuilder builder = getCriteriaBuilder();
-    CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
-    Root<User> user = getRoot(criteriaQuery, User.class);
-    ListJoin<User, User> follows = user.joinList("follows");
-    criteriaQuery.select(builder.count(follows));
-    criteriaQuery.where(
-        builder.and(
-            builder.equal(user.get("id"), currentUserId),
-            builder.equal(follows.get("id"), followedUserId)));
-    return getSingleResult(criteriaQuery).intValue() > 0;
-  }
-
   private boolean existsBy(String field, Long excludeId, String value) {
     CriteriaQuery<Long> criteriaQuery = existsByCriteriaQuery(field, excludeId, value);
     return getSingleResult(criteriaQuery).intValue() > 0;

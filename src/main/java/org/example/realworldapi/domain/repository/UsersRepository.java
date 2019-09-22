@@ -20,6 +20,4 @@ public interface UsersRepository {
   boolean existsEmail(Long excludeId, String email);
 
   Optional<User> findByUsername(String username);
-
-  boolean isFollowing(Long currentUserId, Long followedUserId);
 }

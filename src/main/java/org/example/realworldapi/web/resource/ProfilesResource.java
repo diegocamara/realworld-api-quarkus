@@ -1,15 +1,13 @@
 package org.example.realworldapi.web.resource;
 
 import org.example.realworldapi.domain.entity.Profile;
+import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.ProfilesService;
 import org.example.realworldapi.web.dto.ProfileDTO;
 import org.example.realworldapi.web.security.annotation.Secured;
 
 import javax.validation.constraints.NotBlank;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -38,6 +36,30 @@ public class ProfilesResource {
 
     Profile profile = profilesService.getProfile(username, loggedUserId);
 
+    return Response.ok(new ProfileDTO(profile)).status(Response.Status.OK).build();
+  }
+
+  @POST
+  @Secured({Role.USER, Role.ADMIN})
+  @Path("/{username}/follow")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response follow(
+      @PathParam("username") @NotBlank String username, @Context SecurityContext securityContext) {
+    Profile profile =
+        profilesService.follow(
+            Long.valueOf(securityContext.getUserPrincipal().getName()), username);
+    return Response.ok(new ProfileDTO(profile)).status(Response.Status.OK).build();
+  }
+
+  @DELETE
+  @Secured({Role.USER, Role.ADMIN})
+  @Path("/{username}/follow")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response unfollow(
+      @PathParam("username") @NotBlank String username, @Context SecurityContext securityContext) {
+    Profile profile =
+        profilesService.unfollow(
+            Long.valueOf(securityContext.getUserPrincipal().getName()), username);
     return Response.ok(new ProfileDTO(profile)).status(Response.Status.OK).build();
   }
 }

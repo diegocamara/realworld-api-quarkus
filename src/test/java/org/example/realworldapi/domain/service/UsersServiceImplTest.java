@@ -212,15 +212,4 @@ public class UsersServiceImplTest {
     Assertions.assertThrows(
         UserNotFoundException.class, () -> usersService.findByUsername(username));
   }
-
-  @Test
-  public void shouldReturnTrue_whenExistsFollowedUsers() {
-
-    Long currentUserId = 1L;
-    Long followeduserId = 2L;
-
-    when(usersRepository.isFollowing(currentUserId, followeduserId)).thenReturn(true);
-
-    Assertions.assertTrue(usersService.isFollowing(currentUserId, followeduserId));
-  }
 }

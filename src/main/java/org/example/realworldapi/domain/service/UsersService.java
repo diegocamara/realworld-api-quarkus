@@ -12,6 +12,4 @@ public interface UsersService {
   User update(User user);
 
   User findByUsername(String username);
-
-  boolean isFollowing(Long currentUserId, Long followedUserId);
 }

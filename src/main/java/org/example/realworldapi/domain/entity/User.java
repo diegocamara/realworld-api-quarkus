@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter
@@ -33,10 +32,9 @@ public class User {
   @Column(length = 500)
   private String token;
 
-  @JsonIgnore
-  @ManyToMany(fetch = FetchType.LAZY)
-  @JoinTable(name = "USERS_FOLLOWERS")
-  private List<User> follows;
+  //  @JsonIgnore
+  //  @OneToMany(mappedBy = "primaryKey.user", fetch = FetchType.LAZY)
+  //  private List<UsersFollowers> followers;
 
   public User(Long id, String username, String bio, String image) {
     this.id = id;

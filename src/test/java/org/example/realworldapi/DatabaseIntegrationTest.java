@@ -8,9 +8,11 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import org.reflections.Reflections;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Table;
 import javax.sql.DataSource;
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -71,20 +73,10 @@ public class DatabaseIntegrationTest {
         .getTypesAnnotatedWith(Entity.class)
         .forEach(
             entity -> {
-              joinTableHandler(entity);
               String tableName = entity.getAnnotation(Table.class).name();
               entities.add(tableName);
               configuration.addAnnotatedClass(entity);
             });
-  }
-
-  private static void joinTableHandler(Class<?> entity) {
-    for (Field field : entity.getDeclaredFields()) {
-      JoinTable joinTableAnnotation = field.getAnnotation(JoinTable.class);
-      if (joinTableAnnotation != null) {
-        entities.add(joinTableAnnotation.name());
-      }
-    }
   }
 
   private static DataSource dataSource() {

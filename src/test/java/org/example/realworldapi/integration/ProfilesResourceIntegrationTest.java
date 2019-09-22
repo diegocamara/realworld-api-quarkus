@@ -5,6 +5,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.DatabaseIntegrationTest;
 import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.UsersFollowers;
+import org.example.realworldapi.domain.entity.UsersFollowersKey;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.JWTService;
 import org.example.realworldapi.util.UserUtils;
@@ -13,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
-import java.util.Arrays;
 
 import static io.restassured.RestAssured.given;
 import static org.example.realworldapi.constants.TestConstants.*;
@@ -61,14 +62,14 @@ public class ProfilesResourceIntegrationTest extends DatabaseIntegrationTest {
   public void
       givenExistentUserWithFollows_whenExecuteGetProfileEndpointWithAuth_shouldReturnAUserProfileWithFollowingTrue() {
 
-    User userFollowed = createUser("loggeduser", "loggeduser@mail.com", "user123", Role.USER);
-    User user = createUser("user", "user@mail.com", "user123");
+    User loggedUser = createUser("loggeduser", "loggeduser@mail.com", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "user123", Role.USER);
 
-    follow(user, userFollowed);
+    follow(loggedUser, user);
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
-        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + userFollowed.getToken())
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
         .get(PROFILE_PATH + "/" + user.getUsername())
         .then()
         .statusCode(HttpStatus.SC_OK)
@@ -90,23 +91,77 @@ public class ProfilesResourceIntegrationTest extends DatabaseIntegrationTest {
       givenExistentUserWithoutFollows_whenExecuteGetProfileEndpointWithAuth_shouldReturnAUserProfileWithFollowingFalse() {
 
     User loggedUser = createUser("loggeduser", "loggeduser@mail.com", "user123", Role.USER);
-    User currentUser = createUser("user", "user@mail.com", "user123");
+    User user = createUser("user", "user@mail.com", "user123", Role.USER);
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-        .get(PROFILE_PATH + "/" + currentUser.getUsername())
+        .get(PROFILE_PATH + "/" + user.getUsername())
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body(
             "profile.size()",
             is(4),
             "profile.username",
-            is(currentUser.getUsername()),
+            is(user.getUsername()),
             "profile.bio",
-            is(currentUser.getBio()),
+            is(user.getBio()),
             "profile.image",
-            is(currentUser.getImage()),
+            is(user.getImage()),
+            "profile.following",
+            is(false));
+  }
+
+  @Test
+  public void
+      givenExistentUsers_whenExecuteFollowEndpoint_shouldReturnProfileWithFollowingFieldTrue() {
+
+    User user = createUser("user", "user@mail.com", "user123", Role.USER);
+    User loggedUser = createUser("loggeduser", "loggeduser@mail.com", "user123", Role.USER);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .post(PROFILE_PATH + "/" + user.getUsername() + "/follow")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "profile.size()",
+            is(4),
+            "profile.username",
+            is(user.getUsername()),
+            "profile.bio",
+            is(user.getBio()),
+            "profile.image",
+            is(user.getImage()),
+            "profile.following",
+            is(true));
+  }
+
+  @Test
+  public void
+      givenExistentUserWithFollower_whenExecuteUnfollowEndpoint_shouldReturnProfileWithFollowingFieldFalse() {
+
+    User user = createUser("user", "user@mail.com", "user123", Role.USER);
+    User loggedUser = createUser("loggeduser", "loggeduser@mail.com", "user123", Role.USER);
+
+    follow(loggedUser, user);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .delete(PROFILE_PATH + "/" + user.getUsername() + "/follow")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "profile.size()",
+            is(4),
+            "profile.username",
+            is(user.getUsername()),
+            "profile.bio",
+            is(user.getBio()),
+            "profile.image",
+            is(user.getImage()),
             "profile.following",
             is(false));
   }
@@ -122,10 +177,23 @@ public class ProfilesResourceIntegrationTest extends DatabaseIntegrationTest {
         });
   }
 
-  private void follow(User currentUser, User... followed) {
+  private void follow(User currentUser, User... followers) {
 
-    currentUser.setFollows(Arrays.asList(followed));
+    transaction(
+        () -> {
+          User user = entityManager.find(User.class, currentUser.getId());
 
-    transaction(() -> entityManager.persist(currentUser));
+          for (User follower : followers) {
+            UsersFollowersKey key = new UsersFollowersKey();
+            key.setUser(user);
+            key.setFollower(follower);
+
+            UsersFollowers usersFollowers = new UsersFollowers();
+            usersFollowers.setPrimaryKey(key);
+            entityManager.persist(usersFollowers);
+          }
+
+          entityManager.persist(user);
+        });
   }
 }

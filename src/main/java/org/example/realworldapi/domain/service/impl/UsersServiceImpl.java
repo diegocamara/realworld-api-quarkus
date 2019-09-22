@@ -119,12 +119,6 @@ public class UsersServiceImpl implements UsersService {
     return usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
   }
 
-  @Override
-  @Transactional
-  public boolean isFollowing(Long currentUserId, Long followedUserId) {
-    return usersRepository.isFollowing(currentUserId, followedUserId);
-  }
-
   private boolean isPresent(String property) {
     return property != null && !property.isEmpty();
   }

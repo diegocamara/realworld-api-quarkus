@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
@@ -180,18 +179,6 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
             Assertions.assertTrue(usersRepository.findByUsername(user.getUsername()).isPresent()));
   }
 
-  @Test
-  public void shouldReturnTrue_whenExistsFollowedUsersForCurrentUser() {
-
-    User userFollowed = createUser("user1", "user1@mail.com", "user123");
-    User userFollowed2 = createUser("user2", "user2@mail.com", "user123");
-    User currentUser = createUser("currentUser", "currentuser@mail.com", "user123");
-
-    follow(currentUser, userFollowed, userFollowed2);
-
-    Assertions.assertTrue(usersRepository.isFollowing(currentUser.getId(), userFollowed.getId()));
-  }
-
   private User createUser(String username, String email, String password, Role... role) {
     return transaction(
         () -> {
@@ -199,12 +186,5 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
           entityManager.persist(user);
           return user;
         });
-  }
-
-  private void follow(User currentUser, User... followed) {
-
-    currentUser.setFollows(Arrays.asList(followed));
-
-    transaction(() -> entityManager.persist(currentUser));
   }
 }
