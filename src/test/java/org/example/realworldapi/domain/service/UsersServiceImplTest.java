@@ -1,14 +1,15 @@
 package org.example.realworldapi.domain.service;
 
-import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.builder.UserBuilder;
+import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.exception.EmailAlreadyExistsException;
 import org.example.realworldapi.domain.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.exception.UsernameAlreadyExistsException;
-import org.example.realworldapi.domain.repository.UsersRepository;
+import org.example.realworldapi.domain.repository.UserRepository;
+import org.example.realworldapi.domain.resource.service.UsersService;
+import org.example.realworldapi.domain.resource.service.impl.UsersServiceImpl;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.domain.service.impl.UsersServiceImpl;
 import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,15 +25,15 @@ import static org.mockito.Mockito.when;
 
 public class UsersServiceImplTest {
 
-  private UsersRepository usersRepository;
+  private UserRepository userRepository;
   private JWTService jwtService;
   private UsersService usersService;
 
   @BeforeEach
   public void beforeEach() {
-    usersRepository = mock(UsersRepository.class);
+    userRepository = mock(UserRepository.class);
     jwtService = mock(JWTService.class);
-    usersService = new UsersServiceImpl(usersRepository, jwtService);
+    usersService = new UsersServiceImpl(userRepository, jwtService);
   }
 
   @Test
@@ -49,7 +50,7 @@ public class UsersServiceImplTest {
     createdUser.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
     createdUser.setToken(UUID.randomUUID().toString());
 
-    when(usersRepository.create(any(User.class))).thenReturn(Optional.of(createdUser));
+    when(userRepository.create(any(User.class))).thenReturn(Optional.of(createdUser));
     when(jwtService.sign(createdUser.getId().toString(), Role.USER)).thenReturn("token");
 
     User resultUser = usersService.create(username, email, password);
@@ -67,7 +68,7 @@ public class UsersServiceImplTest {
     String email = "user@email.com";
     String password = "user123";
 
-    when(usersRepository.existsBy("email", email)).thenReturn(true);
+    when(userRepository.existsBy("email", email)).thenReturn(true);
 
     Assertions.assertThrows(
         EmailAlreadyExistsException.class, () -> usersService.create(username, email, password));
@@ -80,7 +81,7 @@ public class UsersServiceImplTest {
     String email = "user@email.com";
     String password = "user123";
 
-    when(usersRepository.existsBy("username", username)).thenReturn(true);
+    when(userRepository.existsBy("username", username)).thenReturn(true);
 
     Assertions.assertThrows(
         UsernameAlreadyExistsException.class, () -> usersService.create(username, email, password));
@@ -94,8 +95,8 @@ public class UsersServiceImplTest {
 
     Optional<User> existingUser = Optional.of(UserUtils.create(1L, "user1", email, password));
 
-    when(usersRepository.findByEmail(email)).thenReturn(existingUser);
-    when(usersRepository.update(existingUser.get())).thenReturn(existingUser.get());
+    when(userRepository.findByEmail(email)).thenReturn(existingUser);
+    when(userRepository.update(existingUser.get())).thenReturn(existingUser.get());
     when(jwtService.sign(existingUser.get().getId().toString(), Role.USER)).thenReturn("token");
 
     User resultUser = usersService.login(email, password);
@@ -109,7 +110,7 @@ public class UsersServiceImplTest {
     String email = "user1@mail.com";
     String password = "123";
 
-    when(usersRepository.findByEmail(email)).thenReturn(Optional.empty());
+    when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     Assertions.assertThrows(UserNotFoundException.class, () -> usersService.login(email, password));
   }
@@ -122,7 +123,7 @@ public class UsersServiceImplTest {
 
     Optional<User> existingUser = Optional.of(UserUtils.create("user1", email, password));
 
-    when(usersRepository.findByEmail(email)).thenReturn(existingUser);
+    when(userRepository.findByEmail(email)).thenReturn(existingUser);
 
     Assertions.assertThrows(InvalidPasswordException.class, () -> usersService.login(email, "158"));
   }
@@ -135,7 +136,7 @@ public class UsersServiceImplTest {
 
     Optional<User> userResponse = Optional.of(user);
 
-    when(usersRepository.findById(user.getId())).thenReturn(userResponse);
+    when(userRepository.findById(user.getId())).thenReturn(userResponse);
 
     User result = usersService.findById(user.getId());
 
@@ -147,7 +148,7 @@ public class UsersServiceImplTest {
 
     Long userId = 1L;
 
-    when(usersRepository.findById(userId)).thenReturn(Optional.empty());
+    when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
     Assertions.assertThrows(UserNotFoundException.class, () -> usersService.findById(userId));
   }
@@ -158,7 +159,7 @@ public class UsersServiceImplTest {
     User user =
         new UserBuilder().id(1L).username("user1").bio("user1 bio").email("user1@mail.com").build();
 
-    when(usersRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
     User result = usersService.update(user);
 
@@ -171,7 +172,7 @@ public class UsersServiceImplTest {
     User user =
         new UserBuilder().id(1L).username("user1").bio("user1 bio").email("user1@mail.com").build();
 
-    when(usersRepository.existsUsername(user.getId(), user.getUsername())).thenReturn(true);
+    when(userRepository.existsUsername(user.getId(), user.getUsername())).thenReturn(true);
 
     Assertions.assertThrows(UsernameAlreadyExistsException.class, () -> usersService.update(user));
   }
@@ -182,7 +183,7 @@ public class UsersServiceImplTest {
     User user =
         new UserBuilder().id(1L).username("user1").bio("user1 bio").email("user1@mail.com").build();
 
-    when(usersRepository.existsEmail(user.getId(), user.getEmail())).thenReturn(true);
+    when(userRepository.existsEmail(user.getId(), user.getEmail())).thenReturn(true);
 
     Assertions.assertThrows(EmailAlreadyExistsException.class, () -> usersService.update(user));
   }
@@ -195,7 +196,7 @@ public class UsersServiceImplTest {
 
     Optional<User> userOptional = Optional.of(user);
 
-    when(usersRepository.findByUsername(user.getUsername())).thenReturn(userOptional);
+    when(userRepository.findByUsername(user.getUsername())).thenReturn(userOptional);
 
     User result = usersService.findByUsername(user.getUsername());
 
@@ -207,7 +208,7 @@ public class UsersServiceImplTest {
 
     String username = "user";
 
-    when(usersRepository.findByUsername(username)).thenReturn(Optional.empty());
+    when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
     Assertions.assertThrows(
         UserNotFoundException.class, () -> usersService.findByUsername(username));

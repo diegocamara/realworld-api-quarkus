@@ -1,10 +1,10 @@
 package org.example.realworldapi.domain.repository;
 
-import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.persistent.User;
 
 import java.util.Optional;
 
-public interface UsersRepository {
+public interface UserRepository {
   Optional<User> create(User user);
 
   Optional<User> findByEmail(String email);

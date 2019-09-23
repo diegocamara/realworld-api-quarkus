@@ -1,9 +1,9 @@
 package org.example.realworldapi.domain.repository;
 
 import org.example.realworldapi.DatabaseIntegrationTest;
-import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.builder.UserBuilder;
-import org.example.realworldapi.domain.repository.impl.UsersRepositoryImpl;
+import org.example.realworldapi.domain.entity.persistent.User;
+import org.example.realworldapi.domain.repository.impl.UserRepositoryImpl;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -13,13 +13,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
+public class UserRepositoryImplTest extends DatabaseIntegrationTest {
 
-  private UsersRepository usersRepository;
+  private UserRepository userRepository;
 
   @BeforeEach
   public void beforeEach() {
-    usersRepository = new UsersRepositoryImpl(entityManager);
+    userRepository = new UserRepositoryImpl(entityManager);
   }
 
   @AfterEach
@@ -32,7 +32,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
 
     User user = UserUtils.create("user", "user@mail.com", "123");
 
-    Optional<User> result = transaction(() -> usersRepository.create(user));
+    Optional<User> result = transaction(() -> userRepository.create(user));
 
     transaction(
         () ->
@@ -46,7 +46,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
 
     User existingUser = createUser("user1", "user@mail.com", "123");
 
-    Optional<User> result = transaction(() -> usersRepository.findByEmail(existingUser.getEmail()));
+    Optional<User> result = transaction(() -> userRepository.findByEmail(existingUser.getEmail()));
 
     Assertions.assertEquals(existingUser.getEmail(), result.orElse(new User()).getEmail());
   }
@@ -57,7 +57,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
     User existingUser = createUser("user1", "user@mail.com", "123");
 
     transaction(
-        () -> Assertions.assertTrue(usersRepository.existsBy("email", existingUser.getEmail())));
+        () -> Assertions.assertTrue(userRepository.existsBy("email", existingUser.getEmail())));
   }
 
   @Test
@@ -67,8 +67,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
 
     transaction(
         () ->
-            Assertions.assertTrue(
-                usersRepository.existsBy("username", existingUser.getUsername())));
+            Assertions.assertTrue(userRepository.existsBy("username", existingUser.getUsername())));
   }
 
   @Test
@@ -76,7 +75,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
 
     String email = "user@mail.com";
 
-    transaction(() -> Assertions.assertFalse(usersRepository.existsBy("email", email)));
+    transaction(() -> Assertions.assertFalse(userRepository.existsBy("email", email)));
   }
 
   @Test
@@ -84,7 +83,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
 
     String username = "user1";
 
-    transaction(() -> Assertions.assertFalse(usersRepository.existsBy("username", username)));
+    transaction(() -> Assertions.assertFalse(userRepository.existsBy("username", username)));
   }
 
   @Test
@@ -94,7 +93,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
 
     User user = new UserBuilder().id(existingUser.getId()).username("user2").build();
 
-    User result = transaction(() -> usersRepository.update(user));
+    User result = transaction(() -> userRepository.update(user));
 
     Assertions.assertEquals(user.getUsername(), result.getUsername());
   }
@@ -109,7 +108,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
     transaction(
         () ->
             Assertions.assertTrue(
-                usersRepository.existsUsername(currentUser.getId(), otherUser.getUsername())));
+                userRepository.existsUsername(currentUser.getId(), otherUser.getUsername())));
   }
 
   @Test
@@ -120,7 +119,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
     transaction(
         () ->
             Assertions.assertFalse(
-                usersRepository.existsUsername(currentUser.getId(), "superusername")));
+                userRepository.existsUsername(currentUser.getId(), "superusername")));
   }
 
   @Test
@@ -131,7 +130,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
     transaction(
         () ->
             Assertions.assertFalse(
-                usersRepository.existsUsername(currentUser.getId(), currentUser.getUsername())));
+                userRepository.existsUsername(currentUser.getId(), currentUser.getUsername())));
   }
 
   @Test
@@ -144,7 +143,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
     transaction(
         () ->
             Assertions.assertTrue(
-                usersRepository.existsEmail(currentUser.getId(), otherUser.getEmail())));
+                userRepository.existsEmail(currentUser.getId(), otherUser.getEmail())));
   }
 
   @Test
@@ -155,7 +154,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
     transaction(
         () ->
             Assertions.assertFalse(
-                usersRepository.existsEmail(currentUser.getId(), "user@mail.com")));
+                userRepository.existsEmail(currentUser.getId(), "user@mail.com")));
   }
 
   @Test
@@ -166,7 +165,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
     transaction(
         () ->
             Assertions.assertFalse(
-                usersRepository.existsEmail(currentUser.getId(), currentUser.getEmail())));
+                userRepository.existsEmail(currentUser.getId(), currentUser.getEmail())));
   }
 
   @Test
@@ -175,8 +174,7 @@ public class UsersRepositoryImplTest extends DatabaseIntegrationTest {
     User user = createUser("user", "user@mail.com", "123");
 
     transaction(
-        () ->
-            Assertions.assertTrue(usersRepository.findByUsername(user.getUsername()).isPresent()));
+        () -> Assertions.assertTrue(userRepository.findByUsername(user.getUsername()).isPresent()));
   }
 
   private User createUser(String username, String email, String password, Role... role) {

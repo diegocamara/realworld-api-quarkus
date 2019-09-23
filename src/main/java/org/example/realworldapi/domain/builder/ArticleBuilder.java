@@ -2,8 +2,8 @@ package org.example.realworldapi.domain.builder;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.realworldapi.domain.entity.Article;
-import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.persistent.Article;
+import org.example.realworldapi.domain.entity.persistent.User;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

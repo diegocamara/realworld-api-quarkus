@@ -1,6 +1,6 @@
-package org.example.realworldapi.domain.service;
+package org.example.realworldapi.domain.resource.service;
 
-import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.persistent.User;
 
 public interface UsersService {
   User create(String username, String email, String password);

@@ -1,6 +1,6 @@
 package org.example.realworldapi.domain.builder;
 
-import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.persistent.User;
 
 public class UserBuilder {
 

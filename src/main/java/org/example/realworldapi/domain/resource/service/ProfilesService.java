@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.service;
+package org.example.realworldapi.domain.resource.service;
 
 import org.example.realworldapi.domain.entity.Profile;
 

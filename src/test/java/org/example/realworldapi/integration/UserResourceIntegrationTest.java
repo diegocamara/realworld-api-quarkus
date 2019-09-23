@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.DatabaseIntegrationTest;
-import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.JWTService;
 import org.example.realworldapi.util.UserUtils;

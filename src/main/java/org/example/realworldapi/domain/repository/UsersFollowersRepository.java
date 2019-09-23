@@ -1,7 +1,10 @@
 package org.example.realworldapi.domain.repository;
 
-import org.example.realworldapi.domain.entity.UsersFollowers;
-import org.example.realworldapi.domain.entity.UsersFollowersKey;
+import org.example.realworldapi.domain.entity.persistent.Article;
+import org.example.realworldapi.domain.entity.persistent.UsersFollowers;
+import org.example.realworldapi.domain.entity.persistent.UsersFollowersKey;
+
+import java.util.List;
 
 public interface UsersFollowersRepository {
 
@@ -9,7 +12,9 @@ public interface UsersFollowersRepository {
 
   UsersFollowers findByKey(UsersFollowersKey primaryKey);
 
-  UsersFollowers insertOrOpdate(UsersFollowers usersFollowers);
+  UsersFollowers insertOrUpdate(UsersFollowers usersFollowers);
 
   void delete(UsersFollowers usersFollowers);
+
+  List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit);
 }

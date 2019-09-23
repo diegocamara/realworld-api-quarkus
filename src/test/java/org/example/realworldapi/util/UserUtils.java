@@ -1,6 +1,6 @@
 package org.example.realworldapi.util;
 
-import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.persistent.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserUtils {

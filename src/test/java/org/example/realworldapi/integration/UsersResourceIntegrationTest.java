@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.DatabaseIntegrationTest;
-import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.JWTService;
 import org.example.realworldapi.util.UserUtils;
 import org.example.realworldapi.web.dto.LoginDTO;
 import org.example.realworldapi.web.dto.NewUserDTO;
+import org.example.realworldapi.web.dto.UserDTO;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -203,7 +204,7 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
             .extract()
             .asString();
 
-    User resultUser = objectMapper.readValue(resultUserJson, User.class);
+    UserDTO resultUser = objectMapper.readValue(resultUserJson, UserDTO.class);
 
     User persistedUser = transaction(() -> entityManager.find(User.class, user.getId()));
 

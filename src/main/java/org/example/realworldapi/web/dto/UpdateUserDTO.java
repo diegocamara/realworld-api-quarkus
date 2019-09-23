@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.web.validation.constraint.AtLeastOneFieldMustBeNotNull;
 
 import javax.validation.constraints.Email;

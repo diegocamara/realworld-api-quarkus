@@ -1,7 +1,7 @@
 package org.example.realworldapi.domain.repository.impl;
 
-import org.example.realworldapi.domain.entity.User;
-import org.example.realworldapi.domain.repository.UsersRepository;
+import org.example.realworldapi.domain.entity.persistent.User;
+import org.example.realworldapi.domain.repository.UserRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
@@ -9,11 +9,11 @@ import javax.persistence.criteria.*;
 import java.util.Optional;
 
 @ApplicationScoped
-public class UsersRepositoryImpl extends AbstractRepository<User, Long> implements UsersRepository {
+public class UserRepositoryImpl extends AbstractRepository<User, Long> implements UserRepository {
 
   private EntityManager entityManager;
 
-  public UsersRepositoryImpl(EntityManager entityManager) {
+  public UserRepositoryImpl(EntityManager entityManager) {
     this.entityManager = entityManager;
   }
 

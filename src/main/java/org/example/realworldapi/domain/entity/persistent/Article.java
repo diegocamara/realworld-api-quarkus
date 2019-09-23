@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.entity;
+package org.example.realworldapi.domain.entity.persistent;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +29,7 @@ public class Article {
   @CreationTimestamp private LocalDateTime createdAt;
   @UpdateTimestamp private LocalDateTime updatedAt;
 
-  @ManyToOne(optional = false)
+  @ManyToOne
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
   private User author;
 }

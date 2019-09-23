@@ -1,10 +1,11 @@
 package org.example.realworldapi.web.resource;
 
-import org.example.realworldapi.domain.entity.User;
+import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
-import org.example.realworldapi.domain.service.UsersService;
+import org.example.realworldapi.domain.resource.service.UsersService;
 import org.example.realworldapi.web.dto.LoginDTO;
 import org.example.realworldapi.web.dto.NewUserDTO;
+import org.example.realworldapi.web.dto.UserDTO;
 import org.example.realworldapi.web.exception.UnauthorizedException;
 
 import javax.validation.Valid;
@@ -32,7 +33,7 @@ public class UsersResource {
     User createdUser =
         usersService.create(
             newUserDTO.getUsername(), newUserDTO.getEmail(), newUserDTO.getPassword());
-    return Response.ok(createdUser).status(Response.Status.CREATED).build();
+    return Response.ok(new UserDTO(createdUser)).status(Response.Status.CREATED).build();
   }
 
   @POST
@@ -46,6 +47,6 @@ public class UsersResource {
     } catch (UserNotFoundException ex) {
       throw new UnauthorizedException();
     }
-    return Response.ok(existingUser).status(Response.Status.OK).build();
+    return Response.ok(new UserDTO(existingUser)).status(Response.Status.OK).build();
   }
 }

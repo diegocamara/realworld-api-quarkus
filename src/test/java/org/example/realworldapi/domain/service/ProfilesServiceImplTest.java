@@ -1,9 +1,12 @@
 package org.example.realworldapi.domain.service;
 
-import org.example.realworldapi.domain.entity.Profile;
-import org.example.realworldapi.domain.entity.User;
 import org.example.realworldapi.domain.builder.UserBuilder;
-import org.example.realworldapi.domain.service.impl.ProfilesServiceImpl;
+import org.example.realworldapi.domain.entity.Profile;
+import org.example.realworldapi.domain.entity.persistent.User;
+import org.example.realworldapi.domain.repository.UsersFollowersRepository;
+import org.example.realworldapi.domain.resource.service.ProfilesService;
+import org.example.realworldapi.domain.resource.service.UsersService;
+import org.example.realworldapi.domain.resource.service.impl.ProfilesServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,14 +17,14 @@ import static org.mockito.Mockito.when;
 public class ProfilesServiceImplTest {
 
   private UsersService usersService;
-  private UsersFollowersService usersFollowersService;
+  private UsersFollowersRepository usersFollowersRepository;
   private ProfilesService profilesService;
 
   @BeforeEach
   private void beforeEach() {
     usersService = mock(UsersService.class);
-    usersFollowersService = mock(UsersFollowersService.class);
-    profilesService = new ProfilesServiceImpl(usersService, usersFollowersService);
+    usersFollowersRepository = mock(UsersFollowersRepository.class);
+    profilesService = new ProfilesServiceImpl(usersService, usersFollowersRepository);
   }
 
   @Test
@@ -54,7 +57,7 @@ public class ProfilesServiceImplTest {
 
     when(usersService.findByUsername(username)).thenReturn(existingUser);
 
-    when(usersFollowersService.isFollowing(loggedUserId, existingUser.getId())).thenReturn(true);
+    when(usersFollowersRepository.isFollowing(loggedUserId, existingUser.getId())).thenReturn(true);
 
     Profile result = profilesService.getProfile(username, loggedUserId);
 

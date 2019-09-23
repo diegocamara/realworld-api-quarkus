@@ -1,14 +1,19 @@
 package org.example.realworldapi.domain.repository.impl;
 
-import org.example.realworldapi.domain.entity.UsersFollowers;
-import org.example.realworldapi.domain.entity.UsersFollowersKey;
+import org.example.realworldapi.domain.entity.persistent.Article;
+import org.example.realworldapi.domain.entity.persistent.User;
+import org.example.realworldapi.domain.entity.persistent.UsersFollowers;
+import org.example.realworldapi.domain.entity.persistent.UsersFollowersKey;
 import org.example.realworldapi.domain.repository.UsersFollowersRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 @ApplicationScoped
 public class UsersFollowersRepositoryImpl
@@ -51,7 +56,7 @@ public class UsersFollowersRepositoryImpl
   }
 
   @Override
-  public UsersFollowers insertOrOpdate(UsersFollowers usersFollowers) {
+  public UsersFollowers insertOrUpdate(UsersFollowers usersFollowers) {
     entityManager.merge(usersFollowers);
     return usersFollowers;
   }
@@ -59,5 +64,28 @@ public class UsersFollowersRepositoryImpl
   @Override
   public void delete(UsersFollowers usersFollowers) {
     entityManager.remove(usersFollowers);
+  }
+
+  @Override
+  public List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit) {
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<UsersFollowers> criteriaQuery = getCriteriaQuery(builder);
+    Root<UsersFollowers> usersFollowers = getRoot(criteriaQuery);
+
+    Join<UsersFollowers, User> user = usersFollowers.join("primaryKey").join("user");
+
+    user.on(builder.equal(user.get("id"), loggedUserId));
+
+    Join<UsersFollowers, User> follower = usersFollowers.join("primaryKey").join("follower");
+
+    criteriaQuery.select(follower.get("articles"));
+
+    TypedQuery typedQuery =
+        getHibernateSession()
+            .createQuery(criteriaQuery)
+            .setFirstResult(offset)
+            .setMaxResults(limit);
+
+    return (List<Article>) typedQuery.getResultList();
   }
 }
