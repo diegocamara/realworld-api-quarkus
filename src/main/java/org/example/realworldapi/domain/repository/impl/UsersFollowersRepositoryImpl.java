@@ -9,10 +9,7 @@ import org.example.realworldapi.domain.repository.UsersFollowersRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @ApplicationScoped
@@ -78,7 +75,11 @@ public class UsersFollowersRepositoryImpl
 
     Join<UsersFollowers, User> follower = usersFollowers.join("primaryKey").join("follower");
 
+    ListJoin<User, Article> articles = follower.joinList("articles");
+
     criteriaQuery.select(follower.get("articles"));
+
+    criteriaQuery.orderBy(builder.desc(articles.get("updatedAt")));
 
     TypedQuery typedQuery =
         getHibernateSession()
