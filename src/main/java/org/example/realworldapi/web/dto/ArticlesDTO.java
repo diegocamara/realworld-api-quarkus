@@ -4,10 +4,9 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.domain.entity.persistent.Article;
+import org.example.realworldapi.domain.entity.Article;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -15,13 +14,13 @@ import java.util.stream.Collectors;
 @RegisterForReflection
 public class ArticlesDTO {
 
-  private List<ArticleDTO> articles;
+  private List<Article> articles;
 
-  public int articlesCount() {
+  public int getArticlesCount() {
     return this.articles.size();
   }
 
   public ArticlesDTO(List<Article> articles) {
-    this.articles = articles.stream().map(article -> new ArticleDTO()).collect(Collectors.toList());
+    this.articles = articles;
   }
 }

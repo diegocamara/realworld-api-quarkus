@@ -1,9 +1,12 @@
 package org.example.realworldapi.web.resource;
 
-import org.example.realworldapi.domain.entity.persistent.Article;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.realworldapi.domain.entity.Article;
 import org.example.realworldapi.domain.resource.service.ArticlesService;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.web.dto.ArticlesDTO;
+import org.example.realworldapi.web.qualifiers.NoWrapRootValueObjectMapper;
 import org.example.realworldapi.web.security.annotation.Secured;
 
 import javax.ws.rs.GET;
@@ -20,9 +23,12 @@ import java.util.List;
 public class ArticlesResource {
 
   private ArticlesService articlesService;
+  private ObjectMapper objectMapper;
 
-  public ArticlesResource(ArticlesService articlesService) {
+  public ArticlesResource(
+      ArticlesService articlesService, @NoWrapRootValueObjectMapper ObjectMapper objectMapper) {
     this.articlesService = articlesService;
+    this.objectMapper = objectMapper;
   }
 
   @GET
@@ -32,9 +38,12 @@ public class ArticlesResource {
   public Response feed(
       @QueryParam("offset") int offset,
       @QueryParam("limit") int limit,
-      @Context SecurityContext securityContext) {
+      @Context SecurityContext securityContext)
+      throws JsonProcessingException {
     Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());
     List<Article> articles = articlesService.findRecentArticles(loggedUserId, offset, limit);
-    return Response.ok(new ArticlesDTO(articles)).status(Response.Status.OK).build();
+    return Response.ok(objectMapper.writeValueAsString(new ArticlesDTO(articles)))
+        .status(Response.Status.OK)
+        .build();
   }
 }

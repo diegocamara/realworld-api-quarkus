@@ -11,18 +11,20 @@ import org.example.realworldapi.domain.entity.persistent.UsersFollowers;
 import org.example.realworldapi.domain.entity.persistent.UsersFollowersKey;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.JWTService;
+import org.example.realworldapi.util.InsertResult;
 import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import javax.persistence.TemporalType;
 import javax.ws.rs.core.MediaType;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Date;
 
 import static io.restassured.RestAssured.given;
 import static org.example.realworldapi.constants.TestConstants.*;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 
 @QuarkusTest
@@ -44,15 +46,19 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
   public void
       given10ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit5_shouldReturnListOf5Articles() {
 
-    User loggedUser = createUser("loggedUser", "loggeduser@mail.com", "loggeduser123", Role.USER);
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
 
-    User follower1 = createUser("follower1", "follower1@mail.com", "follower1_123", Role.USER);
+    User follower1 =
+        createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123", Role.USER);
 
-    createArticles(follower1, "Title", "Description", "Body", 10);
+    InsertResult<Article> insertResult = new InsertResult<>();
 
-    //    User user = createUser("user", "user@mail.com", "user123");
-    //
-    //    createArticles(user, "Title", "Description", "Body", 5);
+    createArticles(follower1, "Title", "Description", "Body", 10, insertResult);
+
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+
+    createArticles(user, "Title", "Description", "Body", 4, insertResult);
 
     follow(loggedUser, follower1);
 
@@ -64,40 +70,65 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
         .get(FEED_PATH)
         .then()
         .statusCode(HttpStatus.SC_OK)
-        .body("articles.size()", is(5));
+        .body(
+            "articles[0]",
+            hasKey("slug"),
+            "articles[0]",
+            hasKey("title"),
+            "articles[0]",
+            hasKey("description"),
+            "articles[0]",
+            hasKey("body"),
+            "articles[0]",
+            hasKey("tagList"),
+            "articles[0]",
+            hasKey("createdAt"),
+            "articles[0]",
+            hasKey("updatedAt"),
+            "articles[0]",
+            hasKey("favorited"),
+            "articles[0]",
+            hasKey("favoritesCount"),
+            "articles[0]",
+            hasKey("author"),
+            "articlesCount",
+            is(5));
   }
 
-  private List<Article> createArticles(
-      User author, String title, String description, String body, int quantity) {
+  private void createArticles(
+      User author,
+      String title,
+      String description,
+      String body,
+      int quantity,
+      InsertResult<Article> insertResult) {
 
-    return transaction(
+    transaction(
         () -> {
-          List<Article> articles = new LinkedList<>();
-
           for (int articleIndex = 0; articleIndex < quantity; articleIndex++) {
 
             Article article =
                 new ArticleBuilder()
-                    .id((long) articleIndex)
                     .title(title + "_" + articleIndex)
                     .description(description + "_" + articleIndex)
                     .body(body + "_" + articleIndex)
                     .build();
+            int id = insertResult.add(article);
+
+            Date date = new Date();
 
             entityManager
                 .createNativeQuery(
-                    "INSERT INTO ARTICLES (ID, TITLE, DESCRIPTION, BODY, USER_ID) VALUES (?, ?, ?, ?, ?)")
-                .setParameter(1, article.getId())
+                    "INSERT INTO ARTICLES (ID, TITLE, DESCRIPTION, BODY, CREATEDAT, UPDATEDAT, AUTHOR_ID) VALUES (?, ?, ?, ?, ?, ?, ?)")
+                .setParameter(1, id)
                 .setParameter(2, article.getTitle())
                 .setParameter(3, article.getDescription())
                 .setParameter(4, article.getBody())
-                .setParameter(5, author.getId())
+                .setParameter(5, date, TemporalType.TIMESTAMP)
+                .setParameter(6, date, TemporalType.TIMESTAMP)
+                .setParameter(7, author.getId())
                 .executeUpdate();
-
-            articles.add(article);
           }
-
-          return articles;
         });
   }
 
@@ -121,10 +152,11 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
         });
   }
 
-  private User createUser(String username, String email, String password, Role... role) {
+  private User createUser(
+      String username, String email, String bio, String image, String password, Role... role) {
     return transaction(
         () -> {
-          User user = UserUtils.create(username, email, password);
+          User user = UserUtils.create(username, email, password, bio, image);
           entityManager.persist(user);
           user.setToken(jwtService.sign(user.getId().toString(), role));
           entityManager.merge(user);

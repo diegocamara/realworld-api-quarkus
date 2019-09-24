@@ -1,6 +1,6 @@
 package org.example.realworldapi.domain.resource.service;
 
-import org.example.realworldapi.domain.entity.persistent.Article;
+import org.example.realworldapi.domain.entity.Article;
 
 import java.util.List;
 

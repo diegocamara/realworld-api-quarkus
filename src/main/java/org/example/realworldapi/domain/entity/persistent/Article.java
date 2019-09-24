@@ -30,6 +30,6 @@ public class Article {
   @UpdateTimestamp private LocalDateTime updatedAt;
 
   @ManyToOne
-  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @JoinColumn(name = "author_id", referencedColumnName = "id")
   private User author;
 }
