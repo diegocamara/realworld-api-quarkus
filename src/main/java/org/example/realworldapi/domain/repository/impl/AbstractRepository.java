@@ -52,6 +52,19 @@ public abstract class AbstractRepository<T, ID> {
     }
   }
 
+  protected <E> List<E> getPagedResultList(CriteriaQuery<E> criteriaQuery, int offset, int limit) {
+    TypedQuery<E> query =
+        getHibernateSession()
+            .createQuery(criteriaQuery)
+            .setFirstResult(offset)
+            .setMaxResults(limit);
+    try {
+      return query.getResultList();
+    } catch (NoResultException noResultException) {
+      return null;
+    }
+  }
+
   protected Session getHibernateSession() {
     return getEntityManager().unwrap(Session.class);
   }

@@ -9,6 +9,7 @@ import org.example.realworldapi.web.dto.ArticlesDTO;
 import org.example.realworldapi.web.qualifiers.NoWrapRootValueObjectMapper;
 import org.example.realworldapi.web.security.annotation.Secured;
 
+import javax.validation.constraints.Min;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -37,7 +38,8 @@ public class ArticlesResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response feed(
       @QueryParam("offset") int offset,
-      @QueryParam("limit") int limit,
+      @QueryParam("limit") @Min(value = 1, message = "limit parameter must be at least 1")
+          int limit,
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());

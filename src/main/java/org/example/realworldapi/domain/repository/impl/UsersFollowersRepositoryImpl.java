@@ -8,8 +8,10 @@ import org.example.realworldapi.domain.repository.UsersFollowersRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @ApplicationScoped
@@ -66,8 +68,8 @@ public class UsersFollowersRepositoryImpl
   @Override
   public List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit) {
     CriteriaBuilder builder = getCriteriaBuilder();
-    CriteriaQuery<UsersFollowers> criteriaQuery = getCriteriaQuery(builder);
-    Root<UsersFollowers> usersFollowers = getRoot(criteriaQuery);
+    CriteriaQuery<Article> criteriaQuery = getCriteriaQuery(builder, Article.class);
+    Root<UsersFollowers> usersFollowers = getRoot(criteriaQuery, UsersFollowers.class);
 
     Join<UsersFollowers, User> user = usersFollowers.join("primaryKey").join("user");
 
@@ -75,18 +77,12 @@ public class UsersFollowersRepositoryImpl
 
     Join<UsersFollowers, User> follower = usersFollowers.join("primaryKey").join("follower");
 
-    ListJoin<User, Article> articles = follower.joinList("articles");
+    Join<User, Article> articles = follower.join("articles");
 
-    criteriaQuery.select(follower.get("articles"));
+    criteriaQuery.select(articles);
 
     criteriaQuery.orderBy(builder.desc(articles.get("updatedAt")));
 
-    TypedQuery typedQuery =
-        getHibernateSession()
-            .createQuery(criteriaQuery)
-            .setFirstResult(offset)
-            .setMaxResults(limit);
-
-    return (List<Article>) typedQuery.getResultList();
+    return getPagedResultList(criteriaQuery, offset, limit);
   }
 }
