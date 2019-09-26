@@ -3,9 +3,7 @@ package org.example.realworldapi.domain.entity.persistent;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
@@ -14,6 +12,10 @@ import java.util.Objects;
 @Table(name = "ARTICLES_TAGS")
 public class ArticlesTags {
   @EmbeddedId private ArticlesTagsKey primaryKey;
+
+  @ManyToOne
+  @JoinColumn(insertable = false, updatable = false)
+  private Article article;
 
   @Override
   public boolean equals(Object o) {

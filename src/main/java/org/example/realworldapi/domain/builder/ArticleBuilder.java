@@ -55,6 +55,15 @@ public class ArticleBuilder {
 
   public Article build() {
     return new Article(
-        this.id, this.slug, this.title, this.description, this.body, null, null, this.author);
+        this.id,
+        this.slug,
+        this.title,
+        this.description,
+        this.body,
+        null,
+        null,
+        this.author,
+        null,
+        null);
   }
 }

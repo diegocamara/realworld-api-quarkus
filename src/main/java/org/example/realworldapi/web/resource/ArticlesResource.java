@@ -9,7 +9,6 @@ import org.example.realworldapi.web.dto.ArticlesDTO;
 import org.example.realworldapi.web.qualifiers.NoWrapRootValueObjectMapper;
 import org.example.realworldapi.web.security.annotation.Secured;
 
-import javax.validation.constraints.Min;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -38,12 +37,35 @@ public class ArticlesResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response feed(
       @QueryParam("offset") int offset,
-      @QueryParam("limit") @Min(value = 1, message = "limit parameter must be at least 1")
-          int limit,
+      @QueryParam("limit") int limit,
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());
     List<Article> articles = articlesService.findRecentArticles(loggedUserId, offset, limit);
+    return Response.ok(objectMapper.writeValueAsString(new ArticlesDTO(articles)))
+        .status(Response.Status.OK)
+        .build();
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Secured(optional = true)
+  public Response getArticles(
+      @QueryParam("offset") int offset,
+      @QueryParam("limit") int limit,
+      @QueryParam("tag") List<String> tags,
+      @QueryParam("author") List<String> authors,
+      @QueryParam("favorited") List<String> favorited,
+      @Context SecurityContext securityContext)
+      throws JsonProcessingException {
+
+    Long loggedUserId =
+        securityContext.getUserPrincipal() != null
+            ? Long.valueOf(securityContext.getUserPrincipal().getName())
+            : null;
+
+    List<Article> articles =
+        articlesService.findArticles(offset, limit, loggedUserId, tags, authors, favorited);
     return Response.ok(objectMapper.writeValueAsString(new ArticlesDTO(articles)))
         .status(Response.Status.OK)
         .build();

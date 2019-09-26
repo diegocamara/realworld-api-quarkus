@@ -52,21 +52,6 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
   }
 
   @Test
-  public void givenInvalidOffsetAndLimitShouldReturn422() {
-
-    User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
-
-    given()
-        .contentType(MediaType.APPLICATION_JSON)
-        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-        .get(FEED_PATH)
-        .then()
-        .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
-        .body("errors.body", hasItem("limit parameter must be at least 1"));
-  }
-
-  @Test
   public void
       given10ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit5_shouldReturnListOf5Articles() {
 
@@ -288,6 +273,64 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
             hasKey("author"),
             "articlesCount",
             is(10));
+  }
+
+  @Test
+  public void
+      given10ArticlesWithDifferentTags_whenExecuteGlobalArticlesEndpoint_shouldReturn5Articles() {
+
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+
+    InsertResult<Article> insertResult = new InsertResult<>();
+
+    createArticles(loggedUser, "Title", "Description", "Body", 5, insertResult);
+
+    Tag tag1 = createTag("Tag 1");
+
+    createArticlesTags(insertResult.getResults(), tag1);
+
+    insertResult = new InsertResult<>(insertResult.getNextValue());
+
+    createArticles(loggedUser, "Title", "Description", "Body", 5, insertResult);
+
+    Tag tag2 = createTag("Tag 2");
+
+    createArticlesTags(insertResult.getResults(), tag2);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX +
+        // loggedUser.getToken())
+        .queryParam("offset", 0)
+        .queryParam("limit", 10)
+        .queryParam("tag", tag1.getName())
+        .get(ARTICLES_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "articles[0]",
+            hasKey("slug"),
+            "articles[0]",
+            hasKey("title"),
+            "articles[0]",
+            hasKey("description"),
+            "articles[0]",
+            hasKey("body"),
+            "articles[0].tagList",
+            hasItem(tag1.getName()),
+            "articles[0]",
+            hasKey("createdAt"),
+            "articles[0]",
+            hasKey("updatedAt"),
+            "articles[0]",
+            hasKey("favorited"),
+            "articles[0]",
+            hasKey("favoritesCount"),
+            "articles[0]",
+            hasKey("author"),
+            "articlesCount",
+            is(5));
   }
 
   private void createArticles(

@@ -28,9 +28,14 @@ public class ProfilesServiceImpl implements ProfilesService {
   @Transactional
   public Profile getProfile(String username, Long loggedUserId) {
     User existentUser = usersService.findByUsername(username);
-    boolean isFollowing = usersFollowersRepository.isFollowing(loggedUserId, existentUser.getId());
+
     ProfileBuilder profileBuilder = new ProfileBuilder().fromUser(existentUser);
-    profileBuilder.following(isFollowing);
+
+    if (loggedUserId != null) {
+      profileBuilder.following(
+          usersFollowersRepository.isFollowing(loggedUserId, existentUser.getId()));
+    }
+
     return profileBuilder.build();
   }
 

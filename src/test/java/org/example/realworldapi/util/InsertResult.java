@@ -13,6 +13,11 @@ public class InsertResult<E> {
     this.nextValue = 0;
   }
 
+  public InsertResult(int startIndexValue) {
+    this.results = new LinkedList<>();
+    this.nextValue = startIndexValue;
+  }
+
   public int add(E item) {
     this.results.add(item);
     return nextValue++;

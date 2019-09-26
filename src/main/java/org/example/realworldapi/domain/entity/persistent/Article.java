@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -33,6 +34,12 @@ public class Article {
   @ManyToOne
   @JoinColumn(name = "author_id", referencedColumnName = "id")
   private User author;
+
+  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
+  private List<ArticlesTags> tags;
+
+  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
+  private List<ArticlesUsers> favorites;
 
   @Override
   public boolean equals(Object o) {
