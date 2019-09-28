@@ -56,6 +56,36 @@ public class ArticleRepositoryImpl extends AbstractRepository<Article, Long>
     return getPagedResultList(criteriaQuery, offset, limit);
   }
 
+  @Override
+  public Article create(Article article) {
+    this.entityManager.persist(article);
+    return article;
+  }
+
+  @Override
+  public boolean existsBySlug(String slug) {
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
+    Root<Article> article = getRoot(criteriaQuery, Article.class);
+
+    criteriaQuery.select(builder.count(article));
+    criteriaQuery.where(
+        builder.equal(builder.upper(article.get("slug")), slug.toUpperCase().trim()));
+
+    return getSingleResult(criteriaQuery).intValue() > 0;
+  }
+
+  @Override
+  public Article findBySlug(String slug) {
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Article> criteriaQuery = getCriteriaQuery(builder);
+    Root<Article> article = getRoot(criteriaQuery);
+    criteriaQuery.select(article);
+    criteriaQuery.where(
+        builder.equal(builder.upper(article.get("slug")), slug.toUpperCase().trim()));
+    return getSingleResult(criteriaQuery);
+  }
+
   private List<String> toUpperCase(List<String> tags) {
     return tags.stream().map(String::toUpperCase).collect(Collectors.toList());
   }

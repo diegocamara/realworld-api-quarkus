@@ -18,6 +18,10 @@ public class ArticlesUsers {
   @JoinColumn(insertable = false, updatable = false)
   private Article article;
 
+  @ManyToOne
+  @JoinColumn(insertable = false, updatable = false)
+  private User user;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

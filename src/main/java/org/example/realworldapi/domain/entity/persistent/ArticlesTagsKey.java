@@ -1,6 +1,8 @@
 package org.example.realworldapi.domain.entity.persistent;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Embeddable;
@@ -10,6 +12,8 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
 public class ArticlesTagsKey implements Serializable {
 

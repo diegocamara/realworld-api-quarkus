@@ -5,14 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.realworldapi.domain.entity.Article;
 import org.example.realworldapi.domain.resource.service.ArticlesService;
 import org.example.realworldapi.domain.security.Role;
+import org.example.realworldapi.web.dto.ArticleDTO;
 import org.example.realworldapi.web.dto.ArticlesDTO;
+import org.example.realworldapi.web.dto.NewArticleDTO;
 import org.example.realworldapi.web.qualifiers.NoWrapRootValueObjectMapper;
 import org.example.realworldapi.web.security.annotation.Secured;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -69,5 +71,31 @@ public class ArticlesResource {
     return Response.ok(objectMapper.writeValueAsString(new ArticlesDTO(articles)))
         .status(Response.Status.OK)
         .build();
+  }
+
+  @POST
+  @Secured({Role.ADMIN, Role.USER})
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response create(
+      @Valid @NotNull(message = "request body must be not null") NewArticleDTO newArticleDTO,
+      @Context SecurityContext securityContext) {
+    Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());
+    Article newArticle =
+        articlesService.create(
+            newArticleDTO.getTitle(),
+            newArticleDTO.getDescription(),
+            newArticleDTO.getBody(),
+            newArticleDTO.getTagList(),
+            loggedUserId);
+    return Response.ok(new ArticleDTO(newArticle)).status(Response.Status.CREATED).build();
+  }
+
+  @GET
+  @Path("/{slug}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response findBySlug(@PathParam("slug") @NotBlank String slug) {
+    Article article = articlesService.findBySlug(slug);
+    return Response.ok(new ArticleDTO(article)).status(Response.Status.OK).build();
   }
 }

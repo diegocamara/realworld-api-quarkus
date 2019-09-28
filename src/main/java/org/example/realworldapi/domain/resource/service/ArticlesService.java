@@ -14,4 +14,8 @@ public interface ArticlesService {
       List<String> tags,
       List<String> authors,
       List<String> favorited);
+
+  Article create(String title, String description, String body, List<String> tagList, Long userId);
+
+  Article findBySlug(String slug);
 }

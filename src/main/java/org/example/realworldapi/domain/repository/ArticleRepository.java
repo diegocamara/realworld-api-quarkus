@@ -7,4 +7,10 @@ import java.util.List;
 public interface ArticleRepository {
   List<Article> findArticles(
       int offset, int limit, List<String> tags, List<String> authors, List<String> favorited);
+
+  Article create(Article article);
+
+  boolean existsBySlug(String slug);
+
+  Article findBySlug(String slug);
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.example.realworldapi.domain.entity.Article;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -14,13 +15,13 @@ import java.util.List;
 @RegisterForReflection
 public class ArticlesDTO {
 
-  private List<Article> articles;
+  private List<ArticleDTO> articles;
 
   public int getArticlesCount() {
     return this.articles.size();
   }
 
   public ArticlesDTO(List<Article> articles) {
-    this.articles = articles;
+    this.articles = articles.stream().map(ArticleDTO::new).collect(Collectors.toList());
   }
 }

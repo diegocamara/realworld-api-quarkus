@@ -47,4 +47,10 @@ public class ArticlesTagsRepositoryImpl extends AbstractRepository<ArticlesTags,
     TypedQuery typedQuery = getHibernateSession().createQuery(criteriaQuery);
     return (List<Tag>) typedQuery.getResultList();
   }
+
+  @Override
+  public ArticlesTags create(ArticlesTags articlesTags) {
+    this.entityManager.persist(articlesTags);
+    return articlesTags;
+  }
 }

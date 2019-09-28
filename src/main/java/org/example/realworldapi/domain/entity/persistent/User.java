@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.LinkedList;
 import java.util.List;
 
 @Getter
@@ -28,12 +27,9 @@ public class User {
   @Column(length = 500)
   private String token;
 
-  //  @JsonIgnore
-  //  @OneToMany(mappedBy = "primaryKey.user", fetch = FetchType.LAZY)
-  //  private List<UsersFollowers> followers;
-
-  @OneToMany(mappedBy = "author", orphanRemoval = true)
-  private List<Article> articles = new LinkedList<>();
+  @OneToMany(fetch = FetchType.LAZY)
+  @JoinColumn(name = "author_id")
+  private List<Article> articles;
 
   public User(Long id, String username, String bio, String image) {
     this.id = id;

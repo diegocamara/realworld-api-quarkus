@@ -1,5 +1,6 @@
 package org.example.realworldapi.integration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
@@ -10,12 +11,14 @@ import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.service.JWTService;
 import org.example.realworldapi.util.InsertResult;
 import org.example.realworldapi.util.UserUtils;
+import org.example.realworldapi.web.dto.NewArticleDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import javax.persistence.TemporalType;
 import javax.ws.rs.core.MediaType;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -300,8 +303,6 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
-        //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX +
-        // loggedUser.getToken())
         .queryParam("offset", 0)
         .queryParam("limit", 10)
         .queryParam("tag", tag1.getName())
@@ -331,6 +332,117 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
             hasKey("author"),
             "articlesCount",
             is(5));
+  }
+
+  @Test
+  public void shouldReturn401WhenExecuteCreateArticleEndpointWithoutToken() {
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .post(ARTICLES_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void
+      givenValidArticleRequestWithoutTags_whenExecuteCreateArticleEndpoint_shouldReturnACreatedArticle()
+          throws JsonProcessingException {
+
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+
+    NewArticleDTO newArticleDTO = createNewArticle("Title", "Description", "Body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .body(objectMapper.writeValueAsString(newArticleDTO))
+        .post(ARTICLES_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_CREATED)
+        .body(
+            "article.size()",
+            is(10),
+            "article",
+            hasKey("slug"),
+            "article.title",
+            is(newArticleDTO.getTitle()),
+            "article.description",
+            is(newArticleDTO.getDescription()),
+            "article.body",
+            is(newArticleDTO.getBody()),
+            "article",
+            hasKey("tagList"),
+            "article",
+            hasKey("createdAt"),
+            "article",
+            hasKey("updatedAt"),
+            "article",
+            hasKey("favorited"),
+            "article",
+            hasKey("favoritesCount"),
+            "article",
+            hasKey("author"));
+  }
+
+  @Test
+  public void
+      givenValidArticleRequestWithTags_whenExecuteCreateArticleEndpoint_shouldReturnACreatedArticle()
+          throws JsonProcessingException {
+
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+
+    Tag tag1 = createTag("Tag 1");
+    Tag tag2 = createTag("Tag 2");
+    String tag3 = "Tag 3";
+    String tag4 = "Tag 4";
+
+    NewArticleDTO newArticleDTO =
+        createNewArticle(
+            "Title 1", "Description", "Body", tag1.getName(), tag2.getName(), tag3, tag4);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .body(objectMapper.writeValueAsString(newArticleDTO))
+        .post(ARTICLES_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_CREATED)
+        .body(
+            "article.size()",
+            is(10),
+            "article",
+            hasKey("slug"),
+            "article.title",
+            is(newArticleDTO.getTitle()),
+            "article.description",
+            is(newArticleDTO.getDescription()),
+            "article.body",
+            is(newArticleDTO.getBody()),
+            "article.tagList",
+            hasItems(tag1.getName(), tag2.getName(), tag3, tag4),
+            "article",
+            hasKey("createdAt"),
+            "article",
+            hasKey("updatedAt"),
+            "article",
+            hasKey("favorited"),
+            "article",
+            hasKey("favoritesCount"),
+            "article",
+            hasKey("author"));
+  }
+
+  private NewArticleDTO createNewArticle(
+      String title, String description, String body, String... tagList) {
+    NewArticleDTO newArticleDTO = new NewArticleDTO();
+    newArticleDTO.setTitle(title);
+    newArticleDTO.setDescription(description);
+    newArticleDTO.setBody(body);
+    newArticleDTO.setTagList(Arrays.asList(tagList));
+    return newArticleDTO;
   }
 
   private void createArticles(
@@ -393,8 +505,7 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
   private Tag createTag(String name) {
     return transaction(
         () -> {
-          Tag tag = new Tag();
-          tag.setName(name);
+          Tag tag = new Tag(name);
           entityManager.persist(tag);
           return tag;
         });

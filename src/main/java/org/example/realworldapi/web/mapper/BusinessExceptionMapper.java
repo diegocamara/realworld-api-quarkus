@@ -31,6 +31,7 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
     handlerMap.put(ResourceNotFoundException.class, notFound());
     handlerMap.put(UnauthorizedException.class, unauthorized());
     handlerMap.put(UsernameAlreadyExistsException.class, conflict());
+    handlerMap.put(TagNotFoundException.class, notFound());
 
     return handlerMap;
   }

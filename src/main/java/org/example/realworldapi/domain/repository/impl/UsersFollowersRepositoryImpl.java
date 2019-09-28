@@ -8,10 +8,7 @@ import org.example.realworldapi.domain.repository.UsersFollowersRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @ApplicationScoped
@@ -77,7 +74,7 @@ public class UsersFollowersRepositoryImpl
 
     Join<UsersFollowers, User> follower = usersFollowers.join("primaryKey").join("follower");
 
-    Join<User, Article> articles = follower.join("articles");
+    ListJoin<User, Article> articles = follower.joinList("articles");
 
     criteriaQuery.select(articles);
 

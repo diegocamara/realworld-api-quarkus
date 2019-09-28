@@ -31,8 +31,8 @@ public class Article {
   @CreationTimestamp private LocalDateTime createdAt;
   @UpdateTimestamp private LocalDateTime updatedAt;
 
-  @ManyToOne
-  @JoinColumn(name = "author_id", referencedColumnName = "id")
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "author_id")
   private User author;
 
   @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
