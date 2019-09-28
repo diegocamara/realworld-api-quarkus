@@ -102,6 +102,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
 
     if (isPresent(title)) {
+      configSlug(title, article);
       article.setTitle(title);
     }
 
