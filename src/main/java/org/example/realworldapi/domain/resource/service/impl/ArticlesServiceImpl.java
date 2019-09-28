@@ -6,6 +6,7 @@ import org.example.realworldapi.domain.entity.persistent.Article;
 import org.example.realworldapi.domain.entity.persistent.ArticlesTags;
 import org.example.realworldapi.domain.entity.persistent.ArticlesTagsKey;
 import org.example.realworldapi.domain.entity.persistent.Tag;
+import org.example.realworldapi.domain.exception.ArticleNotFoundException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.*;
 import org.example.realworldapi.domain.resource.service.ArticlesService;
@@ -80,17 +81,39 @@ public class ArticlesServiceImpl implements ArticlesService {
   @Override
   @Transactional
   public org.example.realworldapi.domain.entity.Article create(
-      String title, String description, String body, List<String> tagList, Long userId) {
-    Article article = createArticle(title, description, body, userId);
+      String title, String description, String body, List<String> tagList, Long authorId) {
+    Article article = createArticle(title, description, body, authorId);
     createArticlesTags(article, tagList);
-    return getArticle(article, userId);
+    return getArticle(article, authorId);
   }
 
   @Override
   @Transactional
   public org.example.realworldapi.domain.entity.Article findBySlug(String slug) {
-    Article article = articleRepository.findBySlug(slug);
+    Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
     return getArticle(article, null);
+  }
+
+  @Override
+  @Transactional
+  public org.example.realworldapi.domain.entity.Article update(
+      String slug, String title, String description, String body, Long authorId) {
+
+    Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
+
+    if (isPresent(title)) {
+      article.setTitle(title);
+    }
+
+    if (isPresent(description)) {
+      article.setDescription(description);
+    }
+
+    if (isPresent(body)) {
+      article.setBody(body);
+    }
+
+    return getArticle(articleRepository.update(article), authorId);
   }
 
   private Article createArticle(String title, String description, String body, Long userId) {
@@ -171,5 +194,9 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   private int getLimit(int limit) {
     return limit > 0 ? limit : DEFAULT_LIMIT;
+  }
+
+  private boolean isPresent(String value) {
+    return value != null && !value.isEmpty();
   }
 }

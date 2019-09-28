@@ -15,7 +15,10 @@ public interface ArticlesService {
       List<String> authors,
       List<String> favorited);
 
-  Article create(String title, String description, String body, List<String> tagList, Long userId);
+  Article create(
+      String title, String description, String body, List<String> tagList, Long authorId);
 
   Article findBySlug(String slug);
+
+  Article update(String slug, String title, String description, String body, Long authorId);
 }

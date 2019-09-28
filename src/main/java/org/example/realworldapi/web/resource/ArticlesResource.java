@@ -8,6 +8,7 @@ import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.web.dto.ArticleDTO;
 import org.example.realworldapi.web.dto.ArticlesDTO;
 import org.example.realworldapi.web.dto.NewArticleDTO;
+import org.example.realworldapi.web.dto.UpdateArticleDTO;
 import org.example.realworldapi.web.qualifiers.NoWrapRootValueObjectMapper;
 import org.example.realworldapi.web.security.annotation.Secured;
 
@@ -97,5 +98,27 @@ public class ArticlesResource {
   public Response findBySlug(@PathParam("slug") @NotBlank String slug) {
     Article article = articlesService.findBySlug(slug);
     return Response.ok(new ArticleDTO(article)).status(Response.Status.OK).build();
+  }
+
+  @PUT
+  @Path("/{slug}")
+  @Secured({Role.ADMIN, Role.USER})
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response update(
+      @PathParam("slug") @NotBlank String slug,
+      @Valid @NotNull UpdateArticleDTO updateArticleDTO,
+      @Context SecurityContext securityContext) {
+
+    Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());
+
+    Article updatedArticle =
+        articlesService.update(
+            slug,
+            updateArticleDTO.getTitle(),
+            updateArticleDTO.getDescription(),
+            updateArticleDTO.getBody(),
+            loggedUserId);
+    return Response.ok(new ArticleDTO(updatedArticle)).status(Response.Status.OK).build();
   }
 }

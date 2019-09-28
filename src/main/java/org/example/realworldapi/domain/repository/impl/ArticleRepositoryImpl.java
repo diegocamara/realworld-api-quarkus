@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -76,14 +77,19 @@ public class ArticleRepositoryImpl extends AbstractRepository<Article, Long>
   }
 
   @Override
-  public Article findBySlug(String slug) {
+  public Optional<Article> findBySlug(String slug) {
     CriteriaBuilder builder = getCriteriaBuilder();
     CriteriaQuery<Article> criteriaQuery = getCriteriaQuery(builder);
     Root<Article> article = getRoot(criteriaQuery);
     criteriaQuery.select(article);
     criteriaQuery.where(
         builder.equal(builder.upper(article.get("slug")), slug.toUpperCase().trim()));
-    return getSingleResult(criteriaQuery);
+    return Optional.ofNullable(getSingleResult(criteriaQuery));
+  }
+
+  @Override
+  public Article update(Article article) {
+    return entityManager.merge(article);
   }
 
   private List<String> toUpperCase(List<String> tags) {

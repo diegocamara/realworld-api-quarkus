@@ -3,6 +3,7 @@ package org.example.realworldapi.domain.repository;
 import org.example.realworldapi.domain.entity.persistent.Article;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ArticleRepository {
   List<Article> findArticles(
@@ -12,5 +13,7 @@ public interface ArticleRepository {
 
   boolean existsBySlug(String slug);
 
-  Article findBySlug(String slug);
+  Optional<Article> findBySlug(String slug);
+
+  Article update(Article article);
 }
