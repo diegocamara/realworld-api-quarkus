@@ -1,5 +1,6 @@
 package org.example.realworldapi.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
@@ -24,10 +25,10 @@ public class ArticleDTO {
   private String body;
   private List<String> tagList;
 
-  //  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
   private LocalDateTime createdAt;
 
-  //  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
   private LocalDateTime updatedAt;
 
   private boolean favorited;
