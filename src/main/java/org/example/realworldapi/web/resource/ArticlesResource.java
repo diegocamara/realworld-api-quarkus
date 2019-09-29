@@ -121,4 +121,15 @@ public class ArticlesResource {
             loggedUserId);
     return Response.ok(new ArticleDTO(updatedArticle)).status(Response.Status.OK).build();
   }
+
+  @DELETE
+  @Path("/{slug}")
+  @Secured({Role.ADMIN, Role.USER})
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response delete(
+      @PathParam("slug") @NotBlank String slug, @Context SecurityContext securityContext) {
+    Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());
+    articlesService.delete(slug, loggedUserId);
+    return Response.ok().build();
+  }
 }

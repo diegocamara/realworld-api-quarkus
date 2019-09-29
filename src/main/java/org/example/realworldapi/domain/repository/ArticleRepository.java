@@ -16,4 +16,8 @@ public interface ArticleRepository {
   Optional<Article> findBySlug(String slug);
 
   Article update(Article article);
+
+  void delete(Article article);
+
+  Optional<Article> findByIdAndSlug(Long authorId, String slug);
 }

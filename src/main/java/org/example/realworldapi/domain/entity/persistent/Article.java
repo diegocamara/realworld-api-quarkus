@@ -35,10 +35,10 @@ public class Article {
   @JoinColumn(name = "author_id")
   private User author;
 
-  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<ArticlesTags> tags;
 
-  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<ArticlesUsers> favorites;
 
   @Override

@@ -92,6 +92,25 @@ public class ArticleRepositoryImpl extends AbstractRepository<Article, Long>
     return entityManager.merge(article);
   }
 
+  @Override
+  public void delete(Article article) {
+    entityManager.remove(article);
+  }
+
+  @Override
+  public Optional<Article> findByIdAndSlug(Long authorId, String slug) {
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Article> criteriaQuery = getCriteriaQuery(builder);
+    Root<Article> article = getRoot(criteriaQuery);
+    Join<Article, User> author = article.join("author");
+    criteriaQuery.select(article);
+    criteriaQuery.where(
+        builder.and(
+            builder.equal(author.get("id"), authorId),
+            builder.equal(builder.upper(article.get("slug")), slug.toUpperCase().trim())));
+    return Optional.ofNullable(getSingleResult(criteriaQuery));
+  }
+
   private List<String> toUpperCase(List<String> tags) {
     return tags.stream().map(String::toUpperCase).collect(Collectors.toList());
   }

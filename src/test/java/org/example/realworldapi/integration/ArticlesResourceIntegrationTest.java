@@ -2,6 +2,7 @@ package org.example.realworldapi.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.slugify.Slugify;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.DatabaseIntegrationTest;
@@ -12,6 +13,8 @@ import org.example.realworldapi.domain.service.JWTService;
 import org.example.realworldapi.util.InsertResult;
 import org.example.realworldapi.util.UserUtils;
 import org.example.realworldapi.web.dto.NewArticleDTO;
+import org.example.realworldapi.web.dto.UpdateArticleDTO;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,13 +31,14 @@ import static org.example.realworldapi.constants.TestConstants.*;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
-public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
+public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
 
   private final String ARTICLES_PATH = API_PREFIX + "/articles";
   private final String FEED_PATH = ARTICLES_PATH + "/feed";
 
   @Inject private ObjectMapper objectMapper;
   @Inject private JWTService jwtService;
+  @Inject private Slugify slugify;
 
   @BeforeEach
   public void beforeEach() {
@@ -435,6 +439,77 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
             hasKey("author"));
   }
 
+  @Test
+  public void
+      givenExistentArticle_whenExecuteGetArticleBySlugEndpoint_shouldReturnArticleWithStatusCode200() {
+
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+    Article article = createArticle(loggedUser, "Title", "Description", "Body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .pathParam("slug", article.getSlug())
+        .get(ARTICLES_PATH + "/{slug}")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "article.title",
+            is(article.getTitle()),
+            "article.description",
+            is(article.getDescription()),
+            "article.body",
+            is(article.getBody()));
+  }
+
+  @Test
+  public void
+      givenExistentArticle_whenExecuteUpdateArticleEndpoint_shouldReturnUpdatedArticleWithStatusCode200()
+          throws JsonProcessingException {
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+    Article article = createArticle(loggedUser, "Title", "Description", "Body");
+
+    UpdateArticleDTO updateArticleDTO = new UpdateArticleDTO();
+    updateArticleDTO.setTitle("updated title");
+    updateArticleDTO.setDescription("updated description");
+    updateArticleDTO.setBody("updated body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .body(objectMapper.writeValueAsString(updateArticleDTO))
+        .pathParam("slug", article.getSlug())
+        .put(ARTICLES_PATH + "/{slug}")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "article.title",
+            is(updateArticleDTO.getTitle()),
+            "article.description",
+            is(updateArticleDTO.getDescription()),
+            "article.body",
+            is(updateArticleDTO.getBody()));
+  }
+
+  @Test
+  public void givenExistentArticle_whenExecuteDeleteArticleEndpoint_shouldReturnStatusCode200() {
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+    Article article = createArticle(loggedUser, "Title", "Description", "Body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .pathParam("slug", article.getSlug())
+        .delete(ARTICLES_PATH + "/{slug}")
+        .then()
+        .statusCode(HttpStatus.SC_OK);
+
+    Assertions.assertNull(transaction(() -> entityManager.find(Article.class, article.getId())));
+  }
+
   private NewArticleDTO createNewArticle(
       String title, String description, String body, String... tagList) {
     NewArticleDTO newArticleDTO = new NewArticleDTO();
@@ -443,6 +518,41 @@ public class ArticleResourceIntegrationTest extends DatabaseIntegrationTest {
     newArticleDTO.setBody(body);
     newArticleDTO.setTagList(Arrays.asList(tagList));
     return newArticleDTO;
+  }
+
+  private List<Article> createArticles(
+      User author, String title, String description, String body, int quantity) {
+    return transaction(
+        () -> {
+          List<Article> articles = new LinkedList<>();
+
+          for (int articleIndex = 0; articleIndex < quantity; articleIndex++) {
+            articles.add(
+                createArticle(
+                    author,
+                    title + "_" + articleIndex,
+                    description + "_" + articleIndex,
+                    body + "_" + articleIndex));
+          }
+
+          return articles;
+        });
+  }
+
+  private Article createArticle(User author, String title, String description, String body) {
+    return transaction(
+        () -> {
+          Article article =
+              new ArticleBuilder()
+                  .title(title)
+                  .slug(slugify.slugify(title))
+                  .description(description)
+                  .body(body)
+                  .author(author)
+                  .build();
+          entityManager.persist(article);
+          return article;
+        });
   }
 
   private void createArticles(

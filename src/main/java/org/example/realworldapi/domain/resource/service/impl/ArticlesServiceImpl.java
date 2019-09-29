@@ -102,8 +102,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
 
     if (isPresent(title)) {
-      configSlug(title, article);
-      article.setTitle(title);
+      configTitle(title, article);
     }
 
     if (isPresent(description)) {
@@ -117,10 +116,24 @@ public class ArticlesServiceImpl implements ArticlesService {
     return getArticle(articleRepository.update(article), authorId);
   }
 
-  private Article createArticle(String title, String description, String body, Long userId) {
-    Article article = new Article();
+  @Override
+  @Transactional
+  public void delete(String slug, Long authorId) {
+    Article article =
+        articleRepository
+            .findByIdAndSlug(authorId, slug)
+            .orElseThrow(ArticleNotFoundException::new);
+    articleRepository.delete(article);
+  }
+
+  private void configTitle(String title, Article article) {
     configSlug(title, article);
     article.setTitle(title);
+  }
+
+  private Article createArticle(String title, String description, String body, Long userId) {
+    Article article = new Article();
+    configTitle(title, article);
     article.setDescription(description);
     article.setBody(body);
     article.setAuthor(userRepository.findById(userId).orElseThrow(UserNotFoundException::new));

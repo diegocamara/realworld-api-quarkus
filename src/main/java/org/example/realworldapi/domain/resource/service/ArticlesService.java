@@ -21,4 +21,6 @@ public interface ArticlesService {
   Article findBySlug(String slug);
 
   Article update(String slug, String title, String description, String body, Long authorId);
+
+  void delete(String slug, Long authorId);
 }
