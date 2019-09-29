@@ -510,6 +510,28 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
     Assertions.assertNull(transaction(() -> entityManager.find(Article.class, article.getId())));
   }
 
+  @Test
+  public void
+      givenExistentArticleWithComments_whenExecuteGetCommentsBySlug_shouldReturnCommentWithStatusCode200() {
+
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+    Article article = createArticle(loggedUser, "Title", "Description", "Body");
+
+    Comment comment1 = createComment(loggedUser, "comment");
+  }
+
+  private Comment createComment(User author, String body) {
+    return transaction(
+        () -> {
+          Comment comment = new Comment();
+          comment.setBody(body);
+          comment.setAuthor(author);
+          entityManager.persist(comment);
+          return comment;
+        });
+  };
+
   private NewArticleDTO createNewArticle(
       String title, String description, String body, String... tagList) {
     NewArticleDTO newArticleDTO = new NewArticleDTO();
