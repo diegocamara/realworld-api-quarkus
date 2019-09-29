@@ -3,12 +3,10 @@ package org.example.realworldapi.web.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.realworldapi.domain.entity.Article;
+import org.example.realworldapi.domain.entity.Comment;
 import org.example.realworldapi.domain.resource.service.ArticlesService;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.web.dto.ArticleDTO;
-import org.example.realworldapi.web.dto.ArticlesDTO;
-import org.example.realworldapi.web.dto.NewArticleDTO;
-import org.example.realworldapi.web.dto.UpdateArticleDTO;
+import org.example.realworldapi.web.dto.*;
 import org.example.realworldapi.web.qualifiers.NoWrapRootValueObjectMapper;
 import org.example.realworldapi.web.security.annotation.Secured;
 
@@ -20,6 +18,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.security.Principal;
 import java.util.List;
 
 @Path("/articles")
@@ -43,7 +42,7 @@ public class ArticlesResource {
       @QueryParam("limit") int limit,
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
-    Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());
+    Long loggedUserId = getLoggedUserId(securityContext);
     List<Article> articles = articlesService.findRecentArticles(loggedUserId, offset, limit);
     return Response.ok(objectMapper.writeValueAsString(new ArticlesDTO(articles)))
         .status(Response.Status.OK)
@@ -61,12 +60,7 @@ public class ArticlesResource {
       @QueryParam("favorited") List<String> favorited,
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
-
-    Long loggedUserId =
-        securityContext.getUserPrincipal() != null
-            ? Long.valueOf(securityContext.getUserPrincipal().getName())
-            : null;
-
+    Long loggedUserId = getLoggedUserId(securityContext);
     List<Article> articles =
         articlesService.findArticles(offset, limit, loggedUserId, tags, authors, favorited);
     return Response.ok(objectMapper.writeValueAsString(new ArticlesDTO(articles)))
@@ -81,7 +75,7 @@ public class ArticlesResource {
   public Response create(
       @Valid @NotNull(message = "request body must be not null") NewArticleDTO newArticleDTO,
       @Context SecurityContext securityContext) {
-    Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());
+    Long loggedUserId = getLoggedUserId(securityContext);
     Article newArticle =
         articlesService.create(
             newArticleDTO.getTitle(),
@@ -95,7 +89,8 @@ public class ArticlesResource {
   @GET
   @Path("/{slug}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response findBySlug(@PathParam("slug") @NotBlank String slug) {
+  public Response findBySlug(
+      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug) {
     Article article = articlesService.findBySlug(slug);
     return Response.ok(new ArticleDTO(article)).status(Response.Status.OK).build();
   }
@@ -109,9 +104,7 @@ public class ArticlesResource {
       @PathParam("slug") @NotBlank String slug,
       @Valid @NotNull UpdateArticleDTO updateArticleDTO,
       @Context SecurityContext securityContext) {
-
-    Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());
-
+    Long loggedUserId = getLoggedUserId(securityContext);
     Article updatedArticle =
         articlesService.update(
             slug,
@@ -127,9 +120,57 @@ public class ArticlesResource {
   @Secured({Role.ADMIN, Role.USER})
   @Produces(MediaType.APPLICATION_JSON)
   public Response delete(
-      @PathParam("slug") @NotBlank String slug, @Context SecurityContext securityContext) {
-    Long loggedUserId = Long.valueOf(securityContext.getUserPrincipal().getName());
+      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @Context SecurityContext securityContext) {
+    Long loggedUserId = getLoggedUserId(securityContext);
     articlesService.delete(slug, loggedUserId);
     return Response.ok().build();
+  }
+
+  @GET
+  @Path("/{slug}/comments")
+  @Secured(optional = true)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getCommentsBySlug(
+      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @Context SecurityContext securityContext)
+      throws JsonProcessingException {
+    Long loggedUserId = getLoggedUserId(securityContext);
+    List<Comment> comments = articlesService.findCommentsBySlug(slug, loggedUserId);
+    return Response.ok(objectMapper.writeValueAsString(new CommentsDTO(comments)))
+        .status(Response.Status.OK)
+        .build();
+  }
+
+  @POST
+  @Path("/{slug}/comments")
+  @Secured({Role.ADMIN, Role.USER})
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response createComment(
+      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @Valid NewCommentDTO newCommentDTO,
+      @Context SecurityContext securityContext) {
+    Long loggedUserId = getLoggedUserId(securityContext);
+    Comment comment = articlesService.createComment(slug, newCommentDTO.getBody(), loggedUserId);
+    return Response.ok(new CommentDTO(comment)).status(Response.Status.OK).build();
+  }
+
+  @DELETE
+  @Path("/{slug}/comments/{id}")
+  @Secured({Role.ADMIN, Role.USER})
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response deleteComment(
+      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @PathParam("id") @NotNull(message = "id must be not null") Long id,
+      @Context SecurityContext securityContext) {
+    Long loggeduserId = getLoggedUserId(securityContext);
+    articlesService.deleteComment(slug, id, loggeduserId);
+    return Response.ok().build();
+  }
+
+  private Long getLoggedUserId(SecurityContext securityContext) {
+    Principal principal = securityContext.getUserPrincipal();
+    return principal != null ? Long.valueOf(principal.getName()) : null;
   }
 }

@@ -65,6 +65,12 @@ public abstract class AbstractRepository<T, ID> {
     }
   }
 
+  protected T persist(T object) {
+    getEntityManager().persist(object);
+    getEntityManager().flush();
+    return object;
+  }
+
   protected Session getHibernateSession() {
     return getEntityManager().unwrap(Session.class);
   }

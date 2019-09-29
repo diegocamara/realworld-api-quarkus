@@ -59,8 +59,7 @@ public class ArticleRepositoryImpl extends AbstractRepository<Article, Long>
 
   @Override
   public Article create(Article article) {
-    this.entityManager.persist(article);
-    return article;
+    return persist(article);
   }
 
   @Override
@@ -109,6 +108,21 @@ public class ArticleRepositoryImpl extends AbstractRepository<Article, Long>
             builder.equal(author.get("id"), authorId),
             builder.equal(builder.upper(article.get("slug")), slug.toUpperCase().trim())));
     return Optional.ofNullable(getSingleResult(criteriaQuery));
+  }
+
+  @Override
+  public List<Comment> findComments(Long articleId) {
+
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Comment> criteriaQuery = getCriteriaQuery(builder, Comment.class);
+    Root<Article> article = getRoot(criteriaQuery, Article.class);
+
+    ListJoin<Article, Comment> comment = article.joinList("comments");
+
+    criteriaQuery.select(comment);
+    criteriaQuery.where(builder.equal(article.get("id"), articleId));
+
+    return getResultList(criteriaQuery);
   }
 
   private List<String> toUpperCase(List<String> tags) {

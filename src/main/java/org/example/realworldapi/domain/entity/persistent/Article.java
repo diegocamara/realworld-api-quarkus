@@ -36,6 +36,9 @@ public class Article {
   private User author;
 
   @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<Comment> comments;
+
+  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<ArticlesTags> tags;
 
   @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

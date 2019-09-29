@@ -1,6 +1,7 @@
 package org.example.realworldapi.domain.repository;
 
 import org.example.realworldapi.domain.entity.persistent.Article;
+import org.example.realworldapi.domain.entity.persistent.Comment;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,4 +21,6 @@ public interface ArticleRepository {
   void delete(Article article);
 
   Optional<Article> findByIdAndSlug(Long authorId, String slug);
+
+  List<Comment> findComments(Long articleId);
 }

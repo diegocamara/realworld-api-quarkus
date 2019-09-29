@@ -50,7 +50,6 @@ public class ArticlesTagsRepositoryImpl extends AbstractRepository<ArticlesTags,
 
   @Override
   public ArticlesTags create(ArticlesTags articlesTags) {
-    this.entityManager.persist(articlesTags);
-    return articlesTags;
+    return persist(articlesTags);
   }
 }

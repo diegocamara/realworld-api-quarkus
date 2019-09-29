@@ -13,6 +13,7 @@ import org.example.realworldapi.domain.service.JWTService;
 import org.example.realworldapi.util.InsertResult;
 import org.example.realworldapi.util.UserUtils;
 import org.example.realworldapi.web.dto.NewArticleDTO;
+import org.example.realworldapi.web.dto.NewCommentDTO;
 import org.example.realworldapi.web.dto.UpdateArticleDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -512,20 +513,101 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
 
   @Test
   public void
-      givenExistentArticleWithComments_whenExecuteGetCommentsBySlug_shouldReturnCommentWithStatusCode200() {
+      givenExistentArticleWithComments_whenExecuteGetCommentsBySlugEndpoint_shouldReturnCommentWithStatusCode200() {
 
     User loggedUser =
         createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
     Article article = createArticle(loggedUser, "Title", "Description", "Body");
 
-    Comment comment1 = createComment(loggedUser, "comment");
+    createComment(loggedUser, article, "comment1");
+    createComment(loggedUser, article, "comment2");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .pathParam("slug", article.getSlug())
+        .get(ARTICLES_PATH + "/{slug}/comments")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "comments.size()",
+            is(2),
+            "comments[0]",
+            hasKey("id"),
+            "comments[0]",
+            hasKey("createdAt"),
+            "comments[0]",
+            hasKey("updatedAt"),
+            "comments[0]",
+            hasKey("body"),
+            "comments[0]",
+            hasKey("author"));
   }
 
-  private Comment createComment(User author, String body) {
+  @Test
+  public void
+      givenExistentArticleWithoutComments_whenExecuteCreateCommentEndpoint_shouldReturnCommentWithStatusCode200()
+          throws JsonProcessingException {
+
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+    Article article = createArticle(loggedUser, "Title", "Description", "Body");
+
+    NewCommentDTO newCommentDTO = new NewCommentDTO();
+    newCommentDTO.setBody("comment body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .pathParam("slug", article.getSlug())
+        .body(objectMapper.writeValueAsString(newCommentDTO))
+        .post(ARTICLES_PATH + "/{slug}/comments")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "comment.size()",
+            is(5),
+            "comment",
+            hasKey("id"),
+            "comment",
+            hasKey("createdAt"),
+            "comment",
+            hasKey("updatedAt"),
+            "comment.body",
+            is(newCommentDTO.getBody()),
+            "comment.author.username",
+            is(loggedUser.getUsername()));
+  }
+
+  @Test
+  public void
+      givenExistentArticleWithComments_whenExecuteDeleteCommentEndpoint_shouldReturnStatusCode200() {
+
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+
+    Article article = createArticle(user, "Title", "Description", "Body");
+
+    Comment comment1 = createComment(loggedUser, article, "comment 1 body");
+    createComment(loggedUser, article, "comment 2 body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .pathParam("slug", article.getSlug())
+        .pathParam("id", comment1.getId())
+        .delete(ARTICLES_PATH + "/{slug}/comments/{id}")
+        .then()
+        .statusCode(HttpStatus.SC_OK);
+  }
+
+  private Comment createComment(User author, Article article, String body) {
     return transaction(
         () -> {
           Comment comment = new Comment();
           comment.setBody(body);
+          comment.setArticle(article);
           comment.setAuthor(author);
           entityManager.persist(comment);
           return comment;

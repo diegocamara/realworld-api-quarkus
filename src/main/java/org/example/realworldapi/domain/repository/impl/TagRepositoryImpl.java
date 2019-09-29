@@ -35,8 +35,7 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Long> implements 
 
   @Override
   public Tag create(Tag tag) {
-    entityManager.persist(tag);
-    return tag;
+    return persist(tag);
   }
 
   @Override

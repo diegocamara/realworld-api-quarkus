@@ -64,6 +64,7 @@ public class ArticleBuilder {
         null,
         this.author,
         null,
+        null,
         null);
   }
 }

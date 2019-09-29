@@ -2,10 +2,7 @@ package org.example.realworldapi.domain.resource.service.impl;
 
 import com.github.slugify.Slugify;
 import org.example.realworldapi.domain.entity.Profile;
-import org.example.realworldapi.domain.entity.persistent.Article;
-import org.example.realworldapi.domain.entity.persistent.ArticlesTags;
-import org.example.realworldapi.domain.entity.persistent.ArticlesTagsKey;
-import org.example.realworldapi.domain.entity.persistent.Tag;
+import org.example.realworldapi.domain.entity.persistent.*;
 import org.example.realworldapi.domain.exception.ArticleNotFoundException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.*;
@@ -28,6 +25,7 @@ public class ArticlesServiceImpl implements ArticlesService {
   private ArticlesTagsRepository articlesTagsRepository;
   private UserRepository userRepository;
   private TagRepository tagRepository;
+  private CommentRepository commentRepository;
   private ArticleRepository articleRepository;
   private ProfilesService profilesService;
   private Slugify slugify;
@@ -39,6 +37,7 @@ public class ArticlesServiceImpl implements ArticlesService {
       UserRepository userRepository,
       TagRepository tagRepository,
       ArticleRepository articleRepository,
+      CommentRepository commentRepository,
       ProfilesService profilesService,
       Slugify slugify) {
     this.usersFollowersRepository = usersFollowersRepository;
@@ -47,6 +46,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     this.userRepository = userRepository;
     this.tagRepository = tagRepository;
     this.articleRepository = articleRepository;
+    this.commentRepository = commentRepository;
     this.profilesService = profilesService;
     this.slugify = slugify;
   }
@@ -124,6 +124,59 @@ public class ArticlesServiceImpl implements ArticlesService {
             .findByIdAndSlug(authorId, slug)
             .orElseThrow(ArticleNotFoundException::new);
     articleRepository.delete(article);
+  }
+
+  @Override
+  @Transactional
+  public List<org.example.realworldapi.domain.entity.Comment> findCommentsBySlug(
+      String slug, Long loggedUserId) {
+    Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
+    List<Comment> comments = articleRepository.findComments(article.getId());
+    Profile author = profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
+    return getComments(comments, author);
+  }
+
+  @Override
+  @Transactional
+  public org.example.realworldapi.domain.entity.Comment createComment(
+      String slug, String body, Long commentAuthorId) {
+    Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
+    User author = userRepository.findById(commentAuthorId).orElseThrow(UserNotFoundException::new);
+    Comment comment = createComment(body, article, author);
+    Profile authorProfile = profilesService.getProfile(author.getUsername(), author.getId());
+    return getComment(comment, authorProfile);
+  }
+
+  @Override
+  @Transactional
+  public void deleteComment(String slug, Long commentId, Long loggedUserId) {
+    Comment comment = commentRepository.findComment(slug, commentId, loggedUserId);
+    commentRepository.delete(comment);
+  }
+
+  private Comment createComment(String body, Article article, User author) {
+    Comment comment = new Comment();
+    comment.setArticle(article);
+    comment.setAuthor(author);
+    comment.setBody(body);
+    return commentRepository.create(comment);
+  }
+
+  private List<org.example.realworldapi.domain.entity.Comment> getComments(
+      List<Comment> comments, Profile profile) {
+    return comments.stream()
+        .map(comment -> getComment(comment, profile))
+        .collect(Collectors.toList());
+  }
+
+  private org.example.realworldapi.domain.entity.Comment getComment(
+      Comment comment, Profile profile) {
+    return new org.example.realworldapi.domain.entity.Comment(
+        comment.getId(),
+        comment.getCreatedAt(),
+        comment.getUpdatedAt(),
+        comment.getBody(),
+        profile);
   }
 
   private void configTitle(String title, Article article) {
