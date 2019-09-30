@@ -4,6 +4,7 @@ import com.github.slugify.Slugify;
 import org.example.realworldapi.domain.entity.Profile;
 import org.example.realworldapi.domain.entity.persistent.*;
 import org.example.realworldapi.domain.exception.ArticleNotFoundException;
+import org.example.realworldapi.domain.exception.FavoriteEntryNotFoundException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.*;
 import org.example.realworldapi.domain.resource.service.ArticlesService;
@@ -152,6 +153,63 @@ public class ArticlesServiceImpl implements ArticlesService {
   public void deleteComment(String slug, Long commentId, Long loggedUserId) {
     Comment comment = commentRepository.findComment(slug, commentId, loggedUserId);
     commentRepository.delete(comment);
+  }
+
+  @Override
+  @Transactional
+  public org.example.realworldapi.domain.entity.Article favoriteArticle(
+      String slug, Long loggedUserId) {
+
+    Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
+
+    if (!articlesUsersRepository.isFavorited(article.getId(), loggedUserId)) {
+
+      User loggedUser =
+          userRepository.findById(loggedUserId).orElseThrow(UserNotFoundException::new);
+
+      ArticlesUsers articlesUsers = getArticlesUsers(article, loggedUser);
+
+      articlesUsersRepository.create(articlesUsers);
+    }
+
+    return getArticle(article, loggedUserId);
+  }
+
+  @Override
+  @Transactional
+  public org.example.realworldapi.domain.entity.Article unfavoriteArticle(
+      String slug, Long loggedUserId) {
+
+    Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
+
+    if (articlesUsersRepository.isFavorited(article.getId(), loggedUserId)) {
+
+      User loggedUser =
+          userRepository.findById(loggedUserId).orElseThrow(UserNotFoundException::new);
+
+      ArticlesUsers articlesUsers =
+          articlesUsersRepository
+              .findById(getArticlesUsersKey(article, loggedUser))
+              .orElseThrow(FavoriteEntryNotFoundException::new);
+
+      articlesUsersRepository.remove(articlesUsers);
+    }
+
+    return getArticle(article, loggedUserId);
+  }
+
+  private ArticlesUsers getArticlesUsers(Article article, User loggedUser) {
+    ArticlesUsersKey articlesUsersKey = getArticlesUsersKey(article, loggedUser);
+    ArticlesUsers articlesUsers = new ArticlesUsers();
+    articlesUsers.setPrimaryKey(articlesUsersKey);
+    return articlesUsers;
+  }
+
+  private ArticlesUsersKey getArticlesUsersKey(Article article, User loggedUser) {
+    ArticlesUsersKey articlesUsersKey = new ArticlesUsersKey();
+    articlesUsersKey.setArticle(article);
+    articlesUsersKey.setUser(loggedUser);
+    return articlesUsersKey;
   }
 
   private Comment createComment(String body, Article article, User author) {

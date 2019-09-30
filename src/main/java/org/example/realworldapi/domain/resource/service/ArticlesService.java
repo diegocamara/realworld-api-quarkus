@@ -30,4 +30,8 @@ public interface ArticlesService {
   Comment createComment(String slug, String body, Long commentAuthorId);
 
   void deleteComment(String slug, Long commentId, Long loggedUserId);
+
+  Article favoriteArticle(String slug, Long loggedUserId);
+
+  Article unfavoriteArticle(String slug, Long loggedUserId);
 }

@@ -602,6 +602,103 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
         .statusCode(HttpStatus.SC_OK);
   }
 
+  @Test
+  public void
+      givenExistentArticle_whenExecuteFaroriteArticleEndpoint_shouldReturnFavoritedArticleWithStatusCode200() {
+
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+
+    Article article = createArticle(user, "Title", "Description", "Body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .pathParam("slug", article.getSlug())
+        .post(ARTICLES_PATH + "/{slug}/favorite")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "article.size()",
+            is(10),
+            "article",
+            hasKey("slug"),
+            "article.title",
+            is(article.getTitle()),
+            "article.description",
+            is(article.getDescription()),
+            "article.body",
+            is(article.getBody()),
+            "article",
+            hasKey("tagList"),
+            "article",
+            hasKey("createdAt"),
+            "article",
+            hasKey("updatedAt"),
+            "article.favorited",
+            is(true),
+            "article.favoritesCount",
+            is(1),
+            "article",
+            hasKey("author"));
+  }
+
+  @Test
+  public void
+      givenExistentArticleFavorited_whenExecuteUnfaroriteArticleEndpoint_shouldReturnUnfavoritedArticleWithStatusCode200() {
+
+    User loggedUser =
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+
+    Article article = createArticle(user, "Title", "Description", "Body");
+
+    favorite(article, loggedUser);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
+        .pathParam("slug", article.getSlug())
+        .delete(ARTICLES_PATH + "/{slug}/favorite")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "article.size()",
+            is(10),
+            "article",
+            hasKey("slug"),
+            "article.title",
+            is(article.getTitle()),
+            "article.description",
+            is(article.getDescription()),
+            "article.body",
+            is(article.getBody()),
+            "article",
+            hasKey("tagList"),
+            "article",
+            hasKey("createdAt"),
+            "article",
+            hasKey("updatedAt"),
+            "article.favorited",
+            is(false),
+            "article.favoritesCount",
+            is(0),
+            "article",
+            hasKey("author"));
+  }
+
+  private ArticlesUsers favorite(Article article, User user) {
+    return transaction(
+        () -> {
+          ArticlesUsers articlesUsers = getArticlesUsers(article, user);
+          entityManager.persist(articlesUsers);
+          return articlesUsers;
+        });
+  }
+
   private Comment createComment(User author, Article article, String body) {
     return transaction(
         () -> {
@@ -763,5 +860,19 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
           entityManager.merge(user);
           return user;
         });
+  }
+
+  private ArticlesUsers getArticlesUsers(Article article, User loggedUser) {
+    ArticlesUsersKey articlesUsersKey = getArticlesUsersKey(article, loggedUser);
+    ArticlesUsers articlesUsers = new ArticlesUsers();
+    articlesUsers.setPrimaryKey(articlesUsersKey);
+    return articlesUsers;
+  }
+
+  private ArticlesUsersKey getArticlesUsersKey(Article article, User loggedUser) {
+    ArticlesUsersKey articlesUsersKey = new ArticlesUsersKey();
+    articlesUsersKey.setArticle(article);
+    articlesUsersKey.setUser(loggedUser);
+    return articlesUsersKey;
   }
 }

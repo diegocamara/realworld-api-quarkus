@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -36,6 +37,18 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Long> implements 
   @Override
   public Tag create(Tag tag) {
     return persist(tag);
+  }
+
+  @Override
+  public List<Tag> findAll() {
+
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Tag> criteriaQuery = getCriteriaQuery(builder);
+    Root<Tag> tag = getRoot(criteriaQuery);
+
+    criteriaQuery.select(tag);
+
+    return getResultList(criteriaQuery);
   }
 
   @Override

@@ -9,6 +9,7 @@ import org.example.realworldapi.domain.repository.ArticlesUsersRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
+import java.util.Optional;
 
 @ApplicationScoped
 public class ArticlesUsersRepositoryImpl extends AbstractRepository<ArticlesUsers, ArticlesUsersKey>
@@ -52,6 +53,21 @@ public class ArticlesUsersRepositoryImpl extends AbstractRepository<ArticlesUser
     criteriaQuery.select(builder.count(articlesUsers));
     criteriaQuery.where(builder.equal(article.get("id"), articleId));
     return getSingleResult(criteriaQuery).intValue();
+  }
+
+  @Override
+  public ArticlesUsers create(ArticlesUsers articlesUsers) {
+    return persist(articlesUsers);
+  }
+
+  @Override
+  public Optional<ArticlesUsers> findById(ArticlesUsersKey articlesUsersKey) {
+    return Optional.ofNullable(entityManager.find(ArticlesUsers.class, articlesUsersKey));
+  }
+
+  @Override
+  public void remove(ArticlesUsers articlesUsers) {
+    entityManager.remove(articlesUsers);
   }
 
   @Override

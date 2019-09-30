@@ -164,9 +164,33 @@ public class ArticlesResource {
       @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
       @PathParam("id") @NotNull(message = "id must be not null") Long id,
       @Context SecurityContext securityContext) {
-    Long loggeduserId = getLoggedUserId(securityContext);
-    articlesService.deleteComment(slug, id, loggeduserId);
+    Long loggedUserId = getLoggedUserId(securityContext);
+    articlesService.deleteComment(slug, id, loggedUserId);
     return Response.ok().build();
+  }
+
+  @POST
+  @Path("/{slug}/favorite")
+  @Secured({Role.ADMIN, Role.USER})
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response favoriteArticle(
+      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @Context SecurityContext securityContext) {
+    Long loggedUserId = getLoggedUserId(securityContext);
+    Article article = articlesService.favoriteArticle(slug, loggedUserId);
+    return Response.ok(new ArticleDTO(article)).status(Response.Status.OK).build();
+  }
+
+  @DELETE
+  @Path("/{slug}/favorite")
+  @Secured({Role.ADMIN, Role.USER})
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response unfavoriteArticle(
+      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @Context SecurityContext securityContext) {
+    Long loggedUserId = getLoggedUserId(securityContext);
+    Article article = articlesService.unfavoriteArticle(slug, loggedUserId);
+    return Response.ok(new ArticleDTO(article)).status(Response.Status.OK).build();
   }
 
   private Long getLoggedUserId(SecurityContext securityContext) {
