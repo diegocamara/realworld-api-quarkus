@@ -2,11 +2,18 @@ package org.example.realworldapi.web.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.realworldapi.domain.constants.ValidationMessages;
 import org.example.realworldapi.domain.entity.Article;
 import org.example.realworldapi.domain.entity.Comment;
 import org.example.realworldapi.domain.resource.service.ArticlesService;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.web.dto.*;
+import org.example.realworldapi.web.model.request.NewArticleRequest;
+import org.example.realworldapi.web.model.request.NewCommentRequest;
+import org.example.realworldapi.web.model.request.UpdateArticleRequest;
+import org.example.realworldapi.web.model.response.ArticleResponse;
+import org.example.realworldapi.web.model.response.ArticlesResponse;
+import org.example.realworldapi.web.model.response.CommentResponse;
+import org.example.realworldapi.web.model.response.CommentsResponse;
 import org.example.realworldapi.web.qualifiers.NoWrapRootValueObjectMapper;
 import org.example.realworldapi.web.security.annotation.Secured;
 
@@ -44,7 +51,7 @@ public class ArticlesResource {
       throws JsonProcessingException {
     Long loggedUserId = getLoggedUserId(securityContext);
     List<Article> articles = articlesService.findRecentArticles(loggedUserId, offset, limit);
-    return Response.ok(objectMapper.writeValueAsString(new ArticlesDTO(articles)))
+    return Response.ok(objectMapper.writeValueAsString(new ArticlesResponse(articles)))
         .status(Response.Status.OK)
         .build();
   }
@@ -63,7 +70,7 @@ public class ArticlesResource {
     Long loggedUserId = getLoggedUserId(securityContext);
     List<Article> articles =
         articlesService.findArticles(offset, limit, loggedUserId, tags, authors, favorited);
-    return Response.ok(objectMapper.writeValueAsString(new ArticlesDTO(articles)))
+    return Response.ok(objectMapper.writeValueAsString(new ArticlesResponse(articles)))
         .status(Response.Status.OK)
         .build();
   }
@@ -73,26 +80,28 @@ public class ArticlesResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response create(
-      @Valid @NotNull(message = "request body must be not null") NewArticleDTO newArticleDTO,
+      @Valid @NotNull(message = ValidationMessages.REQUEST_BODY_MUST_BE_NOT_NULL)
+              NewArticleRequest newArticleRequest,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
     Article newArticle =
         articlesService.create(
-            newArticleDTO.getTitle(),
-            newArticleDTO.getDescription(),
-            newArticleDTO.getBody(),
-            newArticleDTO.getTagList(),
+            newArticleRequest.getTitle(),
+            newArticleRequest.getDescription(),
+            newArticleRequest.getBody(),
+            newArticleRequest.getTagList(),
             loggedUserId);
-    return Response.ok(new ArticleDTO(newArticle)).status(Response.Status.CREATED).build();
+    return Response.ok(new ArticleResponse(newArticle)).status(Response.Status.CREATED).build();
   }
 
   @GET
   @Path("/{slug}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response findBySlug(
-      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug) {
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK)
+          String slug) {
     Article article = articlesService.findBySlug(slug);
-    return Response.ok(new ArticleDTO(article)).status(Response.Status.OK).build();
+    return Response.ok(new ArticleResponse(article)).status(Response.Status.OK).build();
   }
 
   @PUT
@@ -102,17 +111,17 @@ public class ArticlesResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response update(
       @PathParam("slug") @NotBlank String slug,
-      @Valid @NotNull UpdateArticleDTO updateArticleDTO,
+      @Valid @NotNull UpdateArticleRequest updateArticleRequest,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
     Article updatedArticle =
         articlesService.update(
             slug,
-            updateArticleDTO.getTitle(),
-            updateArticleDTO.getDescription(),
-            updateArticleDTO.getBody(),
+            updateArticleRequest.getTitle(),
+            updateArticleRequest.getDescription(),
+            updateArticleRequest.getBody(),
             loggedUserId);
-    return Response.ok(new ArticleDTO(updatedArticle)).status(Response.Status.OK).build();
+    return Response.ok(new ArticleResponse(updatedArticle)).status(Response.Status.OK).build();
   }
 
   @DELETE
@@ -120,7 +129,7 @@ public class ArticlesResource {
   @Secured({Role.ADMIN, Role.USER})
   @Produces(MediaType.APPLICATION_JSON)
   public Response delete(
-      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
     articlesService.delete(slug, loggedUserId);
@@ -132,12 +141,12 @@ public class ArticlesResource {
   @Secured(optional = true)
   @Produces(MediaType.APPLICATION_JSON)
   public Response getCommentsBySlug(
-      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     Long loggedUserId = getLoggedUserId(securityContext);
     List<Comment> comments = articlesService.findCommentsBySlug(slug, loggedUserId);
-    return Response.ok(objectMapper.writeValueAsString(new CommentsDTO(comments)))
+    return Response.ok(objectMapper.writeValueAsString(new CommentsResponse(comments)))
         .status(Response.Status.OK)
         .build();
   }
@@ -148,12 +157,12 @@ public class ArticlesResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response createComment(
-      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
-      @Valid NewCommentDTO newCommentDTO,
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
+      @Valid NewCommentRequest newCommentRequest,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Comment comment = articlesService.createComment(slug, newCommentDTO.getBody(), loggedUserId);
-    return Response.ok(new CommentDTO(comment)).status(Response.Status.OK).build();
+    Comment comment = articlesService.createComment(slug, newCommentRequest.getBody(), loggedUserId);
+    return Response.ok(new CommentResponse(comment)).status(Response.Status.OK).build();
   }
 
   @DELETE
@@ -161,8 +170,8 @@ public class ArticlesResource {
   @Secured({Role.ADMIN, Role.USER})
   @Produces(MediaType.APPLICATION_JSON)
   public Response deleteComment(
-      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
-      @PathParam("id") @NotNull(message = "id must be not null") Long id,
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
+      @PathParam("id") @NotNull(message = ValidationMessages.COMMENT_ID_MUST_BE_NOT_NULL) Long id,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
     articlesService.deleteComment(slug, id, loggedUserId);
@@ -174,11 +183,11 @@ public class ArticlesResource {
   @Secured({Role.ADMIN, Role.USER})
   @Produces(MediaType.APPLICATION_JSON)
   public Response favoriteArticle(
-      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
     Article article = articlesService.favoriteArticle(slug, loggedUserId);
-    return Response.ok(new ArticleDTO(article)).status(Response.Status.OK).build();
+    return Response.ok(new ArticleResponse(article)).status(Response.Status.OK).build();
   }
 
   @DELETE
@@ -186,11 +195,11 @@ public class ArticlesResource {
   @Secured({Role.ADMIN, Role.USER})
   @Produces(MediaType.APPLICATION_JSON)
   public Response unfavoriteArticle(
-      @PathParam("slug") @NotBlank(message = "slug must be not blank") String slug,
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
     Article article = articlesService.unfavoriteArticle(slug, loggedUserId);
-    return Response.ok(new ArticleDTO(article)).status(Response.Status.OK).build();
+    return Response.ok(new ArticleResponse(article)).status(Response.Status.OK).build();
   }
 
   private Long getLoggedUserId(SecurityContext securityContext) {

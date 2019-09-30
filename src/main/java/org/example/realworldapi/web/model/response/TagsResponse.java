@@ -1,4 +1,4 @@
-package org.example.realworldapi.web.dto;
+package org.example.realworldapi.web.model.response;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @RegisterForReflection
-public class TagsDTO {
+public class TagsResponse {
 
   private List<String> tags;
 
-  public TagsDTO(List<Tag> tags) {
+  public TagsResponse(List<Tag> tags) {
     this.tags = tags.stream().map(Tag::getName).collect(Collectors.toList());
   }
 }

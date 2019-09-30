@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.realworldapi.domain.entity.persistent.Tag;
 import org.example.realworldapi.domain.resource.service.TagsService;
-import org.example.realworldapi.web.dto.TagsDTO;
+import org.example.realworldapi.web.model.response.TagsResponse;
 import org.example.realworldapi.web.qualifiers.NoWrapRootValueObjectMapper;
 
 import javax.ws.rs.GET;
@@ -30,7 +30,7 @@ public class TagsResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getTags() throws JsonProcessingException {
     List<Tag> tags = tagsService.findTags();
-    return Response.ok(objectMapper.writeValueAsString(new TagsDTO(tags)))
+    return Response.ok(objectMapper.writeValueAsString(new TagsResponse(tags)))
         .status(Response.Status.OK)
         .build();
   }

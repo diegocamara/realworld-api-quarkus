@@ -1,7 +1,7 @@
 package org.example.realworldapi.web.mapper;
 
 import org.example.realworldapi.domain.exception.*;
-import org.example.realworldapi.web.dto.ErrorResponseDTO;
+import org.example.realworldapi.web.model.response.ErrorResponse;
 import org.example.realworldapi.web.exception.ResourceNotFoundException;
 import org.example.realworldapi.web.exception.UnauthorizedException;
 
@@ -63,7 +63,7 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
   }
 
   private Response errorResponse(String errorMessage, int httpStatusCode) {
-    return Response.ok(new ErrorResponseDTO(errorMessage)).status(httpStatusCode).build();
+    return Response.ok(new ErrorResponse(errorMessage)).status(httpStatusCode).build();
   }
 
   @Override

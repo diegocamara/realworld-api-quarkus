@@ -1,14 +1,16 @@
 package org.example.realworldapi.web.resource;
 
+import org.example.realworldapi.domain.constants.ValidationMessages;
 import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.resource.service.UsersService;
-import org.example.realworldapi.web.dto.LoginDTO;
-import org.example.realworldapi.web.dto.NewUserDTO;
-import org.example.realworldapi.web.dto.UserDTO;
+import org.example.realworldapi.web.model.request.LoginRequest;
+import org.example.realworldapi.web.model.request.NewUserRequest;
+import org.example.realworldapi.web.model.response.UserResponse;
 import org.example.realworldapi.web.exception.UnauthorizedException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -29,24 +31,29 @@ public class UsersResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response create(@Valid NewUserDTO newUserDTO, @Context SecurityException context) {
+  public Response create(
+      @Valid @NotNull(message = ValidationMessages.REQUEST_BODY_MUST_BE_NOT_NULL)
+              NewUserRequest newUserRequest,
+      @Context SecurityException context) {
     User createdUser =
         usersService.create(
-            newUserDTO.getUsername(), newUserDTO.getEmail(), newUserDTO.getPassword());
-    return Response.ok(new UserDTO(createdUser)).status(Response.Status.CREATED).build();
+            newUserRequest.getUsername(), newUserRequest.getEmail(), newUserRequest.getPassword());
+    return Response.ok(new UserResponse(createdUser)).status(Response.Status.CREATED).build();
   }
 
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response login(@Valid LoginDTO loginDTO) {
+  public Response login(
+      @Valid @NotNull(message = ValidationMessages.REQUEST_BODY_MUST_BE_NOT_NULL)
+              LoginRequest loginRequest) {
     User existingUser;
     try {
-      existingUser = usersService.login(loginDTO.getEmail(), loginDTO.getPassword());
+      existingUser = usersService.login(loginRequest.getEmail(), loginRequest.getPassword());
     } catch (UserNotFoundException ex) {
       throw new UnauthorizedException();
     }
-    return Response.ok(new UserDTO(existingUser)).status(Response.Status.OK).build();
+    return Response.ok(new UserResponse(existingUser)).status(Response.Status.OK).build();
   }
 }

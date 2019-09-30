@@ -1,4 +1,4 @@
-package org.example.realworldapi.web.dto;
+package org.example.realworldapi.web.model.request;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -13,7 +13,7 @@ import org.example.realworldapi.web.validation.constraint.AtLeastOneFieldMustBeN
 @JsonRootName("article")
 @AtLeastOneFieldMustBeNotNull
 @RegisterForReflection
-public class UpdateArticleDTO {
+public class UpdateArticleRequest {
 
   private String title;
 

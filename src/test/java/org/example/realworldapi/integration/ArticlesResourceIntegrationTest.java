@@ -1,30 +1,22 @@
 package org.example.realworldapi.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.slugify.Slugify;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
-import org.example.realworldapi.DatabaseIntegrationTest;
-import org.example.realworldapi.domain.builder.ArticleBuilder;
-import org.example.realworldapi.domain.entity.persistent.*;
+import org.example.realworldapi.AbstractIntegrationTest;
+import org.example.realworldapi.domain.entity.persistent.Article;
+import org.example.realworldapi.domain.entity.persistent.Comment;
+import org.example.realworldapi.domain.entity.persistent.Tag;
+import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.domain.service.JWTService;
-import org.example.realworldapi.util.InsertResult;
-import org.example.realworldapi.util.UserUtils;
-import org.example.realworldapi.web.dto.NewArticleDTO;
-import org.example.realworldapi.web.dto.NewCommentDTO;
-import org.example.realworldapi.web.dto.UpdateArticleDTO;
+import org.example.realworldapi.web.model.request.NewArticleRequest;
+import org.example.realworldapi.web.model.request.NewCommentRequest;
+import org.example.realworldapi.web.model.request.UpdateArticleRequest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
-import javax.persistence.TemporalType;
 import javax.ws.rs.core.MediaType;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -32,19 +24,10 @@ import static org.example.realworldapi.constants.TestConstants.*;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
-public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
+public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
 
   private final String ARTICLES_PATH = API_PREFIX + "/articles";
   private final String FEED_PATH = ARTICLES_PATH + "/feed";
-
-  @Inject private ObjectMapper objectMapper;
-  @Inject private JWTService jwtService;
-  @Inject private Slugify slugify;
-
-  @BeforeEach
-  public void beforeEach() {
-    clear();
-  }
 
   @Test
   public void shouldReturn401WhenExecuteFeedEndpointWithoutAuthorization() {
@@ -69,19 +52,17 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
     User follower1 =
         createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123", Role.USER);
 
-    InsertResult<Article> insertResult = new InsertResult<>();
-
-    createArticles(follower1, "Title", "Description", "Body", 10, insertResult);
+    List<Article> articlesFollower = createArticles(follower1, "Title", "Description", "Body", 10);
 
     Tag tag1 = createTag("Tag 1");
 
     Tag tag2 = createTag("Tag 2");
 
-    createArticlesTags(insertResult.getResults(), tag1, tag2);
+    createArticlesTags(articlesFollower, tag1, tag2);
 
     User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
 
-    createArticles(user, "Title", "Description", "Body", 4, insertResult);
+    createArticles(user, "Title", "Description", "Body", 4);
 
     follow(loggedUser, follower1);
 
@@ -130,13 +111,11 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
     User follower1 =
         createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123", Role.USER);
 
-    InsertResult<Article> insertResult = new InsertResult<>();
-
-    createArticles(follower1, "Title", "Description", "Body", 8, insertResult);
+    createArticles(follower1, "Title", "Description", "Body", 8);
 
     User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
 
-    createArticles(user, "Title", "Description", "Body", 4, insertResult);
+    createArticles(user, "Title", "Description", "Body", 4);
 
     follow(loggedUser, follower1);
 
@@ -183,13 +162,11 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
     User follower1 =
         createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123", Role.USER);
 
-    InsertResult<Article> insertResult = new InsertResult<>();
-
-    createArticles(follower1, "Title", "Description", "Body", 5, insertResult);
+    createArticles(follower1, "Title", "Description", "Body", 5);
 
     User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
 
-    createArticles(user, "Title", "Description", "Body", 4, insertResult);
+    createArticles(user, "Title", "Description", "Body", 4);
 
     follow(loggedUser, follower1);
 
@@ -238,13 +215,11 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
     User follower1 =
         createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123", Role.USER);
 
-    InsertResult<Article> insertResult = new InsertResult<>();
-
-    createArticles(follower1, "Title", "Description", "Body", 2, insertResult);
+    createArticles(follower1, "Title", "Description", "Body", 2);
 
     User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
 
-    createArticles(user, "Title", "Description", "Body", 18, insertResult);
+    createArticles(user, "Title", "Description", "Body", 18);
 
     follow(loggedUser, follower1);
 
@@ -290,21 +265,18 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
     User loggedUser =
         createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
 
-    InsertResult<Article> insertResult = new InsertResult<>();
-
-    createArticles(loggedUser, "Title", "Description", "Body", 5, insertResult);
+    List<Article> articlesLoggedUser =
+        createArticles(loggedUser, "Title", "Description", "Body", 5);
 
     Tag tag1 = createTag("Tag 1");
 
-    createArticlesTags(insertResult.getResults(), tag1);
+    createArticlesTags(articlesLoggedUser, tag1);
 
-    insertResult = new InsertResult<>(insertResult.getNextValue());
-
-    createArticles(loggedUser, "Title", "Description", "Body", 5, insertResult);
+    articlesLoggedUser = createArticles(loggedUser, "Title", "Description", "Body", 5);
 
     Tag tag2 = createTag("Tag 2");
 
-    createArticlesTags(insertResult.getResults(), tag2);
+    createArticlesTags(articlesLoggedUser, tag2);
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
@@ -357,12 +329,12 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
     User loggedUser =
         createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
 
-    NewArticleDTO newArticleDTO = createNewArticle("Title", "Description", "Body");
+    NewArticleRequest newArticleRequest = createNewArticle("Title", "Description", "Body");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-        .body(objectMapper.writeValueAsString(newArticleDTO))
+        .body(objectMapper.writeValueAsString(newArticleRequest))
         .post(ARTICLES_PATH)
         .then()
         .statusCode(HttpStatus.SC_CREATED)
@@ -372,11 +344,11 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
             "article",
             hasKey("slug"),
             "article.title",
-            is(newArticleDTO.getTitle()),
+            is(newArticleRequest.getTitle()),
             "article.description",
-            is(newArticleDTO.getDescription()),
+            is(newArticleRequest.getDescription()),
             "article.body",
-            is(newArticleDTO.getBody()),
+            is(newArticleRequest.getBody()),
             "article",
             hasKey("tagList"),
             "article",
@@ -404,14 +376,14 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
     String tag3 = "Tag 3";
     String tag4 = "Tag 4";
 
-    NewArticleDTO newArticleDTO =
+    NewArticleRequest newArticleRequest =
         createNewArticle(
             "Title 1", "Description", "Body", tag1.getName(), tag2.getName(), tag3, tag4);
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-        .body(objectMapper.writeValueAsString(newArticleDTO))
+        .body(objectMapper.writeValueAsString(newArticleRequest))
         .post(ARTICLES_PATH)
         .then()
         .statusCode(HttpStatus.SC_CREATED)
@@ -421,11 +393,11 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
             "article",
             hasKey("slug"),
             "article.title",
-            is(newArticleDTO.getTitle()),
+            is(newArticleRequest.getTitle()),
             "article.description",
-            is(newArticleDTO.getDescription()),
+            is(newArticleRequest.getDescription()),
             "article.body",
-            is(newArticleDTO.getBody()),
+            is(newArticleRequest.getBody()),
             "article.tagList",
             hasItems(tag1.getName(), tag2.getName(), tag3, tag4),
             "article",
@@ -472,26 +444,26 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
         createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
     Article article = createArticle(loggedUser, "Title", "Description", "Body");
 
-    UpdateArticleDTO updateArticleDTO = new UpdateArticleDTO();
-    updateArticleDTO.setTitle("updated title");
-    updateArticleDTO.setDescription("updated description");
-    updateArticleDTO.setBody("updated body");
+    UpdateArticleRequest updateArticleRequest = new UpdateArticleRequest();
+    updateArticleRequest.setTitle("updated title");
+    updateArticleRequest.setDescription("updated description");
+    updateArticleRequest.setBody("updated body");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-        .body(objectMapper.writeValueAsString(updateArticleDTO))
+        .body(objectMapper.writeValueAsString(updateArticleRequest))
         .pathParam("slug", article.getSlug())
         .put(ARTICLES_PATH + "/{slug}")
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body(
             "article.title",
-            is(updateArticleDTO.getTitle()),
+            is(updateArticleRequest.getTitle()),
             "article.description",
-            is(updateArticleDTO.getDescription()),
+            is(updateArticleRequest.getDescription()),
             "article.body",
-            is(updateArticleDTO.getBody()));
+            is(updateArticleRequest.getBody()));
   }
 
   @Test
@@ -552,14 +524,14 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
         createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
     Article article = createArticle(loggedUser, "Title", "Description", "Body");
 
-    NewCommentDTO newCommentDTO = new NewCommentDTO();
-    newCommentDTO.setBody("comment body");
+    NewCommentRequest newCommentRequest = new NewCommentRequest();
+    newCommentRequest.setBody("comment body");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
         .pathParam("slug", article.getSlug())
-        .body(objectMapper.writeValueAsString(newCommentDTO))
+        .body(objectMapper.writeValueAsString(newCommentRequest))
         .post(ARTICLES_PATH + "/{slug}/comments")
         .then()
         .statusCode(HttpStatus.SC_OK)
@@ -573,7 +545,7 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
             "comment",
             hasKey("updatedAt"),
             "comment.body",
-            is(newCommentDTO.getBody()),
+            is(newCommentRequest.getBody()),
             "comment.author.username",
             is(loggedUser.getUsername()));
   }
@@ -690,189 +662,13 @@ public class ArticlesResourceIntegrationTest extends DatabaseIntegrationTest {
             hasKey("author"));
   }
 
-  private ArticlesUsers favorite(Article article, User user) {
-    return transaction(
-        () -> {
-          ArticlesUsers articlesUsers = getArticlesUsers(article, user);
-          entityManager.persist(articlesUsers);
-          return articlesUsers;
-        });
-  }
-
-  private Comment createComment(User author, Article article, String body) {
-    return transaction(
-        () -> {
-          Comment comment = new Comment();
-          comment.setBody(body);
-          comment.setArticle(article);
-          comment.setAuthor(author);
-          entityManager.persist(comment);
-          return comment;
-        });
-  };
-
-  private NewArticleDTO createNewArticle(
+  private NewArticleRequest createNewArticle(
       String title, String description, String body, String... tagList) {
-    NewArticleDTO newArticleDTO = new NewArticleDTO();
-    newArticleDTO.setTitle(title);
-    newArticleDTO.setDescription(description);
-    newArticleDTO.setBody(body);
-    newArticleDTO.setTagList(Arrays.asList(tagList));
-    return newArticleDTO;
-  }
-
-  private List<Article> createArticles(
-      User author, String title, String description, String body, int quantity) {
-    return transaction(
-        () -> {
-          List<Article> articles = new LinkedList<>();
-
-          for (int articleIndex = 0; articleIndex < quantity; articleIndex++) {
-            articles.add(
-                createArticle(
-                    author,
-                    title + "_" + articleIndex,
-                    description + "_" + articleIndex,
-                    body + "_" + articleIndex));
-          }
-
-          return articles;
-        });
-  }
-
-  private Article createArticle(User author, String title, String description, String body) {
-    return transaction(
-        () -> {
-          Article article =
-              new ArticleBuilder()
-                  .title(title)
-                  .slug(slugify.slugify(title))
-                  .description(description)
-                  .body(body)
-                  .author(author)
-                  .build();
-          entityManager.persist(article);
-          return article;
-        });
-  }
-
-  private void createArticles(
-      User author,
-      String title,
-      String description,
-      String body,
-      int quantity,
-      InsertResult<Article> insertResult) {
-
-    transaction(
-        () -> {
-          for (int articleIndex = 0; articleIndex < quantity; articleIndex++) {
-
-            Article article =
-                new ArticleBuilder()
-                    .title(title + "_" + articleIndex)
-                    .description(description + "_" + articleIndex)
-                    .body(body + "_" + articleIndex)
-                    .build();
-            int id = insertResult.add(article);
-            article.setId((long) id);
-            Date date = new Date();
-
-            entityManager
-                .createNativeQuery(
-                    "INSERT INTO ARTICLES (ID, TITLE, DESCRIPTION, BODY, CREATEDAT, UPDATEDAT, AUTHOR_ID) VALUES (?, ?, ?, ?, ?, ?, ?)")
-                .setParameter(1, id)
-                .setParameter(2, article.getTitle())
-                .setParameter(3, article.getDescription())
-                .setParameter(4, article.getBody())
-                .setParameter(5, date, TemporalType.TIMESTAMP)
-                .setParameter(6, date, TemporalType.TIMESTAMP)
-                .setParameter(7, author.getId())
-                .executeUpdate();
-          }
-        });
-  }
-
-  private void follow(User currentUser, User... followers) {
-
-    transaction(
-        () -> {
-          User user = entityManager.find(User.class, currentUser.getId());
-
-          for (User follower : followers) {
-            UsersFollowersKey key = new UsersFollowersKey();
-            key.setUser(user);
-            key.setFollower(follower);
-
-            UsersFollowers usersFollowers = new UsersFollowers();
-            usersFollowers.setPrimaryKey(key);
-            entityManager.persist(usersFollowers);
-          }
-
-          entityManager.persist(user);
-        });
-  }
-
-  private Tag createTag(String name) {
-    return transaction(
-        () -> {
-          Tag tag = new Tag(name);
-          entityManager.persist(tag);
-          return tag;
-        });
-  }
-
-  private List<ArticlesTags> createArticlesTags(List<Article> articles, Tag... tags) {
-    return transaction(
-        () -> {
-          List<ArticlesTags> resultList = new LinkedList<>();
-
-          for (Article article : articles) {
-
-            Article managedArticle = entityManager.find(Article.class, article.getId());
-
-            for (Tag tag : tags) {
-              Tag managedTag = entityManager.find(Tag.class, tag.getId());
-
-              ArticlesTagsKey articlesTagsKey = new ArticlesTagsKey();
-              articlesTagsKey.setArticle(managedArticle);
-              articlesTagsKey.setTag(managedTag);
-
-              ArticlesTags articlesTags = new ArticlesTags();
-              articlesTags.setPrimaryKey(articlesTagsKey);
-
-              entityManager.persist(articlesTags);
-              resultList.add(articlesTags);
-            }
-          }
-
-          return resultList;
-        });
-  }
-
-  private User createUser(
-      String username, String email, String bio, String image, String password, Role... role) {
-    return transaction(
-        () -> {
-          User user = UserUtils.create(username, email, password, bio, image);
-          entityManager.persist(user);
-          user.setToken(jwtService.sign(user.getId().toString(), role));
-          entityManager.merge(user);
-          return user;
-        });
-  }
-
-  private ArticlesUsers getArticlesUsers(Article article, User loggedUser) {
-    ArticlesUsersKey articlesUsersKey = getArticlesUsersKey(article, loggedUser);
-    ArticlesUsers articlesUsers = new ArticlesUsers();
-    articlesUsers.setPrimaryKey(articlesUsersKey);
-    return articlesUsers;
-  }
-
-  private ArticlesUsersKey getArticlesUsersKey(Article article, User loggedUser) {
-    ArticlesUsersKey articlesUsersKey = new ArticlesUsersKey();
-    articlesUsersKey.setArticle(article);
-    articlesUsersKey.setUser(loggedUser);
-    return articlesUsersKey;
+    NewArticleRequest newArticleRequest = new NewArticleRequest();
+    newArticleRequest.setTitle(title);
+    newArticleRequest.setDescription(description);
+    newArticleRequest.setBody(body);
+    newArticleRequest.setTagList(Arrays.asList(tagList));
+    return newArticleRequest;
   }
 }

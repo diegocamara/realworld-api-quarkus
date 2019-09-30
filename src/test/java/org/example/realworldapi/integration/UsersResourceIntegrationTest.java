@@ -1,23 +1,18 @@
 package org.example.realworldapi.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
-import org.example.realworldapi.DatabaseIntegrationTest;
+import org.example.realworldapi.AbstractIntegrationTest;
 import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.domain.service.JWTService;
-import org.example.realworldapi.util.UserUtils;
-import org.example.realworldapi.web.dto.LoginDTO;
-import org.example.realworldapi.web.dto.NewUserDTO;
-import org.example.realworldapi.web.dto.UserDTO;
+import org.example.realworldapi.web.model.request.LoginRequest;
+import org.example.realworldapi.web.model.request.NewUserRequest;
+import org.example.realworldapi.web.model.response.UserResponse;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
@@ -26,26 +21,17 @@ import static org.example.realworldapi.constants.TestConstants.API_PREFIX;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
-public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
+public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
 
   private final String USERS_RESOURCE_PATH = API_PREFIX + "/users";
   private final String LOGIN_PATH = USERS_RESOURCE_PATH + "/login";
-
-  @Inject private ObjectMapper objectMapper;
-
-  @Inject private JWTService jwtService;
-
-  @AfterEach
-  public void afterEach() {
-    clear();
-  }
 
   @Test
   public void
       givenAValidUser_whenCallingRegisterUserEndpoint_thenReturnAnUserWithTokenFieldAndCode201()
           throws JsonProcessingException {
 
-    NewUserDTO newUser = new NewUserDTO();
+    NewUserRequest newUser = new NewUserRequest();
     newUser.setUsername("user");
     newUser.setEmail("user@mail.com");
     newUser.setPassword("user123");
@@ -81,9 +67,9 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", userPassword, Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword, Role.USER);
 
-    NewUserDTO newUser = new NewUserDTO();
+    NewUserRequest newUser = new NewUserRequest();
     newUser.setUsername("user2");
     newUser.setEmail(user.getEmail());
     newUser.setPassword("user123");
@@ -105,9 +91,9 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", userPassword, Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword, Role.USER);
 
-    NewUserDTO newUser = new NewUserDTO();
+    NewUserRequest newUser = new NewUserRequest();
     newUser.setUsername(user.getUsername());
     newUser.setEmail("user2@mail.com");
     newUser.setPassword("user123");
@@ -125,7 +111,7 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
   @Test
   public void givenAnInvalidUser_thenReturnErrorsWith422Code() throws JsonProcessingException {
 
-    NewUserDTO newUser = new NewUserDTO();
+    NewUserRequest newUser = new NewUserRequest();
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
@@ -147,7 +133,7 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
   @Test
   public void givenAnInvalidEmail_thenReturnErrorsWith422Code() throws JsonProcessingException {
 
-    NewUserDTO newUser = new NewUserDTO();
+    NewUserRequest newUser = new NewUserRequest();
     newUser.setUsername("username");
     newUser.setEmail("email");
     newUser.setPassword("user123");
@@ -172,16 +158,16 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", userPassword, Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword, Role.USER);
 
-    LoginDTO loginDTO = new LoginDTO();
-    loginDTO.setEmail(user.getEmail());
-    loginDTO.setPassword(userPassword);
+    LoginRequest loginRequest = new LoginRequest();
+    loginRequest.setEmail(user.getEmail());
+    loginRequest.setPassword(userPassword);
 
     String resultUserJson =
         given()
             .contentType(MediaType.APPLICATION_JSON)
-            .body(objectMapper.writeValueAsString(loginDTO))
+            .body(objectMapper.writeValueAsString(loginRequest))
             .when()
             .post(LOGIN_PATH)
             .then()
@@ -198,13 +184,13 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
                 "user.token",
                 is(not(user.getToken())),
                 "user.bio",
-                Matchers.nullValue(),
+                is(user.getBio()),
                 "user.image",
-                Matchers.nullValue())
+                is(user.getImage()))
             .extract()
             .asString();
 
-    UserDTO resultUser = objectMapper.readValue(resultUserJson, UserDTO.class);
+    UserResponse resultUser = objectMapper.readValue(resultUserJson, UserResponse.class);
 
     User persistedUser = transaction(() -> entityManager.find(User.class, user.getId()));
 
@@ -215,11 +201,11 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
   public void givenAInvalidLogin_whenExecuteLoginEndpoint_shouldReturnErrorsWith422Code()
       throws JsonProcessingException {
 
-    LoginDTO loginDTO = new LoginDTO();
+    LoginRequest loginRequest = new LoginRequest();
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
-        .body(objectMapper.writeValueAsString(loginDTO))
+        .body(objectMapper.writeValueAsString(loginRequest))
         .when()
         .post(LOGIN_PATH)
         .then()
@@ -233,15 +219,15 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", userPassword, Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword, Role.USER);
 
-    LoginDTO loginDTO = new LoginDTO();
-    loginDTO.setEmail("user2@mail.com");
-    loginDTO.setPassword(userPassword);
+    LoginRequest loginRequest = new LoginRequest();
+    loginRequest.setEmail("user2@mail.com");
+    loginRequest.setPassword(userPassword);
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
-        .body(objectMapper.writeValueAsString(loginDTO))
+        .body(objectMapper.writeValueAsString(loginRequest))
         .when()
         .post(LOGIN_PATH)
         .then()
@@ -253,30 +239,19 @@ public class UsersResourceIntegrationTest extends DatabaseIntegrationTest {
   public void givenAInvalidLoginPassword_whenExecuteLoginEndpoint_shouldReturnUnauthorized()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "123", "bio", "image", Role.USER);
 
-    LoginDTO loginDTO = new LoginDTO();
-    loginDTO.setEmail(user.getEmail());
-    loginDTO.setPassword("145");
+    LoginRequest loginRequest = new LoginRequest();
+    loginRequest.setEmail(user.getEmail());
+    loginRequest.setPassword("145");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
-        .body(objectMapper.writeValueAsString(loginDTO))
+        .body(objectMapper.writeValueAsString(loginRequest))
         .when()
         .post(LOGIN_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNAUTHORIZED)
         .body("errors.body", hasItems("UNAUTHORIZED"));
-  }
-
-  private User createUser(String username, String email, String password, Role... role) {
-    return transaction(
-        () -> {
-          User user = UserUtils.create(username, email, password);
-          entityManager.persist(user);
-          user.setToken(jwtService.sign(user.getId().toString(), role));
-          entityManager.merge(user);
-          return user;
-        });
   }
 }

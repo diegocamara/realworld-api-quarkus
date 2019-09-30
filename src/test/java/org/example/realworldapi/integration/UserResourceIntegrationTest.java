@@ -1,20 +1,16 @@
 package org.example.realworldapi.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
-import org.example.realworldapi.DatabaseIntegrationTest;
+import org.example.realworldapi.AbstractIntegrationTest;
 import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.domain.service.JWTService;
 import org.example.realworldapi.util.UserUtils;
-import org.example.realworldapi.web.dto.UpdateUserDTO;
+import org.example.realworldapi.web.model.request.UpdateUserRequest;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
@@ -22,28 +18,17 @@ import static org.example.realworldapi.constants.TestConstants.*;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
-public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
+public class UserResourceIntegrationTest extends AbstractIntegrationTest {
 
   private final String USER_RESOURCE_PATH = API_PREFIX + "/user";
-
-  @Inject private ObjectMapper objectMapper;
-
-  @Inject private JWTService jwtService;
-
-  @AfterEach
-  public void afterEach() {
-    clear();
-  }
 
   @Test
   public void givenAValidToken_whenExecuteGetUserEndpoint_shouldReturnLoggedInUser() {
 
-    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
-
-    String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
 
     given()
-        .header(AUTHORIZATION_HEADER, authorizationHeader)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken())
         .contentType(MediaType.APPLICATION_JSON)
         .get(USER_RESOURCE_PATH)
         .then()
@@ -60,9 +45,9 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
             "user.token",
             Matchers.notNullValue(),
             "user.bio",
-            Matchers.nullValue(),
+            is(user.getBio()),
             "user.image",
-            Matchers.nullValue());
+            is(user.getImage()));
   }
 
   @Test
@@ -100,18 +85,18 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
   public void givenAExistentUser_whenExecuteUpdateUserEndpoint_shouldReturnUpdatedUser()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
-    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-    updateUserDTO.setUsername("user2");
-    updateUserDTO.setEmail(user.getEmail());
+    UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+    updateUserRequest.setUsername("user2");
+    updateUserRequest.setEmail(user.getEmail());
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, authorizationHeader)
-        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .body(objectMapper.writeValueAsString(updateUserRequest))
         .put(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_OK)
@@ -121,31 +106,31 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
             "user.password",
             Matchers.nullValue(),
             "user.username",
-            is(updateUserDTO.getUsername()),
+            is(updateUserRequest.getUsername()),
             "user.email",
             Matchers.notNullValue(),
             "user.token",
             Matchers.notNullValue(),
             "user.bio",
-            Matchers.nullValue(),
+            is(user.getBio()),
             "user.image",
-            Matchers.nullValue());
+            is(user.getImage()));
   }
 
   @Test
   public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyBody_shouldReturn422()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
-    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+    UpdateUserRequest updateUserRequest = new UpdateUserRequest();
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, authorizationHeader)
-        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .body(objectMapper.writeValueAsString(updateUserRequest))
         .put(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
@@ -156,19 +141,20 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
   public void givenAnotherExistingUsername_whenExecuteUpdateUserEndpoint_shouldReturn409()
       throws JsonProcessingException {
 
-    User otherUser = createUser("user", "user@mail.com", "123", Role.USER);
+    User otherUser = createUser("user", "user@mail.com", "bio", "image", "123", Role.USER);
 
-    User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
+    User currentUser =
+        createUser("currentUser", "current@mail.com", "bio", "image", "123", Role.USER);
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + currentUser.getToken();
 
-    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-    updateUserDTO.setUsername(otherUser.getUsername());
+    UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+    updateUserRequest.setUsername(otherUser.getUsername());
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, authorizationHeader)
-        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .body(objectMapper.writeValueAsString(updateUserRequest))
         .put(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_CONFLICT)
@@ -179,19 +165,20 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
   public void givenAnotherExistingEmail_whenExecuteUpdateUserEndpoint_shouldReturn409()
       throws JsonProcessingException {
 
-    User otherUser = createUser("user", "user@mail.com", "123", Role.USER);
+    User otherUser = createUser("user", "user@mail.com", "bio", "image", "123", Role.USER);
 
-    User currentUser = createUser("currentUser", "current@mail.com", "123", Role.USER);
+    User currentUser =
+        createUser("currentUser", "current@mail.com", "bio", "image", "123", Role.USER);
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + currentUser.getToken();
 
-    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-    updateUserDTO.setEmail(otherUser.getEmail());
+    UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+    updateUserRequest.setEmail(otherUser.getEmail());
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, authorizationHeader)
-        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .body(objectMapper.writeValueAsString(updateUserRequest))
         .put(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_CONFLICT)
@@ -202,17 +189,17 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
   public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyUsername_shouldReturn422()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
-    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-    updateUserDTO.setUsername("");
+    UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+    updateUserRequest.setUsername("");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, authorizationHeader)
-        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .body(objectMapper.writeValueAsString(updateUserRequest))
         .put(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
@@ -223,17 +210,17 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
   public void givenAExistentUser_whenExecuteUpdateUserEndpointWithInvalidEmail_shouldReturn422()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
-    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-    updateUserDTO.setEmail("email");
+    UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+    updateUserRequest.setEmail("email");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, authorizationHeader)
-        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .body(objectMapper.writeValueAsString(updateUserRequest))
         .put(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
@@ -248,31 +235,20 @@ public class UserResourceIntegrationTest extends DatabaseIntegrationTest {
   public void givenAExistentUser_whenExecuteUpdateUserEndpointWithBlankUsername_shouldReturn422()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
-    UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-    updateUserDTO.setUsername(" ");
+    UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+    updateUserRequest.setUsername(" ");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
         .header(AUTHORIZATION_HEADER, authorizationHeader)
-        .body(objectMapper.writeValueAsString(updateUserDTO))
+        .body(objectMapper.writeValueAsString(updateUserRequest))
         .put(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY)
         .body("errors.body", hasItems("username must be not blank"));
-  }
-
-  private User createUser(String username, String email, String password, Role... role) {
-    return transaction(
-        () -> {
-          User user = UserUtils.create(username, email, password);
-          entityManager.persist(user);
-          user.setToken(jwtService.sign(user.getId().toString(), role));
-          entityManager.merge(user);
-          return user;
-        });
   }
 }

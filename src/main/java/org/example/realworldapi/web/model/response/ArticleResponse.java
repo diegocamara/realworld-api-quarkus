@@ -1,4 +1,4 @@
-package org.example.realworldapi.web.dto;
+package org.example.realworldapi.web.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @JsonRootName("article")
 @RegisterForReflection
-public class ArticleDTO {
+public class ArticleResponse {
 
   private String slug;
   private String title;
@@ -35,7 +35,7 @@ public class ArticleDTO {
   private int favoritesCount;
   private Profile author;
 
-  public ArticleDTO(Article article) {
+  public ArticleResponse(Article article) {
     this.slug = article.getSlug();
     this.title = article.getTitle();
     this.description = article.getDescription();

@@ -1,4 +1,4 @@
-package org.example.realworldapi.web.dto;
+package org.example.realworldapi.web.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @JsonRootName("comment")
 @RegisterForReflection
-@NoArgsConstructor
-public class CommentDTO {
+public class CommentResponse {
 
   private Long id;
 
@@ -29,7 +29,7 @@ public class CommentDTO {
   private String body;
   private Profile author;
 
-  public CommentDTO(Comment comment) {
+  public CommentResponse(Comment comment) {
     this.id = comment.getId();
     this.createdAt = comment.getCreatedAt();
     this.updatedAt = comment.getUpdatedAt();

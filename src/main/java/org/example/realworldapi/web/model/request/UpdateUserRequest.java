@@ -1,9 +1,10 @@
-package org.example.realworldapi.web.dto;
+package org.example.realworldapi.web.model.request;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.realworldapi.domain.constants.ValidationMessages;
 import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.web.validation.constraint.AtLeastOneFieldMustBeNotNull;
 
@@ -15,9 +16,9 @@ import javax.validation.constraints.Pattern;
 @JsonRootName("user")
 @AtLeastOneFieldMustBeNotNull
 @RegisterForReflection
-public class UpdateUserDTO {
+public class UpdateUserRequest {
 
-  @Pattern(regexp = "\\A(?!\\s*\\Z).+", message = "username must be not blank")
+  @Pattern(regexp = "\\A(?!\\s*\\Z).+", message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
   private String username;
 
   private String bio;

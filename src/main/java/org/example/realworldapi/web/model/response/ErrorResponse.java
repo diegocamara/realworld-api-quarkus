@@ -1,4 +1,4 @@
-package org.example.realworldapi.web.dto;
+package org.example.realworldapi.web.model.response;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -12,15 +12,15 @@ import java.util.List;
 @Setter
 @JsonRootName("errors")
 @RegisterForReflection
-public class ErrorResponseDTO {
+public class ErrorResponse {
 
   private List<String> body;
 
-  public ErrorResponseDTO() {
+  public ErrorResponse() {
     this.body = new LinkedList<>();
   }
 
-  public ErrorResponseDTO(String error) {
+  public ErrorResponse(String error) {
     this();
     this.body.add(error);
   }

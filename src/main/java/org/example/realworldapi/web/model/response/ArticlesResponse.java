@@ -1,4 +1,4 @@
-package org.example.realworldapi.web.dto;
+package org.example.realworldapi.web.model.response;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
@@ -13,15 +13,15 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @RegisterForReflection
-public class ArticlesDTO {
+public class ArticlesResponse {
 
-  private List<ArticleDTO> articles;
+  private List<ArticleResponse> articles;
 
   public int getArticlesCount() {
     return this.articles.size();
   }
 
-  public ArticlesDTO(List<Article> articles) {
-    this.articles = articles.stream().map(ArticleDTO::new).collect(Collectors.toList());
+  public ArticlesResponse(List<Article> articles) {
+    this.articles = articles.stream().map(ArticleResponse::new).collect(Collectors.toList());
   }
 }

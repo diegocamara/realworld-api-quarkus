@@ -1,9 +1,10 @@
-package org.example.realworldapi.web.dto;
+package org.example.realworldapi.web.model.request;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.realworldapi.domain.constants.ValidationMessages;
 
 import javax.validation.constraints.NotBlank;
 
@@ -11,11 +12,11 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @JsonRootName("user")
 @RegisterForReflection
-public class LoginDTO {
+public class LoginRequest {
 
-  @NotBlank(message = "email must be not blank")
+  @NotBlank(message = ValidationMessages.EMAIL_MUST_BE_NOT_BLANK)
   private String email;
 
-  @NotBlank(message = "password must be not blank")
+  @NotBlank(message = ValidationMessages.PASSWORD_MUST_BE_NOT_BLANK)
   private String password;
 }

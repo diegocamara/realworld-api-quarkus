@@ -1,4 +1,4 @@
-package org.example.realworldapi.web.dto;
+package org.example.realworldapi.web.model.response;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -12,7 +12,7 @@ import org.example.realworldapi.domain.entity.persistent.User;
 @NoArgsConstructor
 @JsonRootName("user")
 @RegisterForReflection
-public class UserDTO {
+public class UserResponse {
 
   private String username;
   private String bio;
@@ -20,7 +20,7 @@ public class UserDTO {
   private String email;
   private String token;
 
-  public UserDTO(User user) {
+  public UserResponse(User user) {
     this.username = user.getUsername();
     this.bio = user.getBio();
     this.image = user.getImage();

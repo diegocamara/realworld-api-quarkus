@@ -1,9 +1,10 @@
 package org.example.realworldapi.web.resource;
 
+import org.example.realworldapi.domain.constants.ValidationMessages;
 import org.example.realworldapi.domain.entity.Profile;
-import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.resource.service.ProfilesService;
-import org.example.realworldapi.web.dto.ProfileDTO;
+import org.example.realworldapi.domain.security.Role;
+import org.example.realworldapi.web.model.response.ProfileResponse;
 import org.example.realworldapi.web.security.annotation.Secured;
 
 import javax.validation.constraints.NotBlank;
@@ -27,7 +28,9 @@ public class ProfilesResource {
   @Path("/{username}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getProfile(
-      @PathParam("username") @NotBlank String username, @Context SecurityContext securityContext) {
+      @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
+          String username,
+      @Context SecurityContext securityContext) {
 
     Long loggedUserId =
         securityContext.getUserPrincipal() != null
@@ -36,7 +39,7 @@ public class ProfilesResource {
 
     Profile profile = profilesService.getProfile(username, loggedUserId);
 
-    return Response.ok(new ProfileDTO(profile)).status(Response.Status.OK).build();
+    return Response.ok(new ProfileResponse(profile)).status(Response.Status.OK).build();
   }
 
   @POST
@@ -44,11 +47,13 @@ public class ProfilesResource {
   @Path("/{username}/follow")
   @Produces(MediaType.APPLICATION_JSON)
   public Response follow(
-      @PathParam("username") @NotBlank String username, @Context SecurityContext securityContext) {
+      @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
+          String username,
+      @Context SecurityContext securityContext) {
     Profile profile =
         profilesService.follow(
             Long.valueOf(securityContext.getUserPrincipal().getName()), username);
-    return Response.ok(new ProfileDTO(profile)).status(Response.Status.OK).build();
+    return Response.ok(new ProfileResponse(profile)).status(Response.Status.OK).build();
   }
 
   @DELETE
@@ -56,10 +61,12 @@ public class ProfilesResource {
   @Path("/{username}/follow")
   @Produces(MediaType.APPLICATION_JSON)
   public Response unfollow(
-      @PathParam("username") @NotBlank String username, @Context SecurityContext securityContext) {
+      @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
+          String username,
+      @Context SecurityContext securityContext) {
     Profile profile =
         profilesService.unfollow(
             Long.valueOf(securityContext.getUserPrincipal().getName()), username);
-    return Response.ok(new ProfileDTO(profile)).status(Response.Status.OK).build();
+    return Response.ok(new ProfileResponse(profile)).status(Response.Status.OK).build();
   }
 }
