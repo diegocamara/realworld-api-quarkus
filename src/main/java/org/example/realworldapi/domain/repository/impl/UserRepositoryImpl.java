@@ -18,8 +18,8 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
   }
 
   @Override
-  public Optional<User> create(User user) {
-    return Optional.of(persist(user));
+  public User create(User user) {
+    return persist(user);
   }
 
   @Override

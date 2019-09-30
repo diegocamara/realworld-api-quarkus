@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import java.util.Optional;
 
 @ApplicationScoped
 public class CommentRepositoryImpl extends AbstractRepository<Comment, Long>
@@ -28,7 +29,7 @@ public class CommentRepositoryImpl extends AbstractRepository<Comment, Long>
   }
 
   @Override
-  public Comment findComment(String slug, Long commentId, Long authorId) {
+  public Optional<Comment> findComment(String slug, Long commentId, Long authorId) {
 
     CriteriaBuilder builder = getCriteriaBuilder();
     CriteriaQuery<Comment> criteriaQuery = getCriteriaQuery(builder);
@@ -44,7 +45,7 @@ public class CommentRepositoryImpl extends AbstractRepository<Comment, Long>
             builder.equal(comment.get("id"), commentId),
             builder.equal(author.get("id"), authorId)));
 
-    return getSingleResult(criteriaQuery);
+    return Optional.ofNullable(getSingleResult(criteriaQuery));
   }
 
   @Override

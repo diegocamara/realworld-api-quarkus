@@ -1,9 +1,11 @@
 package org.example.realworldapi.domain.resource.service.impl;
 
 import com.github.slugify.Slugify;
+import org.example.realworldapi.domain.entity.Articles;
 import org.example.realworldapi.domain.entity.Profile;
 import org.example.realworldapi.domain.entity.persistent.*;
 import org.example.realworldapi.domain.exception.ArticleNotFoundException;
+import org.example.realworldapi.domain.exception.CommentNotFoundException;
 import org.example.realworldapi.domain.exception.FavoriteEntryNotFoundException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.*;
@@ -54,18 +56,19 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   @Override
   @Transactional
-  public List<org.example.realworldapi.domain.entity.Article> findRecentArticles(
-      Long loggedUserId, int offset, int limit) {
+  public Articles findRecentArticles(Long loggedUserId, int offset, int limit) {
 
     List<Article> articles =
         usersFollowersRepository.findMostRecentArticles(loggedUserId, offset, getLimit(limit));
 
-    return toResultList(articles, loggedUserId);
+    int articlesCount = usersFollowersRepository.count(loggedUserId);
+
+    return new Articles(toResultList(articles, loggedUserId), articlesCount);
   }
 
   @Override
   @Transactional
-  public List<org.example.realworldapi.domain.entity.Article> findArticles(
+  public Articles findArticles(
       int offset,
       int limit,
       Long loggedUserId,
@@ -76,7 +79,9 @@ public class ArticlesServiceImpl implements ArticlesService {
     List<Article> articles =
         articleRepository.findArticles(offset, getLimit(limit), tags, authors, favorited);
 
-    return toResultList(articles, loggedUserId);
+    int articlesCount = articleRepository.count(tags, authors, favorited);
+
+    return new Articles(toResultList(articles, loggedUserId), articlesCount);
   }
 
   @Override
@@ -151,7 +156,10 @@ public class ArticlesServiceImpl implements ArticlesService {
   @Override
   @Transactional
   public void deleteComment(String slug, Long commentId, Long loggedUserId) {
-    Comment comment = commentRepository.findComment(slug, commentId, loggedUserId);
+    Comment comment =
+        commentRepository
+            .findComment(slug, commentId, loggedUserId)
+            .orElseThrow(CommentNotFoundException::new);
     commentRepository.delete(comment);
   }
 

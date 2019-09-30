@@ -50,7 +50,7 @@ public class UsersServiceImplTest {
     createdUser.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
     createdUser.setToken(UUID.randomUUID().toString());
 
-    when(userRepository.create(any(User.class))).thenReturn(Optional.of(createdUser));
+    when(userRepository.create(any(User.class))).thenReturn(createdUser);
     when(jwtService.sign(createdUser.getId().toString(), Role.USER)).thenReturn("token");
 
     User resultUser = usersService.create(username, email, password);

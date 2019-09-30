@@ -1,14 +1,15 @@
 package org.example.realworldapi.domain.resource.service;
 
 import org.example.realworldapi.domain.entity.Article;
+import org.example.realworldapi.domain.entity.Articles;
 import org.example.realworldapi.domain.entity.Comment;
 
 import java.util.List;
 
 public interface ArticlesService {
-  List<Article> findRecentArticles(Long loggedUserId, int offset, int limit);
+  Articles findRecentArticles(Long loggedUserId, int offset, int limit);
 
-  List<Article> findArticles(
+  Articles findArticles(
       int offset,
       int limit,
       Long loggedUserId,

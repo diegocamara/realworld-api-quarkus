@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.realworldapi.domain.constants.ValidationMessages;
 import org.example.realworldapi.domain.entity.Article;
+import org.example.realworldapi.domain.entity.Articles;
 import org.example.realworldapi.domain.entity.Comment;
 import org.example.realworldapi.domain.resource.service.ArticlesService;
 import org.example.realworldapi.domain.security.Role;
@@ -50,8 +51,8 @@ public class ArticlesResource {
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     Long loggedUserId = getLoggedUserId(securityContext);
-    List<Article> articles = articlesService.findRecentArticles(loggedUserId, offset, limit);
-    return Response.ok(objectMapper.writeValueAsString(new ArticlesResponse(articles)))
+    Articles result = articlesService.findRecentArticles(loggedUserId, offset, limit);
+    return Response.ok(objectMapper.writeValueAsString(new ArticlesResponse(result)))
         .status(Response.Status.OK)
         .build();
   }
@@ -68,9 +69,9 @@ public class ArticlesResource {
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     Long loggedUserId = getLoggedUserId(securityContext);
-    List<Article> articles =
+    Articles result =
         articlesService.findArticles(offset, limit, loggedUserId, tags, authors, favorited);
-    return Response.ok(objectMapper.writeValueAsString(new ArticlesResponse(articles)))
+    return Response.ok(objectMapper.writeValueAsString(new ArticlesResponse(result)))
         .status(Response.Status.OK)
         .build();
   }
@@ -81,7 +82,7 @@ public class ArticlesResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response create(
       @Valid @NotNull(message = ValidationMessages.REQUEST_BODY_MUST_BE_NOT_NULL)
-              NewArticleRequest newArticleRequest,
+          NewArticleRequest newArticleRequest,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
     Article newArticle =
@@ -161,7 +162,8 @@ public class ArticlesResource {
       @Valid NewCommentRequest newCommentRequest,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Comment comment = articlesService.createComment(slug, newCommentRequest.getBody(), loggedUserId);
+    Comment comment =
+        articlesService.createComment(slug, newCommentRequest.getBody(), loggedUserId);
     return Response.ok(new CommentResponse(comment)).status(Response.Status.OK).build();
   }
 

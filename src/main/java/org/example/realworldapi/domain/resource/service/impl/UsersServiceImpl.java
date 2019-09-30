@@ -1,7 +1,10 @@
 package org.example.realworldapi.domain.resource.service.impl;
 
 import org.example.realworldapi.domain.entity.persistent.User;
-import org.example.realworldapi.domain.exception.*;
+import org.example.realworldapi.domain.exception.EmailAlreadyExistsException;
+import org.example.realworldapi.domain.exception.InvalidPasswordException;
+import org.example.realworldapi.domain.exception.UserNotFoundException;
+import org.example.realworldapi.domain.exception.UsernameAlreadyExistsException;
 import org.example.realworldapi.domain.repository.UserRepository;
 import org.example.realworldapi.domain.resource.service.UsersService;
 import org.example.realworldapi.domain.security.Role;
@@ -35,11 +38,10 @@ public class UsersServiceImpl implements UsersService {
     user.setEmail(email.toUpperCase().trim());
     user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
 
-    Optional<User> resultUser = userRepository.create(user);
+    User resultUser = userRepository.create(user);
+    resultUser.setToken(createJWT(resultUser));
 
-    resultUser.ifPresent(createdUser -> createdUser.setToken(createJWT(createdUser)));
-
-    return resultUser.orElseThrow(UserNotCreatedException::new);
+    return resultUser;
   }
 
   private String createJWT(User user) {

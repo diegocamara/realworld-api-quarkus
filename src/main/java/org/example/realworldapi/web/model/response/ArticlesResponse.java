@@ -4,7 +4,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.domain.entity.Article;
+import org.example.realworldapi.domain.entity.Articles;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,12 +16,11 @@ import java.util.stream.Collectors;
 public class ArticlesResponse {
 
   private List<ArticleResponse> articles;
+  private int articlesCount;
 
-  public int getArticlesCount() {
-    return this.articles.size();
-  }
-
-  public ArticlesResponse(List<Article> articles) {
-    this.articles = articles.stream().map(ArticleResponse::new).collect(Collectors.toList());
+  public ArticlesResponse(Articles result) {
+    this.articles =
+        result.getArticles().stream().map(ArticleResponse::new).collect(Collectors.toList());
+    this.articlesCount = result.getArticlesCount();
   }
 }

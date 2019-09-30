@@ -32,13 +32,9 @@ public class UserRepositoryImplTest extends DatabaseIntegrationTest {
 
     User user = UserUtils.create("user", "user@mail.com", "123");
 
-    Optional<User> result = transaction(() -> userRepository.create(user));
+    User result = transaction(() -> userRepository.create(user));
 
-    transaction(
-        () ->
-            result.ifPresent(
-                createdUser ->
-                    Assertions.assertNotNull(entityManager.find(User.class, createdUser.getId()))));
+    transaction(() -> Assertions.assertNotNull(entityManager.find(User.class, result.getId())));
   }
 
   @Test

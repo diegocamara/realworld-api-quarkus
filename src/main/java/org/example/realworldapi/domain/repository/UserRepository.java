@@ -5,7 +5,7 @@ import org.example.realworldapi.domain.entity.persistent.User;
 import java.util.Optional;
 
 public interface UserRepository {
-  Optional<User> create(User user);
+  User create(User user);
 
   Optional<User> findByEmail(String email);
 

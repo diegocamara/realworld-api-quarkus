@@ -17,4 +17,6 @@ public interface UsersFollowersRepository {
   void delete(UsersFollowers usersFollowers);
 
   List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit);
+
+  int count(Long userId);
 }

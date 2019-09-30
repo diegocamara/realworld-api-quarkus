@@ -23,4 +23,6 @@ public interface ArticleRepository {
   Optional<Article> findByIdAndSlug(Long authorId, String slug);
 
   List<Comment> findComments(Long articleId);
+
+  int count(List<String> tags, List<String> authors, List<String> favorited);
 }

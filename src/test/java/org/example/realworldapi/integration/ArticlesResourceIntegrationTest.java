@@ -98,7 +98,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
             "articles[0]",
             hasKey("author"),
             "articlesCount",
-            is(5));
+            is(10));
   }
 
   @Test
@@ -255,7 +255,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
             "articles[0]",
             hasKey("author"),
             "articlesCount",
-            is(10));
+            is(20));
   }
 
   @Test

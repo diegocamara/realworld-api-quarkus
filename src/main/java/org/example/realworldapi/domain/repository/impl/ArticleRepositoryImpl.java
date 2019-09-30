@@ -58,6 +58,39 @@ public class ArticleRepositoryImpl extends AbstractRepository<Article, Long>
   }
 
   @Override
+  public int count(List<String> tags, List<String> authors, List<String> favorited) {
+
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
+    Root<Article> article = getRoot(criteriaQuery, Article.class);
+
+    criteriaQuery.select(builder.count(article));
+
+    List<Predicate> predicates = new LinkedList<>();
+
+    if (isNotEmpty(tags)) {
+      ListJoin<Article, ArticlesTags> articlesTags = article.joinList("tags");
+      Join<ArticlesTags, Tag> tag = articlesTags.join("primaryKey").join("tag");
+      predicates.add(builder.upper(tag.get("name")).in(toUpperCase(tags)));
+    }
+
+    if (isNotEmpty(authors)) {
+      Join<Article, User> author = article.join("author");
+      predicates.add(builder.upper(author.get("username")).in(toUpperCase(authors)));
+    }
+
+    if (isNotEmpty(favorited)) {
+      ListJoin<Article, ArticlesUsers> articlesUsers = article.joinList("favorites");
+      Join<ArticlesUsers, User> userWhoFavorited = articlesUsers.join("primaryKey").join("user");
+      predicates.add(builder.upper(userWhoFavorited.get("username")).in(toUpperCase(favorited)));
+    }
+
+    criteriaQuery.where(builder.and(predicates.toArray(new Predicate[0])));
+
+    return getSingleResult(criteriaQuery).intValue();
+  }
+
+  @Override
   public Article create(Article article) {
     return persist(article);
   }

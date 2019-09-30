@@ -82,4 +82,25 @@ public class UsersFollowersRepositoryImpl
 
     return getPagedResultList(criteriaQuery, offset, limit);
   }
+
+  @Override
+  public int count(Long userId) {
+    CriteriaBuilder builder = getCriteriaBuilder();
+
+    CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
+
+    Root<UsersFollowers> usersFollowers = getRoot(criteriaQuery, UsersFollowers.class);
+
+    Join<UsersFollowers, User> user = usersFollowers.join("primaryKey").join("user");
+
+    user.on(builder.equal(user.get("id"), userId));
+
+    Join<UsersFollowers, User> follower = usersFollowers.join("primaryKey").join("follower");
+
+    ListJoin<User, Article> articles = follower.joinList("articles");
+
+    criteriaQuery.select(builder.count(articles));
+
+    return getSingleResult(criteriaQuery).intValue();
+  }
 }
