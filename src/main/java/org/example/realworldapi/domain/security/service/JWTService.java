@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.service;
+package org.example.realworldapi.domain.security.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.example.realworldapi.domain.security.Role;

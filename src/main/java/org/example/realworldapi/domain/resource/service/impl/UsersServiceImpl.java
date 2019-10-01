@@ -8,7 +8,7 @@ import org.example.realworldapi.domain.exception.UsernameAlreadyExistsException;
 import org.example.realworldapi.domain.repository.UserRepository;
 import org.example.realworldapi.domain.resource.service.UsersService;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.domain.service.JWTService;
+import org.example.realworldapi.domain.security.service.JWTService;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.enterprise.context.ApplicationScoped;

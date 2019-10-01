@@ -3,7 +3,7 @@ package org.example.realworldapi.web.security.filter;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.domain.service.JWTService;
+import org.example.realworldapi.domain.security.service.JWTService;
 import org.example.realworldapi.web.exception.UnauthorizedException;
 import org.example.realworldapi.web.security.annotation.Secured;
 

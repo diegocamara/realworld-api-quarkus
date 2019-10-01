@@ -5,7 +5,7 @@ import com.github.slugify.Slugify;
 import org.example.realworldapi.domain.builder.ArticleBuilder;
 import org.example.realworldapi.domain.entity.persistent.*;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.domain.service.JWTService;
+import org.example.realworldapi.domain.security.service.JWTService;
 import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.BeforeEach;
 

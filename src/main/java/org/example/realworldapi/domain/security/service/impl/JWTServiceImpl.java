@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.service.impl;
+package org.example.realworldapi.domain.security.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -8,7 +8,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.domain.service.JWTService;
+import org.example.realworldapi.domain.security.service.JWTService;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Calendar;

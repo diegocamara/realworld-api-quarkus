@@ -11,7 +11,34 @@ For more information on how to this works with other frontends/backends, head ov
 
 # How it works
 
-> Describe the general architecture of your app here
+This application basicaly uses Quarkus Framework with Java with some other modules known to development community:
+
+* Hibernate
+* Jackson for JSON
+* H2 in memory database
+* JPA Criteria
+* Auth0 java-jwt
+
+### Organization of project:
+```
+domain/
+    builder/
+    config/
+    constants/
+    entity/
+        persistent/
+        exception/
+    repository/
+        impl/
+    resource/
+        service/
+            impl/
+    security/
+        service/
+            impl/        
+web/
+```
+
 
 # Getting started
 
