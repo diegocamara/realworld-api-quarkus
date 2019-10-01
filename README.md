@@ -27,7 +27,7 @@ domain/
     constants/
     entity/
         persistent/
-        exception/
+    exception/
     repository/
         impl/
     resource/
