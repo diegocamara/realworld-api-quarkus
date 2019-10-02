@@ -10,9 +10,8 @@ For more information on how to this works with other frontends/backends, head ov
 
 # How it works
 
-This application basicaly uses Quarkus Framework with Java with some other modules known to development community:
+This application basicaly uses Quarkus Framework with Java 8 with some other modules known to development community:
 
-* Java 8
 * Hibernate 5
 * Jackson for JSON
 * H2 in memory database
