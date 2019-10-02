@@ -32,11 +32,8 @@ public class ProfilesResource {
       @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
           String username,
       @Context SecurityContext securityContext) {
-
     Long loggedUserId = getLoggedUserId(securityContext);
-
     Profile profile = profilesService.getProfile(username, loggedUserId);
-
     return Response.ok(new ProfileResponse(profile)).status(Response.Status.OK).build();
   }
 
