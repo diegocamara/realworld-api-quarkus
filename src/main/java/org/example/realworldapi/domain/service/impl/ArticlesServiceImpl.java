@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.resource.service.impl;
+package org.example.realworldapi.domain.service.impl;
 
 import com.github.slugify.Slugify;
 import org.example.realworldapi.domain.entity.Articles;
@@ -9,8 +9,8 @@ import org.example.realworldapi.domain.exception.CommentNotFoundException;
 import org.example.realworldapi.domain.exception.FavoriteEntryNotFoundException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.repository.*;
-import org.example.realworldapi.domain.resource.service.ArticlesService;
-import org.example.realworldapi.domain.resource.service.ProfilesService;
+import org.example.realworldapi.domain.service.ArticlesService;
+import org.example.realworldapi.domain.service.ProfilesService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;

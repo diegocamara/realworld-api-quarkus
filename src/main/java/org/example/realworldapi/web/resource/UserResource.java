@@ -2,7 +2,7 @@ package org.example.realworldapi.web.resource;
 
 import org.example.realworldapi.domain.constants.ValidationMessages;
 import org.example.realworldapi.domain.entity.persistent.User;
-import org.example.realworldapi.domain.resource.service.UsersService;
+import org.example.realworldapi.domain.service.UsersService;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.web.model.request.UpdateUserRequest;
 import org.example.realworldapi.web.model.response.UserResponse;

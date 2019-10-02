@@ -6,7 +6,7 @@ import org.example.realworldapi.domain.constants.ValidationMessages;
 import org.example.realworldapi.domain.entity.Article;
 import org.example.realworldapi.domain.entity.Articles;
 import org.example.realworldapi.domain.entity.Comment;
-import org.example.realworldapi.domain.resource.service.ArticlesService;
+import org.example.realworldapi.domain.service.ArticlesService;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.web.model.request.NewArticleRequest;
 import org.example.realworldapi.web.model.request.NewCommentRequest;

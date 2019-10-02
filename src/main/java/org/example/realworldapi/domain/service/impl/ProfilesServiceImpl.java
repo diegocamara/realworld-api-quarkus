@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.resource.service.impl;
+package org.example.realworldapi.domain.service.impl;
 
 import org.example.realworldapi.domain.builder.ProfileBuilder;
 import org.example.realworldapi.domain.entity.Profile;
@@ -6,8 +6,8 @@ import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.entity.persistent.UsersFollowers;
 import org.example.realworldapi.domain.entity.persistent.UsersFollowersKey;
 import org.example.realworldapi.domain.repository.UsersFollowersRepository;
-import org.example.realworldapi.domain.resource.service.ProfilesService;
-import org.example.realworldapi.domain.resource.service.UsersService;
+import org.example.realworldapi.domain.service.ProfilesService;
+import org.example.realworldapi.domain.service.UsersService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;

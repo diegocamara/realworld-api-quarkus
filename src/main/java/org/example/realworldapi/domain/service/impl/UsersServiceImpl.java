@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.resource.service.impl;
+package org.example.realworldapi.domain.service.impl;
 
 import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.exception.EmailAlreadyExistsException;
@@ -6,7 +6,7 @@ import org.example.realworldapi.domain.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.exception.UsernameAlreadyExistsException;
 import org.example.realworldapi.domain.repository.UserRepository;
-import org.example.realworldapi.domain.resource.service.UsersService;
+import org.example.realworldapi.domain.service.UsersService;
 import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.security.service.JWTService;
 import org.mindrot.jbcrypt.BCrypt;

@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.resource.service;
+package org.example.realworldapi.domain.service;
 
 import org.example.realworldapi.domain.entity.persistent.Tag;
 

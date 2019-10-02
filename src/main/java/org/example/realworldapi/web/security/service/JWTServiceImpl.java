@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.security.service.impl;
+package org.example.realworldapi.web.security.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;

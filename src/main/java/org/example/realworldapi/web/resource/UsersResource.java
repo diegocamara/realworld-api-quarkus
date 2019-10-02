@@ -3,7 +3,7 @@ package org.example.realworldapi.web.resource;
 import org.example.realworldapi.domain.constants.ValidationMessages;
 import org.example.realworldapi.domain.entity.persistent.User;
 import org.example.realworldapi.domain.exception.UserNotFoundException;
-import org.example.realworldapi.domain.resource.service.UsersService;
+import org.example.realworldapi.domain.service.UsersService;
 import org.example.realworldapi.web.model.request.LoginRequest;
 import org.example.realworldapi.web.model.request.NewUserRequest;
 import org.example.realworldapi.web.model.response.UserResponse;
