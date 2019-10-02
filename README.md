@@ -25,26 +25,26 @@ domain/
 +-- config/
 +-- constants/
 +-- entity/ 
-|   +-- persistent/                 -> only persistent objects
-+-- exception/                      -> domain exceptions
-+-- repository/                     -> persistent context abstractions
-+-- security/                       -> security context abstractions
-+-- service                         -> domain bussiness layer
+|   +-- persistent/         -> only persistent objects
++-- exception/              -> domain exceptions
++-- repository/             -> persistent context abstractions
++-- security/               -> security context abstractions
++-- service                 -> domain bussiness layer
 
 web/
-+-- config/                         -> serializer/deserializer singleton options
-+-- exception/                      -> web layer exceptions
-+-- mapper/                         -> exception handler mapping
-+-- model/                          -> request/response models for web layer
-|   +-- request/                    -> request model objects
-|   +-- response/                   -> response model objects
-+-- qualifiers/                     -> qualifiers for dependency injection 
-+-- resources/                      -> http routes and their handlers
-+-- security/                       -> web layer security implementation
-|   +-- annotation/                 -> name binding annotations
-|   +-- filter/                     -> filters implementation for check authentication/authorization rules
-|   +-- service/                    -> web layer services implementation
-+-- validation/                     -> custom validator for request model
++-- config/                 -> serializer/deserializer singleton options
++-- exception/              -> web layer exceptions
++-- mapper/                 -> exception handler mapping
++-- model/                  -> request/response models for web layer
+|   +-- request/            -> request model objects
+|   +-- response/           -> response model objects
++-- qualifiers/             -> qualifiers for dependency injection 
++-- resources/              -> http routes and their handlers
++-- security/               -> web layer security implementation
+|   +-- annotation/         -> name binding annotations
+|   +-- filter/             -> filters implementation for check authentication/authorization rules
+|   +-- service/            -> web layer services implementation
++-- validation/             -> custom validator for request model
 ```
 
 # Getting started
