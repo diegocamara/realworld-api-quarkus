@@ -2,8 +2,8 @@ package org.example.realworldapi.web.resource;
 
 import org.example.realworldapi.domain.constants.ValidationMessages;
 import org.example.realworldapi.domain.entity.Profile;
-import org.example.realworldapi.domain.service.ProfilesService;
 import org.example.realworldapi.domain.security.Role;
+import org.example.realworldapi.domain.service.ProfilesService;
 import org.example.realworldapi.web.model.response.ProfileResponse;
 import org.example.realworldapi.web.security.annotation.Secured;
 
@@ -13,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.security.Principal;
 
 @Path("/profiles")
 public class ProfilesResource {
@@ -32,10 +33,7 @@ public class ProfilesResource {
           String username,
       @Context SecurityContext securityContext) {
 
-    Long loggedUserId =
-        securityContext.getUserPrincipal() != null
-            ? Long.valueOf(securityContext.getUserPrincipal().getName())
-            : null;
+    Long loggedUserId = getLoggedUserId(securityContext);
 
     Profile profile = profilesService.getProfile(username, loggedUserId);
 
@@ -50,9 +48,7 @@ public class ProfilesResource {
       @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
           String username,
       @Context SecurityContext securityContext) {
-    Profile profile =
-        profilesService.follow(
-            Long.valueOf(securityContext.getUserPrincipal().getName()), username);
+    Profile profile = profilesService.follow(getLoggedUserId(securityContext), username);
     return Response.ok(new ProfileResponse(profile)).status(Response.Status.OK).build();
   }
 
@@ -64,9 +60,12 @@ public class ProfilesResource {
       @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
           String username,
       @Context SecurityContext securityContext) {
-    Profile profile =
-        profilesService.unfollow(
-            Long.valueOf(securityContext.getUserPrincipal().getName()), username);
+    Profile profile = profilesService.unfollow(getLoggedUserId(securityContext), username);
     return Response.ok(new ProfileResponse(profile)).status(Response.Status.OK).build();
+  }
+
+  private Long getLoggedUserId(SecurityContext securityContext) {
+    Principal principal = securityContext.getUserPrincipal();
+    return principal != null ? Long.valueOf(principal.getName()) : null;
   }
 }
