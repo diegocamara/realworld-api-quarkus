@@ -1,1 +1,5 @@
 language: java
+script:
+  - mvn test
+  - mvn compile quarkus:dev -Ddebug=false
+  - ./collections/run-api-tests.sh
