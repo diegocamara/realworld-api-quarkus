@@ -1,5 +1,5 @@
 language: java
+install: false
+jdk: openjdk8
 script:
-  - mvn test
-  - mvn compile quarkus:dev -Ddebug=false
-  - ./collections/run-api-tests.sh
+  - mvn package

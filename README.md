@@ -8,6 +8,8 @@ We've gone to great lengths to adhere to the Quarkus community styleguides & bes
 
 For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
+[![Build Status](https://travis-ci.org/diegocamara/realworld-api-quarkus.svg?branch=master)](https://travis-ci.org/diegocamara/realworld-api-quarkus)
+
 # How it works
 
 This application basicaly uses Quarkus Framework with Java 8 with some other modules known to development community:
@@ -49,17 +51,35 @@ web/
 
 # Getting started
 
-#### Start local server
+### Start local server
 
 ```bash
  ./mvnw compile quarkus:dev
  ```
 The server should be running at http://localhost:8080
 
-#### Running the application tests
+### For postman collection
+
+```
+./collections/run-api-tests.sh
+```
+
+### Running the application tests
 
 ``` 
 ./mvnw test 
+```
+
+### Building jar file
+
+```
+./mvnw package
+```
+
+### Building native executable
+
+```
+./mvnw package -Pnative
 ```
 
 #### Database changes can be made to the application.properties file.
