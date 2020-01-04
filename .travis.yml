@@ -1,5 +1,4 @@
 language: java
-install: false
 jdk: openjdk8
 script:
   - mvn package
