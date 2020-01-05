@@ -6,6 +6,7 @@ import org.example.realworldapi.domain.security.Role;
 import org.example.realworldapi.domain.security.service.JWTService;
 import org.example.realworldapi.web.exception.UnauthorizedException;
 import org.example.realworldapi.web.security.annotation.Secured;
+import org.example.realworldapi.web.security.context.EmptySecurityContext;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -56,6 +57,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 .build());
       }
     } else {
+
+      containerRequestContext.setSecurityContext(new EmptySecurityContext());
 
       if (!isSecurityOptional()) {
         throw new UnauthorizedException();
