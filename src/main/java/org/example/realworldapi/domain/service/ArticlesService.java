@@ -1,8 +1,8 @@
 package org.example.realworldapi.domain.service;
 
-import org.example.realworldapi.domain.entity.Article;
-import org.example.realworldapi.domain.entity.Articles;
-import org.example.realworldapi.domain.entity.Comment;
+import org.example.realworldapi.domain.model.entity.Article;
+import org.example.realworldapi.domain.model.entity.Articles;
+import org.example.realworldapi.domain.model.entity.Comment;
 
 import java.util.List;
 

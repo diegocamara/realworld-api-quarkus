@@ -4,10 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
-import org.example.realworldapi.domain.entity.persistent.User;
-import org.example.realworldapi.domain.security.Role;
+import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.infrastructure.web.model.request.UpdateUserRequest;
 import org.example.realworldapi.util.UserUtils;
-import org.example.realworldapi.web.model.request.UpdateUserRequest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +24,7 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
   @Test
   public void givenAValidToken_whenExecuteGetUserEndpoint_shouldReturnLoggedInUser() {
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123");
 
     given()
         .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken())
@@ -54,7 +53,7 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAInexistentUser_whenExecuteGetUserEndpoint_shouldReturn404NotFound() {
 
     String authorizationHeader =
-        AUTHORIZATION_HEADER_VALUE_PREFIX + jwtService.sign("1", Role.USER);
+        AUTHORIZATION_HEADER_VALUE_PREFIX + tokenProvider.createUserToken("1");
 
     given()
         .header(AUTHORIZATION_HEADER, authorizationHeader)
@@ -85,7 +84,7 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAExistentUser_whenExecuteUpdateUserEndpoint_shouldReturnUpdatedUser()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123");
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
@@ -121,7 +120,7 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyBody_shouldReturn422()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123");
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
@@ -141,10 +140,9 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAnotherExistingUsername_whenExecuteUpdateUserEndpoint_shouldReturn409()
       throws JsonProcessingException {
 
-    User otherUser = createUser("user", "user@mail.com", "bio", "image", "123", Role.USER);
+    User otherUser = createUser("user", "user@mail.com", "bio", "image", "123");
 
-    User currentUser =
-        createUser("currentUser", "current@mail.com", "bio", "image", "123", Role.USER);
+    User currentUser = createUser("currentUser", "current@mail.com", "bio", "image", "123");
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + currentUser.getToken();
 
@@ -165,10 +163,9 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAnotherExistingEmail_whenExecuteUpdateUserEndpoint_shouldReturn409()
       throws JsonProcessingException {
 
-    User otherUser = createUser("user", "user@mail.com", "bio", "image", "123", Role.USER);
+    User otherUser = createUser("user", "user@mail.com", "bio", "image", "123");
 
-    User currentUser =
-        createUser("currentUser", "current@mail.com", "bio", "image", "123", Role.USER);
+    User currentUser = createUser("currentUser", "current@mail.com", "bio", "image", "123");
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + currentUser.getToken();
 
@@ -189,7 +186,7 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAExistentUser_whenExecuteUpdateUserEndpointWithEmptyUsername_shouldReturn422()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123");
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
@@ -210,7 +207,7 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAExistentUser_whenExecuteUpdateUserEndpointWithInvalidEmail_shouldReturn422()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123");
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 
@@ -235,7 +232,7 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAExistentUser_whenExecuteUpdateUserEndpointWithBlankUsername_shouldReturn422()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", "123", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", "123");
 
     String authorizationHeader = AUTHORIZATION_HEADER_VALUE_PREFIX + user.getToken();
 

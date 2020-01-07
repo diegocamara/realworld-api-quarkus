@@ -3,8 +3,7 @@ package org.example.realworldapi.integration;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
-import org.example.realworldapi.domain.entity.persistent.User;
-import org.example.realworldapi.domain.security.Role;
+import org.example.realworldapi.domain.model.entity.persistent.User;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MediaType;
@@ -22,7 +21,7 @@ public class ProfilesResourceIntegrationTest extends AbstractIntegrationTest {
   public void
       givenExistentUser_whenExecuteGetProfileEndpointWithoutAuth_shouldReturnAUserProfile() {
 
-    User existentUser = createUser("user1", "user1@mail.com", "bio", "image", "user123", Role.USER);
+    User existentUser = createUser("user1", "user1@mail.com", "bio", "image", "user123");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
@@ -46,9 +45,8 @@ public class ProfilesResourceIntegrationTest extends AbstractIntegrationTest {
   public void
       givenExistentUserWithFollows_whenExecuteGetProfileEndpointWithAuth_shouldReturnAUserProfileWithFollowingTrue() {
 
-    User loggedUser =
-        createUser("loggeduser", "loggeduser@mail.com", "bio", "image", "user123", Role.USER);
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+    User loggedUser = createUser("loggeduser", "loggeduser@mail.com", "bio", "image", "user123");
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
 
     follow(loggedUser, user);
 
@@ -75,9 +73,8 @@ public class ProfilesResourceIntegrationTest extends AbstractIntegrationTest {
   public void
       givenExistentUserWithoutFollows_whenExecuteGetProfileEndpointWithAuth_shouldReturnAUserProfileWithFollowingFalse() {
 
-    User loggedUser =
-        createUser("loggeduser", "loggeduser@mail.com", "bio", "image", "user123", Role.USER);
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+    User loggedUser = createUser("loggeduser", "loggeduser@mail.com", "bio", "image", "user123");
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
@@ -102,9 +99,8 @@ public class ProfilesResourceIntegrationTest extends AbstractIntegrationTest {
   public void
       givenExistentUsers_whenExecuteFollowEndpoint_shouldReturnProfileWithFollowingFieldTrue() {
 
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
-    User loggedUser =
-        createUser("loggeduser", "loggeduser@mail.com", "bio", "image", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
+    User loggedUser = createUser("loggeduser", "loggeduser@mail.com", "bio", "image", "user123");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)
@@ -129,9 +125,8 @@ public class ProfilesResourceIntegrationTest extends AbstractIntegrationTest {
   public void
       givenExistentUserWithFollower_whenExecuteUnfollowEndpoint_shouldReturnProfileWithFollowingFieldFalse() {
 
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
-    User loggedUser =
-        createUser("loggeduser", "loggeduser@mail.com", "bio", "image", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
+    User loggedUser = createUser("loggeduser", "loggeduser@mail.com", "bio", "image", "user123");
 
     follow(loggedUser, user);
 

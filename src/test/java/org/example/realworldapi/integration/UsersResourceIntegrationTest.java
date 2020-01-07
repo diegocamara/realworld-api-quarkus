@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
-import org.example.realworldapi.domain.entity.persistent.User;
-import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.web.model.request.LoginRequest;
-import org.example.realworldapi.web.model.request.NewUserRequest;
-import org.example.realworldapi.web.model.response.UserResponse;
+import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.infrastructure.web.model.request.LoginRequest;
+import org.example.realworldapi.infrastructure.web.model.request.NewUserRequest;
+import org.example.realworldapi.infrastructure.web.model.response.UserResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -67,7 +66,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword, Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword);
 
     NewUserRequest newUser = new NewUserRequest();
     newUser.setUsername("user2");
@@ -91,7 +90,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword, Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword);
 
     NewUserRequest newUser = new NewUserRequest();
     newUser.setUsername(user.getUsername());
@@ -158,7 +157,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword, Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword);
 
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setEmail(user.getEmail());
@@ -219,7 +218,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword, Role.USER);
+    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword);
 
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setEmail("user2@mail.com");
@@ -239,7 +238,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAInvalidLoginPassword_whenExecuteLoginEndpoint_shouldReturnUnauthorized()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "123", "bio", "image", Role.USER);
+    User user = createUser("user1", "user1@mail.com", "123", "bio", "image");
 
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setEmail(user.getEmail());

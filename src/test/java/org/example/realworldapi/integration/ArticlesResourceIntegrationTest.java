@@ -4,14 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
-import org.example.realworldapi.domain.entity.persistent.Article;
-import org.example.realworldapi.domain.entity.persistent.Comment;
-import org.example.realworldapi.domain.entity.persistent.Tag;
-import org.example.realworldapi.domain.entity.persistent.User;
-import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.web.model.request.NewArticleRequest;
-import org.example.realworldapi.web.model.request.NewCommentRequest;
-import org.example.realworldapi.web.model.request.UpdateArticleRequest;
+import org.example.realworldapi.domain.model.entity.persistent.Article;
+import org.example.realworldapi.domain.model.entity.persistent.Comment;
+import org.example.realworldapi.domain.model.entity.persistent.Tag;
+import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.infrastructure.web.model.request.NewArticleRequest;
+import org.example.realworldapi.infrastructure.web.model.request.NewCommentRequest;
+import org.example.realworldapi.infrastructure.web.model.request.UpdateArticleRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,10 +46,9 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       given10ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit5_shouldReturnListOf5Articles() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
-    User follower1 =
-        createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123", Role.USER);
+    User follower1 = createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
 
     List<Article> articlesFollower = createArticles(follower1, "Title", "Description", "Body", 10);
 
@@ -60,7 +58,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
 
     createArticlesTags(articlesFollower, tag1, tag2);
 
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
 
     createArticles(user, "Title", "Description", "Body", 4);
 
@@ -106,14 +104,13 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       given8ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit10_shouldReturnListOf8Articles() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
-    User follower1 =
-        createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123", Role.USER);
+    User follower1 = createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
 
     createArticles(follower1, "Title", "Description", "Body", 8);
 
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
 
     createArticles(user, "Title", "Description", "Body", 4);
 
@@ -157,14 +154,13 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       given9ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit10_shouldReturnListOf9Articles() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
-    User follower1 =
-        createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123", Role.USER);
+    User follower1 = createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
 
     createArticles(follower1, "Title", "Description", "Body", 5);
 
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
 
     createArticles(user, "Title", "Description", "Body", 4);
 
@@ -210,14 +206,13 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       given20ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit10_shouldReturnListOf10Articles() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
-    User follower1 =
-        createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123", Role.USER);
+    User follower1 = createUser("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
 
     createArticles(follower1, "Title", "Description", "Body", 2);
 
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
 
     createArticles(user, "Title", "Description", "Body", 18);
 
@@ -263,7 +258,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       given10ArticlesWithDifferentTags_whenExecuteGlobalArticlesEndpoint_shouldReturn5Articles() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
     List<Article> articlesLoggedUser =
         createArticles(loggedUser, "Title", "Description", "Body", 5);
@@ -327,7 +322,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
           throws JsonProcessingException {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
     NewArticleRequest newArticleRequest = createNewArticle("Title", "Description", "Body");
 
@@ -369,7 +364,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
           throws JsonProcessingException {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
     Tag tag1 = createTag("Tag 1");
     Tag tag2 = createTag("Tag 2");
@@ -417,7 +412,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       givenExistentArticle_whenExecuteGetArticleBySlugEndpoint_shouldReturnArticleWithStatusCode200() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
     Article article = createArticle(loggedUser, "Title", "Description", "Body");
 
     given()
@@ -441,7 +436,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       givenExistentArticle_whenExecuteUpdateArticleEndpoint_shouldReturnUpdatedArticleWithStatusCode200()
           throws JsonProcessingException {
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
     Article article = createArticle(loggedUser, "Title", "Description", "Body");
 
     UpdateArticleRequest updateArticleRequest = new UpdateArticleRequest();
@@ -469,7 +464,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
   @Test
   public void givenExistentArticle_whenExecuteDeleteArticleEndpoint_shouldReturnStatusCode200() {
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
     Article article = createArticle(loggedUser, "Title", "Description", "Body");
 
     given()
@@ -488,7 +483,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       givenExistentArticleWithComments_whenExecuteGetCommentsBySlugEndpoint_shouldReturnCommentWithStatusCode200() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
     Article article = createArticle(loggedUser, "Title", "Description", "Body");
 
     createComment(loggedUser, article, "comment1");
@@ -521,7 +516,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
           throws JsonProcessingException {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
     Article article = createArticle(loggedUser, "Title", "Description", "Body");
 
     NewCommentRequest newCommentRequest = new NewCommentRequest();
@@ -555,9 +550,9 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       givenExistentArticleWithComments_whenExecuteDeleteCommentEndpoint_shouldReturnStatusCode200() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
 
     Article article = createArticle(user, "Title", "Description", "Body");
 
@@ -579,9 +574,9 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       givenExistentArticle_whenExecuteFaroriteArticleEndpoint_shouldReturnFavoritedArticleWithStatusCode200() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
 
     Article article = createArticle(user, "Title", "Description", "Body");
 
@@ -622,9 +617,9 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
       givenExistentArticleFavorited_whenExecuteUnfaroriteArticleEndpoint_shouldReturnUnfavoritedArticleWithStatusCode200() {
 
     User loggedUser =
-        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123", Role.USER);
+        createUser("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
 
-    User user = createUser("user", "user@mail.com", "bio", "image", "user123", Role.USER);
+    User user = createUser("user", "user@mail.com", "bio", "image", "user123");
 
     Article article = createArticle(user, "Title", "Description", "Body");
 

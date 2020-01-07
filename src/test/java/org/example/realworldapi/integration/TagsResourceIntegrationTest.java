@@ -3,7 +3,7 @@ package org.example.realworldapi.integration;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
-import org.example.realworldapi.domain.entity.persistent.Tag;
+import org.example.realworldapi.domain.model.entity.persistent.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MediaType;

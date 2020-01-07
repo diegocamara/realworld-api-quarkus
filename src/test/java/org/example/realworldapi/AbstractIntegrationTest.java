@@ -2,10 +2,9 @@ package org.example.realworldapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.slugify.Slugify;
-import org.example.realworldapi.domain.builder.ArticleBuilder;
-import org.example.realworldapi.domain.entity.persistent.*;
-import org.example.realworldapi.domain.security.Role;
-import org.example.realworldapi.domain.security.service.JWTService;
+import org.example.realworldapi.domain.model.builder.ArticleBuilder;
+import org.example.realworldapi.domain.model.entity.persistent.*;
+import org.example.realworldapi.domain.model.provider.TokenProvider;
 import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -16,7 +15,7 @@ import java.util.List;
 public class AbstractIntegrationTest extends DatabaseIntegrationTest {
 
   @Inject protected ObjectMapper objectMapper;
-  @Inject protected JWTService jwtService;
+  @Inject protected TokenProvider tokenProvider;
   @Inject protected Slugify slugify;
 
   @BeforeEach
@@ -25,12 +24,12 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
   }
 
   protected User createUser(
-      String username, String email, String bio, String image, String password, Role... role) {
+      String username, String email, String bio, String image, String password) {
     return transaction(
         () -> {
           User user = UserUtils.create(username, email, password, bio, image);
           entityManager.persist(user);
-          user.setToken(jwtService.sign(user.getId().toString(), role));
+          user.setToken(tokenProvider.createUserToken(user.getId().toString()));
           entityManager.merge(user);
           return user;
         });
