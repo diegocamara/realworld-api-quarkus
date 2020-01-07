@@ -5,18 +5,11 @@ import lombok.Setter;
 import org.example.realworldapi.domain.model.entity.persistent.Article;
 import org.example.realworldapi.domain.model.entity.persistent.User;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 @Getter
 @Setter
 public class ArticleBuilder {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-
   private String slug;
   private String title;
   private String description;
