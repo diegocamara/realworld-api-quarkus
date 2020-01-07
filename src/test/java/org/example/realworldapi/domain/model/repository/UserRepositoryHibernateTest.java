@@ -4,7 +4,7 @@ import org.example.realworldapi.DatabaseIntegrationTest;
 import org.example.realworldapi.domain.model.builder.UserBuilder;
 import org.example.realworldapi.domain.model.entity.persistent.User;
 import org.example.realworldapi.infrastructure.repository.UserRepositoryHibernate;
-import org.example.realworldapi.infrastructure.web.security.Role;
+import org.example.realworldapi.infrastructure.web.security.profile.Role;
 import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

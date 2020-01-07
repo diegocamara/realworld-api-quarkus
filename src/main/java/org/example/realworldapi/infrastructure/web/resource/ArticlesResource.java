@@ -7,7 +7,7 @@ import org.example.realworldapi.domain.model.entity.Article;
 import org.example.realworldapi.domain.model.entity.Articles;
 import org.example.realworldapi.domain.model.entity.Comment;
 import org.example.realworldapi.domain.service.ArticlesService;
-import org.example.realworldapi.infrastructure.web.security.Role;
+import org.example.realworldapi.infrastructure.web.security.profile.Role;
 import org.example.realworldapi.infrastructure.web.model.request.NewArticleRequest;
 import org.example.realworldapi.infrastructure.web.model.request.NewCommentRequest;
 import org.example.realworldapi.infrastructure.web.model.request.UpdateArticleRequest;

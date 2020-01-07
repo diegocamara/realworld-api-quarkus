@@ -1,7 +1,7 @@
 package org.example.realworldapi.infrastructure.web.security.context;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.example.realworldapi.infrastructure.web.security.Role;
+import org.example.realworldapi.infrastructure.web.security.profile.Role;
 import org.example.realworldapi.domain.model.provider.TokenProvider;
 
 import javax.ws.rs.core.SecurityContext;

@@ -1,6 +1,6 @@
 package org.example.realworldapi.infrastructure.web.security.filter;
 
-import org.example.realworldapi.infrastructure.web.security.Role;
+import org.example.realworldapi.infrastructure.web.security.profile.Role;
 import org.example.realworldapi.infrastructure.web.exception.ForbiddenException;
 import org.example.realworldapi.infrastructure.web.security.annotation.Secured;
 

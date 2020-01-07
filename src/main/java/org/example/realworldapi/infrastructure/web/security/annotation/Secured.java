@@ -1,6 +1,6 @@
 package org.example.realworldapi.infrastructure.web.security.annotation;
 
-import org.example.realworldapi.infrastructure.web.security.Role;
+import org.example.realworldapi.infrastructure.web.security.profile.Role;
 
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.ElementType;

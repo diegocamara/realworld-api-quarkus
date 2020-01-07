@@ -1,7 +1,7 @@
 package org.example.realworldapi.domain.model.provider;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.example.realworldapi.infrastructure.web.security.Role;
+import org.example.realworldapi.infrastructure.web.security.profile.Role;
 
 public interface TokenProvider {
 

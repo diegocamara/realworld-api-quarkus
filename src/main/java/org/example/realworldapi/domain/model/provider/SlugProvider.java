@@ -1,5 +1,5 @@
 package org.example.realworldapi.domain.model.provider;
 
-public interface SlugifyProvider {
+public interface SlugProvider {
   String slugify(String text);
 }

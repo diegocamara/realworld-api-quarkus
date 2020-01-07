@@ -7,7 +7,7 @@ import org.example.realworldapi.domain.model.exception.ArticleNotFoundException;
 import org.example.realworldapi.domain.model.exception.CommentNotFoundException;
 import org.example.realworldapi.domain.model.exception.FavoriteEntryNotFoundException;
 import org.example.realworldapi.domain.model.exception.UserNotFoundException;
-import org.example.realworldapi.domain.model.provider.SlugifyProvider;
+import org.example.realworldapi.domain.model.provider.SlugProvider;
 import org.example.realworldapi.domain.model.repository.*;
 import org.example.realworldapi.domain.service.ArticlesService;
 import org.example.realworldapi.domain.service.ProfilesService;
@@ -31,7 +31,7 @@ public class ArticlesServiceImpl implements ArticlesService {
   private CommentRepository commentRepository;
   private ArticleRepository articleRepository;
   private ProfilesService profilesService;
-  private SlugifyProvider slugifyProvider;
+  private SlugProvider slugProvider;
 
   public ArticlesServiceImpl(
       UsersFollowersRepository usersFollowersRepository,
@@ -42,7 +42,7 @@ public class ArticlesServiceImpl implements ArticlesService {
       ArticleRepository articleRepository,
       CommentRepository commentRepository,
       ProfilesService profilesService,
-      SlugifyProvider slugifyProvider) {
+      SlugProvider slugProvider) {
     this.usersFollowersRepository = usersFollowersRepository;
     this.articlesUsersRepository = articlesUsersRepository;
     this.articlesTagsRepository = articlesTagsRepository;
@@ -51,7 +51,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     this.articleRepository = articleRepository;
     this.commentRepository = commentRepository;
     this.profilesService = profilesService;
-    this.slugifyProvider = slugifyProvider;
+    this.slugProvider = slugProvider;
   }
 
   @Override
@@ -261,7 +261,7 @@ public class ArticlesServiceImpl implements ArticlesService {
   }
 
   private void configSlug(String title, Article article) {
-    String slug = slugifyProvider.slugify(title);
+    String slug = slugProvider.slugify(title);
     if (articleRepository.existsBySlug(slug)) {
       slug += UUID.randomUUID().toString();
     }
