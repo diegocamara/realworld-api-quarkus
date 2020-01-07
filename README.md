@@ -62,16 +62,17 @@ infrastructure/             -> technical details package
  ```
 The server should be running at http://localhost:8080
 
-### For postman collection
-
-```
-./collections/run-api-tests.sh
-```
 
 ### Running the application tests
 
 ``` 
 ./mvnw test 
+```
+
+### Running postman collection tests
+
+```
+./collections/run-api-tests.sh
 ```
 
 ### Building jar file
