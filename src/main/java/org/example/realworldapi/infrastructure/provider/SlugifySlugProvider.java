@@ -6,11 +6,11 @@ import org.example.realworldapi.domain.model.provider.SlugProvider;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class SlugifyProvider implements SlugProvider {
+public class SlugifySlugProvider implements SlugProvider {
 
   private Slugify slugify;
 
-  public SlugifyProvider(Slugify slugify) {
+  public SlugifySlugProvider(Slugify slugify) {
     this.slugify = slugify;
   }
 
