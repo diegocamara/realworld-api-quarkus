@@ -1,7 +1,7 @@
 package org.example.realworldapi.infrastructure.web.resource;
 
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
-import org.example.realworldapi.domain.model.entity.Profile;
+import org.example.realworldapi.domain.application.data.ProfileData;
 import org.example.realworldapi.infrastructure.web.security.profile.Role;
 import org.example.realworldapi.domain.service.ProfilesService;
 import org.example.realworldapi.infrastructure.web.model.response.ProfileResponse;
@@ -33,7 +33,7 @@ public class ProfilesResource {
           String username,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Profile profile = profilesService.getProfile(username, loggedUserId);
+    ProfileData profile = profilesService.getProfile(username, loggedUserId);
     return Response.ok(new ProfileResponse(profile)).status(Response.Status.OK).build();
   }
 
@@ -45,7 +45,7 @@ public class ProfilesResource {
       @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
           String username,
       @Context SecurityContext securityContext) {
-    Profile profile = profilesService.follow(getLoggedUserId(securityContext), username);
+    ProfileData profile = profilesService.follow(getLoggedUserId(securityContext), username);
     return Response.ok(new ProfileResponse(profile)).status(Response.Status.OK).build();
   }
 
@@ -57,7 +57,7 @@ public class ProfilesResource {
       @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
           String username,
       @Context SecurityContext securityContext) {
-    Profile profile = profilesService.unfollow(getLoggedUserId(securityContext), username);
+    ProfileData profile = profilesService.unfollow(getLoggedUserId(securityContext), username);
     return Response.ok(new ProfileResponse(profile)).status(Response.Status.OK).build();
   }
 

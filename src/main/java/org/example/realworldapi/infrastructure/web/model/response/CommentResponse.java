@@ -6,8 +6,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.domain.model.entity.Comment;
-import org.example.realworldapi.domain.model.entity.Profile;
+import org.example.realworldapi.domain.application.data.CommentData;
+import org.example.realworldapi.domain.application.data.ProfileData;
 
 import java.time.LocalDateTime;
 
@@ -27,13 +27,13 @@ public class CommentResponse {
   private LocalDateTime updatedAt;
 
   private String body;
-  private Profile author;
+  private ProfileData author;
 
-  public CommentResponse(Comment comment) {
-    this.id = comment.getId();
-    this.createdAt = comment.getCreatedAt();
-    this.updatedAt = comment.getUpdatedAt();
-    this.body = comment.getBody();
-    this.author = comment.getAuthor();
+  public CommentResponse(CommentData commentData) {
+    this.id = commentData.getId();
+    this.createdAt = commentData.getCreatedAt();
+    this.updatedAt = commentData.getUpdatedAt();
+    this.body = commentData.getBody();
+    this.author = commentData.getAuthor();
   }
 }

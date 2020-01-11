@@ -1,8 +1,8 @@
 package org.example.realworldapi.infrastructure.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.Article;
-import org.example.realworldapi.domain.model.entity.persistent.Comment;
-import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.domain.model.entity.Article;
+import org.example.realworldapi.domain.model.entity.Comment;
+import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.repository.CommentRepository;
 
 import javax.enterprise.context.ApplicationScoped;

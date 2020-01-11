@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.model.entity;
+package org.example.realworldapi.domain.application.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Profile {
+public class ProfileData {
 
   private String username;
   private String bio;

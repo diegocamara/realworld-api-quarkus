@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.realworldapi.domain.model.entity.Profile;
+import org.example.realworldapi.domain.application.data.ProfileData;
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ public class ProfileResponse {
   private String image;
   private boolean following;
 
-  public ProfileResponse(Profile profile) {
+  public ProfileResponse(ProfileData profile) {
     this.username = profile.getUsername();
     this.bio = profile.getBio();
     this.image = profile.getImage();

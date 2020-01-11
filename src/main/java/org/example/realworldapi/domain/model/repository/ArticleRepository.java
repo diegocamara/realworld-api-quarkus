@@ -1,7 +1,7 @@
 package org.example.realworldapi.domain.model.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.Article;
-import org.example.realworldapi.domain.model.entity.persistent.Comment;
+import org.example.realworldapi.domain.model.entity.Article;
+import org.example.realworldapi.domain.model.entity.Comment;
 
 import java.util.List;
 import java.util.Optional;

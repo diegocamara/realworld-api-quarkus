@@ -1,6 +1,6 @@
 package org.example.realworldapi.domain.application;
 
-import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.exception.EmailAlreadyExistsException;
 import org.example.realworldapi.domain.model.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.model.exception.UserNotFoundException;

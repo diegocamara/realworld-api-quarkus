@@ -1,6 +1,6 @@
 package org.example.realworldapi.infrastructure.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.Tag;
+import org.example.realworldapi.domain.model.entity.Tag;
 import org.example.realworldapi.domain.model.repository.TagRepository;
 
 import javax.enterprise.context.ApplicationScoped;

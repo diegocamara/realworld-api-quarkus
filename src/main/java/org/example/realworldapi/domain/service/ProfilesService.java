@@ -1,11 +1,11 @@
 package org.example.realworldapi.domain.service;
 
-import org.example.realworldapi.domain.model.entity.Profile;
+import org.example.realworldapi.domain.application.data.ProfileData;
 
 public interface ProfilesService {
-  Profile getProfile(String username, Long loggedUserId);
+  ProfileData getProfile(String username, Long loggedUserId);
 
-  Profile follow(Long loggedUserId, String username);
+  ProfileData follow(Long loggedUserId, String username);
 
-  Profile unfollow(Long loggedUserId, String username);
+  ProfileData unfollow(Long loggedUserId, String username);
 }

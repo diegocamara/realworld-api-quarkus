@@ -2,8 +2,8 @@ package org.example.realworldapi.domain.model.security.service;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.example.realworldapi.domain.model.builder.UserBuilder;
-import org.example.realworldapi.domain.model.entity.Profile;
-import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.repository.UsersFollowersRepository;
 import org.example.realworldapi.domain.service.ProfilesService;
 import org.example.realworldapi.domain.service.UsersService;
@@ -40,7 +40,7 @@ public class ProfilesServiceImplTest {
 
     when(usersService.findByUsername(username)).thenReturn(existingUser);
 
-    Profile result = profilesService.getProfile(username, loggedUserId);
+    ProfileData result = profilesService.getProfile(username, loggedUserId);
 
     Assertions.assertEquals(existingUser.getUsername(), result.getUsername());
     Assertions.assertEquals(existingUser.getBio(), result.getBio());
@@ -61,7 +61,7 @@ public class ProfilesServiceImplTest {
 
     when(usersFollowersRepository.isFollowing(loggedUserId, existingUser.getId())).thenReturn(true);
 
-    Profile result = profilesService.getProfile(username, loggedUserId);
+    ProfileData result = profilesService.getProfile(username, loggedUserId);
 
     Assertions.assertEquals(existingUser.getUsername(), result.getUsername());
     Assertions.assertEquals(existingUser.getBio(), result.getBio());

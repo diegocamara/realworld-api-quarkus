@@ -24,11 +24,11 @@ This application basicaly uses Quarkus Framework with Java 8 with some other mod
 ```
 domain/                     -> core business package
 +-- application/            -> business logic implementation
+|   +--data/                -> data aggregator classes
 +-- model/
 |   +-- builder/
 |   +-- constants/
-|   +-- entity/
-|   |   +-- persistent/     -> only persistent objects
+|   +-- entity/             -> only persistent model classes
 |   +-- exception/          -> domain exceptions
 |   +-- repository/         -> persistent context abstractions
 |   +-- provider/           -> providers abstraction (token, hash, slug)

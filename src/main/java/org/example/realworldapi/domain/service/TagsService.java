@@ -1,6 +1,6 @@
 package org.example.realworldapi.domain.service;
 
-import org.example.realworldapi.domain.model.entity.persistent.Tag;
+import org.example.realworldapi.domain.model.entity.Tag;
 
 import java.util.List;
 

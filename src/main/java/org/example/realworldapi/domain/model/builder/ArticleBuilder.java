@@ -2,8 +2,8 @@ package org.example.realworldapi.domain.model.builder;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.realworldapi.domain.model.entity.persistent.Article;
-import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.domain.model.entity.Article;
+import org.example.realworldapi.domain.model.entity.User;
 
 @Getter
 @Setter

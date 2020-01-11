@@ -3,7 +3,7 @@ package org.example.realworldapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.slugify.Slugify;
 import org.example.realworldapi.domain.model.builder.ArticleBuilder;
-import org.example.realworldapi.domain.model.entity.persistent.*;
+import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.provider.TokenProvider;
 import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.BeforeEach;

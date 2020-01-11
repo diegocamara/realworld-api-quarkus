@@ -1,21 +1,31 @@
 package org.example.realworldapi.domain.model.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "COMMENTS")
 public class Comment {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
+
+  @CreationTimestamp private LocalDateTime createdAt;
+  @UpdateTimestamp private LocalDateTime updatedAt;
+
   private String body;
-  private Profile author;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  private Article article;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  private User author;
 }

@@ -1,10 +1,10 @@
 package org.example.realworldapi.domain.application;
 
 import org.example.realworldapi.domain.model.builder.ProfileBuilder;
-import org.example.realworldapi.domain.model.entity.Profile;
-import org.example.realworldapi.domain.model.entity.persistent.User;
-import org.example.realworldapi.domain.model.entity.persistent.UsersFollowers;
-import org.example.realworldapi.domain.model.entity.persistent.UsersFollowersKey;
+import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.domain.model.entity.User;
+import org.example.realworldapi.domain.model.entity.UsersFollowers;
+import org.example.realworldapi.domain.model.entity.UsersFollowersKey;
 import org.example.realworldapi.domain.model.repository.UsersFollowersRepository;
 import org.example.realworldapi.domain.service.ProfilesService;
 import org.example.realworldapi.domain.service.UsersService;
@@ -26,7 +26,7 @@ public class ProfilesServiceImpl implements ProfilesService {
 
   @Override
   @Transactional
-  public Profile getProfile(String username, Long loggedUserId) {
+  public ProfileData getProfile(String username, Long loggedUserId) {
     User existentUser = usersService.findByUsername(username);
 
     ProfileBuilder profileBuilder = new ProfileBuilder().fromUser(existentUser);
@@ -41,7 +41,7 @@ public class ProfilesServiceImpl implements ProfilesService {
 
   @Override
   @Transactional
-  public Profile follow(Long loggedUserId, String username) {
+  public ProfileData follow(Long loggedUserId, String username) {
     User loggedUser = usersService.findById(loggedUserId);
     User userToFollow = usersService.findByUsername(username);
     usersFollowersRepository.insertOrUpdate(getUsersFollowers(loggedUser, userToFollow));
@@ -50,7 +50,7 @@ public class ProfilesServiceImpl implements ProfilesService {
 
   @Override
   @Transactional
-  public Profile unfollow(Long loggedUserId, String username) {
+  public ProfileData unfollow(Long loggedUserId, String username) {
     User loggedUser = usersService.findById(loggedUserId);
     User userToUnfollow = usersService.findByUsername(username);
     UsersFollowers usersFollowers =

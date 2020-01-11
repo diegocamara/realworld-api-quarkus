@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.model.entity.persistent;
+package org.example.realworldapi.domain.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;

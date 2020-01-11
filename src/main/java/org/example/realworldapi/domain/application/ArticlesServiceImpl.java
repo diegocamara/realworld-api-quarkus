@@ -1,8 +1,10 @@
 package org.example.realworldapi.domain.application;
 
-import org.example.realworldapi.domain.model.entity.Articles;
-import org.example.realworldapi.domain.model.entity.Profile;
-import org.example.realworldapi.domain.model.entity.persistent.*;
+import org.example.realworldapi.domain.application.data.ArticleData;
+import org.example.realworldapi.domain.application.data.ArticlesData;
+import org.example.realworldapi.domain.application.data.CommentData;
+import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.exception.ArticleNotFoundException;
 import org.example.realworldapi.domain.model.exception.CommentNotFoundException;
 import org.example.realworldapi.domain.model.exception.FavoriteEntryNotFoundException;
@@ -56,19 +58,19 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   @Override
   @Transactional
-  public Articles findRecentArticles(Long loggedUserId, int offset, int limit) {
+  public ArticlesData findRecentArticles(Long loggedUserId, int offset, int limit) {
 
     List<Article> articles =
         usersFollowersRepository.findMostRecentArticles(loggedUserId, offset, getLimit(limit));
 
     int articlesCount = usersFollowersRepository.count(loggedUserId);
 
-    return new Articles(toResultList(articles, loggedUserId), articlesCount);
+    return new ArticlesData(toResultList(articles, loggedUserId), articlesCount);
   }
 
   @Override
   @Transactional
-  public Articles findArticles(
+  public ArticlesData findArticles(
       int offset,
       int limit,
       Long loggedUserId,
@@ -81,12 +83,12 @@ public class ArticlesServiceImpl implements ArticlesService {
 
     int articlesCount = articleRepository.count(tags, authors, favorited);
 
-    return new Articles(toResultList(articles, loggedUserId), articlesCount);
+    return new ArticlesData(toResultList(articles, loggedUserId), articlesCount);
   }
 
   @Override
   @Transactional
-  public org.example.realworldapi.domain.model.entity.Article create(
+  public ArticleData create(
       String title, String description, String body, List<String> tagList, Long authorId) {
     Article article = createArticle(title, description, body, authorId);
     createArticlesTags(article, tagList);
@@ -95,14 +97,14 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   @Override
   @Transactional
-  public org.example.realworldapi.domain.model.entity.Article findBySlug(String slug) {
+  public ArticleData findBySlug(String slug) {
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
     return getArticle(article, null);
   }
 
   @Override
   @Transactional
-  public org.example.realworldapi.domain.model.entity.Article update(
+  public ArticleData update(
       String slug, String title, String description, String body, Long authorId) {
 
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
@@ -134,22 +136,22 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   @Override
   @Transactional
-  public List<org.example.realworldapi.domain.model.entity.Comment> findCommentsBySlug(
+  public List<CommentData> findCommentsBySlug(
       String slug, Long loggedUserId) {
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
     List<Comment> comments = articleRepository.findComments(article.getId());
-    Profile author = profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
+    ProfileData author = profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
     return getComments(comments, author);
   }
 
   @Override
   @Transactional
-  public org.example.realworldapi.domain.model.entity.Comment createComment(
+  public CommentData createComment(
       String slug, String body, Long commentAuthorId) {
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
     User author = userRepository.findById(commentAuthorId).orElseThrow(UserNotFoundException::new);
     Comment comment = createComment(body, article, author);
-    Profile authorProfile = profilesService.getProfile(author.getUsername(), author.getId());
+    ProfileData authorProfile = profilesService.getProfile(author.getUsername(), author.getId());
     return getComment(comment, authorProfile);
   }
 
@@ -165,7 +167,7 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   @Override
   @Transactional
-  public org.example.realworldapi.domain.model.entity.Article favoriteArticle(
+  public ArticleData favoriteArticle(
       String slug, Long loggedUserId) {
 
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
@@ -185,7 +187,7 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   @Override
   @Transactional
-  public org.example.realworldapi.domain.model.entity.Article unfavoriteArticle(
+  public ArticleData unfavoriteArticle(
       String slug, Long loggedUserId) {
 
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
@@ -228,16 +230,16 @@ public class ArticlesServiceImpl implements ArticlesService {
     return commentRepository.create(comment);
   }
 
-  private List<org.example.realworldapi.domain.model.entity.Comment> getComments(
-      List<Comment> comments, Profile profile) {
+  private List<CommentData> getComments(
+      List<Comment> comments, ProfileData profile) {
     return comments.stream()
         .map(comment -> getComment(comment, profile))
         .collect(Collectors.toList());
   }
 
-  private org.example.realworldapi.domain.model.entity.Comment getComment(
-      Comment comment, Profile profile) {
-    return new org.example.realworldapi.domain.model.entity.Comment(
+  private CommentData getComment(
+      Comment comment, ProfileData profile) {
+    return new CommentData(
         comment.getId(),
         comment.getCreatedAt(),
         comment.getUpdatedAt(),
@@ -289,14 +291,14 @@ public class ArticlesServiceImpl implements ArticlesService {
     return new ArticlesTags(articlesTagsKey);
   }
 
-  private List<org.example.realworldapi.domain.model.entity.Article> toResultList(
+  private List<ArticleData> toResultList(
       List<Article> articles, Long loggedUserId) {
     return articles.stream()
         .map(article -> getArticle(article, loggedUserId))
         .collect(Collectors.toList());
   }
 
-  private org.example.realworldapi.domain.model.entity.Article getArticle(
+  private ArticleData getArticle(
       Article article, Long loggedUserId) {
     boolean isFavorited = false;
 
@@ -306,13 +308,13 @@ public class ArticlesServiceImpl implements ArticlesService {
 
     int favoritesCount = articlesUsersRepository.favoritesCount(article.getId());
 
-    Profile author = profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
+    ProfileData author = profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
 
     List<String> tags =
         articlesTagsRepository.findTags(article.getId()).stream()
             .map(Tag::getName)
             .collect(Collectors.toList());
-    return new org.example.realworldapi.domain.model.entity.Article(
+    return new ArticleData(
         article.getSlug(),
         article.getTitle(),
         article.getDescription(),

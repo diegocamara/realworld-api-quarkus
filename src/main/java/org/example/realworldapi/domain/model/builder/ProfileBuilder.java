@@ -1,7 +1,7 @@
 package org.example.realworldapi.domain.model.builder;
 
-import org.example.realworldapi.domain.model.entity.Profile;
-import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.domain.model.entity.User;
 
 public class ProfileBuilder {
 
@@ -30,8 +30,8 @@ public class ProfileBuilder {
     return this;
   }
 
-  public Profile build() {
-    return new Profile(this.username, this.bio, this.image, this.following);
+  public ProfileData build() {
+    return new ProfileData(this.username, this.bio, this.image, this.following);
   }
 
   public ProfileBuilder fromUser(User existentUser) {

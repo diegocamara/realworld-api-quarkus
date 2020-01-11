@@ -1,7 +1,7 @@
 package org.example.realworldapi.domain.model.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.ArticlesTags;
-import org.example.realworldapi.domain.model.entity.persistent.Tag;
+import org.example.realworldapi.domain.model.entity.ArticlesTags;
+import org.example.realworldapi.domain.model.entity.Tag;
 
 import java.util.List;
 

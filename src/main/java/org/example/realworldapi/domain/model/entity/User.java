@@ -1,8 +1,9 @@
-package org.example.realworldapi.domain.model.entity.persistent;
+package org.example.realworldapi.domain.model.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.realworldapi.domain.model.entity.Article;
 
 import javax.persistence.*;
 import java.util.List;

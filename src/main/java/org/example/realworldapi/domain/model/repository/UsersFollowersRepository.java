@@ -1,8 +1,8 @@
 package org.example.realworldapi.domain.model.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.Article;
-import org.example.realworldapi.domain.model.entity.persistent.UsersFollowers;
-import org.example.realworldapi.domain.model.entity.persistent.UsersFollowersKey;
+import org.example.realworldapi.domain.model.entity.Article;
+import org.example.realworldapi.domain.model.entity.UsersFollowers;
+import org.example.realworldapi.domain.model.entity.UsersFollowersKey;
 
 import java.util.List;
 

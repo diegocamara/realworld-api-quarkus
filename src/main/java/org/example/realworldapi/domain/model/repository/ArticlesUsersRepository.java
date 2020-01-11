@@ -1,7 +1,7 @@
 package org.example.realworldapi.domain.model.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.ArticlesUsers;
-import org.example.realworldapi.domain.model.entity.persistent.ArticlesUsersKey;
+import org.example.realworldapi.domain.model.entity.ArticlesUsers;
+import org.example.realworldapi.domain.model.entity.ArticlesUsersKey;
 
 import java.util.Optional;
 

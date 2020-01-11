@@ -1,6 +1,6 @@
 package org.example.realworldapi.infrastructure.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.*;
+import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.repository.ArticleRepository;
 
 import javax.enterprise.context.ApplicationScoped;

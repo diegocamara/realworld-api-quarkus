@@ -1,6 +1,8 @@
-package org.example.realworldapi.domain.model.entity.persistent;
+package org.example.realworldapi.domain.model.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Embeddable;
@@ -10,11 +12,13 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
-public class ArticlesUsersKey implements Serializable {
+public class ArticlesTagsKey implements Serializable {
 
   @ManyToOne private Article article;
-  @ManyToOne private User user;
+  @ManyToOne private Tag tag;
 
   @Override
   public boolean equals(Object o) {
@@ -22,12 +26,12 @@ public class ArticlesUsersKey implements Serializable {
 
     if (o == null || getClass() != o.getClass()) return false;
 
-    ArticlesUsersKey that = (ArticlesUsersKey) o;
-    return Objects.equals(user, that.user) && Objects.equals(article, that.article);
+    ArticlesTagsKey that = (ArticlesTagsKey) o;
+    return Objects.equals(article, that.article) && Objects.equals(tag, that.tag);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(user, article);
+    return Objects.hash(article, tag);
   }
 }

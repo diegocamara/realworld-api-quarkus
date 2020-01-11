@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.model.entity;
+package org.example.realworldapi.domain.application.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Articles {
-  private List<Article> articles;
+public class ArticlesData {
+  private List<ArticleData> articles;
   private int articlesCount;
 }

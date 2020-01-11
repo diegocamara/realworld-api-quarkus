@@ -1,9 +1,9 @@
 package org.example.realworldapi.infrastructure.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.Article;
-import org.example.realworldapi.domain.model.entity.persistent.ArticlesTags;
-import org.example.realworldapi.domain.model.entity.persistent.ArticlesTagsKey;
-import org.example.realworldapi.domain.model.entity.persistent.Tag;
+import org.example.realworldapi.domain.model.entity.Article;
+import org.example.realworldapi.domain.model.entity.ArticlesTags;
+import org.example.realworldapi.domain.model.entity.ArticlesTagsKey;
+import org.example.realworldapi.domain.model.entity.Tag;
 import org.example.realworldapi.domain.model.repository.ArticlesTagsRepository;
 
 import javax.enterprise.context.ApplicationScoped;

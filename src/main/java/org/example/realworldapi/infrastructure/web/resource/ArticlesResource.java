@@ -3,9 +3,9 @@ package org.example.realworldapi.infrastructure.web.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
-import org.example.realworldapi.domain.model.entity.Article;
-import org.example.realworldapi.domain.model.entity.Articles;
-import org.example.realworldapi.domain.model.entity.Comment;
+import org.example.realworldapi.domain.application.data.ArticleData;
+import org.example.realworldapi.domain.application.data.ArticlesData;
+import org.example.realworldapi.domain.application.data.CommentData;
 import org.example.realworldapi.domain.service.ArticlesService;
 import org.example.realworldapi.infrastructure.web.security.profile.Role;
 import org.example.realworldapi.infrastructure.web.model.request.NewArticleRequest;
@@ -51,7 +51,7 @@ public class ArticlesResource {
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Articles result = articlesService.findRecentArticles(loggedUserId, offset, limit);
+    ArticlesData result = articlesService.findRecentArticles(loggedUserId, offset, limit);
     return Response.ok(objectMapper.writeValueAsString(new ArticlesResponse(result)))
         .status(Response.Status.OK)
         .build();
@@ -69,7 +69,7 @@ public class ArticlesResource {
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Articles result =
+    ArticlesData result =
         articlesService.findArticles(offset, limit, loggedUserId, tags, authors, favorited);
     return Response.ok(objectMapper.writeValueAsString(new ArticlesResponse(result)))
         .status(Response.Status.OK)
@@ -85,14 +85,14 @@ public class ArticlesResource {
           NewArticleRequest newArticleRequest,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Article newArticle =
+    ArticleData newArticleData =
         articlesService.create(
             newArticleRequest.getTitle(),
             newArticleRequest.getDescription(),
             newArticleRequest.getBody(),
             newArticleRequest.getTagList(),
             loggedUserId);
-    return Response.ok(new ArticleResponse(newArticle)).status(Response.Status.CREATED).build();
+    return Response.ok(new ArticleResponse(newArticleData)).status(Response.Status.CREATED).build();
   }
 
   @GET
@@ -101,8 +101,8 @@ public class ArticlesResource {
   public Response findBySlug(
       @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK)
           String slug) {
-    Article article = articlesService.findBySlug(slug);
-    return Response.ok(new ArticleResponse(article)).status(Response.Status.OK).build();
+    ArticleData articleData = articlesService.findBySlug(slug);
+    return Response.ok(new ArticleResponse(articleData)).status(Response.Status.OK).build();
   }
 
   @PUT
@@ -115,14 +115,14 @@ public class ArticlesResource {
       @Valid @NotNull UpdateArticleRequest updateArticleRequest,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Article updatedArticle =
+    ArticleData updatedArticleData =
         articlesService.update(
             slug,
             updateArticleRequest.getTitle(),
             updateArticleRequest.getDescription(),
             updateArticleRequest.getBody(),
             loggedUserId);
-    return Response.ok(new ArticleResponse(updatedArticle)).status(Response.Status.OK).build();
+    return Response.ok(new ArticleResponse(updatedArticleData)).status(Response.Status.OK).build();
   }
 
   @DELETE
@@ -146,7 +146,7 @@ public class ArticlesResource {
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     Long loggedUserId = getLoggedUserId(securityContext);
-    List<Comment> comments = articlesService.findCommentsBySlug(slug, loggedUserId);
+    List<CommentData> comments = articlesService.findCommentsBySlug(slug, loggedUserId);
     return Response.ok(objectMapper.writeValueAsString(new CommentsResponse(comments)))
         .status(Response.Status.OK)
         .build();
@@ -162,9 +162,9 @@ public class ArticlesResource {
       @Valid NewCommentRequest newCommentRequest,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Comment comment =
+    CommentData commentData =
         articlesService.createComment(slug, newCommentRequest.getBody(), loggedUserId);
-    return Response.ok(new CommentResponse(comment)).status(Response.Status.OK).build();
+    return Response.ok(new CommentResponse(commentData)).status(Response.Status.OK).build();
   }
 
   @DELETE
@@ -188,8 +188,8 @@ public class ArticlesResource {
       @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Article article = articlesService.favoriteArticle(slug, loggedUserId);
-    return Response.ok(new ArticleResponse(article)).status(Response.Status.OK).build();
+    ArticleData articleData = articlesService.favoriteArticle(slug, loggedUserId);
+    return Response.ok(new ArticleResponse(articleData)).status(Response.Status.OK).build();
   }
 
   @DELETE
@@ -200,8 +200,8 @@ public class ArticlesResource {
       @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
       @Context SecurityContext securityContext) {
     Long loggedUserId = getLoggedUserId(securityContext);
-    Article article = articlesService.unfavoriteArticle(slug, loggedUserId);
-    return Response.ok(new ArticleResponse(article)).status(Response.Status.OK).build();
+    ArticleData articleData = articlesService.unfavoriteArticle(slug, loggedUserId);
+    return Response.ok(new ArticleResponse(articleData)).status(Response.Status.OK).build();
   }
 
   private Long getLoggedUserId(SecurityContext securityContext) {

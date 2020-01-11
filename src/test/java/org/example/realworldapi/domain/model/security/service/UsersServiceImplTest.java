@@ -3,7 +3,7 @@ package org.example.realworldapi.domain.model.security.service;
 import io.quarkus.test.junit.QuarkusTest;
 import org.example.realworldapi.domain.application.UsersServiceImpl;
 import org.example.realworldapi.domain.model.builder.UserBuilder;
-import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.exception.EmailAlreadyExistsException;
 import org.example.realworldapi.domain.model.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.model.exception.UserNotFoundException;
