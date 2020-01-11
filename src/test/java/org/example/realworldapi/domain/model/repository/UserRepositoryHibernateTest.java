@@ -1,5 +1,6 @@
 package org.example.realworldapi.domain.model.repository;
 
+import io.quarkus.test.junit.QuarkusTest;
 import org.example.realworldapi.DatabaseIntegrationTest;
 import org.example.realworldapi.domain.model.builder.UserBuilder;
 import org.example.realworldapi.domain.model.entity.persistent.User;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+@QuarkusTest
 public class UserRepositoryHibernateTest extends DatabaseIntegrationTest {
 
   private UserRepository userRepository;

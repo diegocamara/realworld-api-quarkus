@@ -1,5 +1,6 @@
 package org.example.realworldapi.domain.model.security.service;
 
+import io.quarkus.test.junit.QuarkusTest;
 import org.example.realworldapi.domain.model.builder.UserBuilder;
 import org.example.realworldapi.domain.model.entity.Profile;
 import org.example.realworldapi.domain.model.entity.persistent.User;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@QuarkusTest
 public class ProfilesServiceImplTest {
 
   private UsersService usersService;
