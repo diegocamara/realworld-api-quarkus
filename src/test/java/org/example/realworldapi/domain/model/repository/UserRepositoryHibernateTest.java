@@ -2,9 +2,8 @@ package org.example.realworldapi.domain.model.repository;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.example.realworldapi.DatabaseIntegrationTest;
-import org.example.realworldapi.domain.model.builder.UserBuilder;
 import org.example.realworldapi.domain.model.entity.User;
-import org.example.realworldapi.infrastructure.repository.UserRepositoryHibernate;
+import org.example.realworldapi.infrastructure.repository.criteriabuilder.UserRepositoryHibernate;
 import org.example.realworldapi.infrastructure.web.security.profile.Role;
 import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -44,7 +43,8 @@ public class UserRepositoryHibernateTest extends DatabaseIntegrationTest {
 
     User existingUser = createUser("user1", "user@mail.com", "123");
 
-    Optional<User> result = transaction(() -> userRepository.findByEmail(existingUser.getEmail()));
+    Optional<User> result =
+        transaction(() -> userRepository.findUserByEmail(existingUser.getEmail()));
 
     Assertions.assertEquals(existingUser.getEmail(), result.orElse(new User()).getEmail());
   }
@@ -82,18 +82,6 @@ public class UserRepositoryHibernateTest extends DatabaseIntegrationTest {
     String username = "user1";
 
     transaction(() -> Assertions.assertFalse(userRepository.existsBy("username", username)));
-  }
-
-  @Test
-  public void shouldReturnAnUpdatedUser() {
-
-    User existingUser = createUser("user1", "user@mail.com", "123");
-
-    User user = new UserBuilder().id(existingUser.getId()).username("user2").build();
-
-    User result = transaction(() -> userRepository.update(user));
-
-    Assertions.assertEquals(user.getUsername(), result.getUsername());
   }
 
   @Test
@@ -172,7 +160,9 @@ public class UserRepositoryHibernateTest extends DatabaseIntegrationTest {
     User user = createUser("user", "user@mail.com", "123");
 
     transaction(
-        () -> Assertions.assertTrue(userRepository.findByUsername(user.getUsername()).isPresent()));
+        () ->
+            Assertions.assertTrue(
+                userRepository.findByUsernameOptional(user.getUsername()).isPresent()));
   }
 
   private User createUser(String username, String email, String password, Role... role) {

@@ -66,27 +66,21 @@ public class UsersServiceImpl implements UsersService {
   @Transactional
   public User login(String email, String password) {
 
-    Optional<User> userOptional = userRepository.findByEmail(email);
+    User user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
 
-    if (!userOptional.isPresent()) {
-      throw new UserNotFoundException();
-    }
-
-    User loggedUser = userOptional.get();
-
-    if (isPasswordInvalid(password, loggedUser.getPassword())) {
+    if (isPasswordInvalid(password, user.getPassword())) {
       throw new InvalidPasswordException();
     }
 
-    loggedUser.setToken(createToken(loggedUser));
+    user.setToken(createToken(user));
 
-    return userRepository.update(loggedUser);
+    return user;
   }
 
   @Override
   @Transactional
   public User findById(Long id) {
-    return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    return userRepository.findUserById(id).orElseThrow(UserNotFoundException::new);
   }
 
   @Override
@@ -95,7 +89,7 @@ public class UsersServiceImpl implements UsersService {
 
     checkValidations(user);
 
-    Optional<User> managedUserOptional = userRepository.findById(user.getId());
+    Optional<User> managedUserOptional = userRepository.findUserById(user.getId());
 
     managedUserOptional.ifPresent(
         storedUser -> {
@@ -122,7 +116,7 @@ public class UsersServiceImpl implements UsersService {
   @Override
   @Transactional
   public User findByUsername(String username) {
-    return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+    return userRepository.findByUsernameOptional(username).orElseThrow(UserNotFoundException::new);
   }
 
   private boolean isPresent(String property) {

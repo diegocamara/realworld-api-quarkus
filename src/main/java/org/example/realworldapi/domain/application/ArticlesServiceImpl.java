@@ -136,20 +136,20 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   @Override
   @Transactional
-  public List<CommentData> findCommentsBySlug(
-      String slug, Long loggedUserId) {
+  public List<CommentData> findCommentsBySlug(String slug, Long loggedUserId) {
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
     List<Comment> comments = articleRepository.findComments(article.getId());
-    ProfileData author = profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
+    ProfileData author =
+        profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
     return getComments(comments, author);
   }
 
   @Override
   @Transactional
-  public CommentData createComment(
-      String slug, String body, Long commentAuthorId) {
+  public CommentData createComment(String slug, String body, Long commentAuthorId) {
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
-    User author = userRepository.findById(commentAuthorId).orElseThrow(UserNotFoundException::new);
+    User author =
+        userRepository.findUserById(commentAuthorId).orElseThrow(UserNotFoundException::new);
     Comment comment = createComment(body, article, author);
     ProfileData authorProfile = profilesService.getProfile(author.getUsername(), author.getId());
     return getComment(comment, authorProfile);
@@ -167,15 +167,14 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   @Override
   @Transactional
-  public ArticleData favoriteArticle(
-      String slug, Long loggedUserId) {
+  public ArticleData favoriteArticle(String slug, Long loggedUserId) {
 
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
 
     if (!articlesUsersRepository.isFavorited(article.getId(), loggedUserId)) {
 
       User loggedUser =
-          userRepository.findById(loggedUserId).orElseThrow(UserNotFoundException::new);
+          userRepository.findUserById(loggedUserId).orElseThrow(UserNotFoundException::new);
 
       ArticlesUsers articlesUsers = getArticlesUsers(article, loggedUser);
 
@@ -187,15 +186,14 @@ public class ArticlesServiceImpl implements ArticlesService {
 
   @Override
   @Transactional
-  public ArticleData unfavoriteArticle(
-      String slug, Long loggedUserId) {
+  public ArticleData unfavoriteArticle(String slug, Long loggedUserId) {
 
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
 
     if (articlesUsersRepository.isFavorited(article.getId(), loggedUserId)) {
 
       User loggedUser =
-          userRepository.findById(loggedUserId).orElseThrow(UserNotFoundException::new);
+          userRepository.findUserById(loggedUserId).orElseThrow(UserNotFoundException::new);
 
       ArticlesUsers articlesUsers =
           articlesUsersRepository
@@ -230,15 +228,13 @@ public class ArticlesServiceImpl implements ArticlesService {
     return commentRepository.create(comment);
   }
 
-  private List<CommentData> getComments(
-      List<Comment> comments, ProfileData profile) {
+  private List<CommentData> getComments(List<Comment> comments, ProfileData profile) {
     return comments.stream()
         .map(comment -> getComment(comment, profile))
         .collect(Collectors.toList());
   }
 
-  private CommentData getComment(
-      Comment comment, ProfileData profile) {
+  private CommentData getComment(Comment comment, ProfileData profile) {
     return new CommentData(
         comment.getId(),
         comment.getCreatedAt(),
@@ -257,7 +253,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     configTitle(title, article);
     article.setDescription(description);
     article.setBody(body);
-    article.setAuthor(userRepository.findById(userId).orElseThrow(UserNotFoundException::new));
+    article.setAuthor(userRepository.findUserById(userId).orElseThrow(UserNotFoundException::new));
     articleRepository.create(article);
     return article;
   }
@@ -291,15 +287,13 @@ public class ArticlesServiceImpl implements ArticlesService {
     return new ArticlesTags(articlesTagsKey);
   }
 
-  private List<ArticleData> toResultList(
-      List<Article> articles, Long loggedUserId) {
+  private List<ArticleData> toResultList(List<Article> articles, Long loggedUserId) {
     return articles.stream()
         .map(article -> getArticle(article, loggedUserId))
         .collect(Collectors.toList());
   }
 
-  private ArticleData getArticle(
-      Article article, Long loggedUserId) {
+  private ArticleData getArticle(Article article, Long loggedUserId) {
     boolean isFavorited = false;
 
     if (loggedUserId != null) {
@@ -308,7 +302,8 @@ public class ArticlesServiceImpl implements ArticlesService {
 
     int favoritesCount = articlesUsersRepository.favoritesCount(article.getId());
 
-    ProfileData author = profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
+    ProfileData author =
+        profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
 
     List<String> tags =
         articlesTagsRepository.findTags(article.getId()).stream()

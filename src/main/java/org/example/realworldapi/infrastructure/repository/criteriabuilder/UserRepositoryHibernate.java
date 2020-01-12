@@ -1,14 +1,13 @@
-package org.example.realworldapi.infrastructure.repository;
+package org.example.realworldapi.infrastructure.repository.criteriabuilder;
 
 import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.repository.UserRepository;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.Optional;
 
-@ApplicationScoped
+// @ApplicationScoped
 public class UserRepositoryHibernate extends AbstractRepositoryHibernate<User, Long>
     implements UserRepository {
 
@@ -24,7 +23,7 @@ public class UserRepositoryHibernate extends AbstractRepositoryHibernate<User, L
   }
 
   @Override
-  public Optional<User> findByEmail(String email) {
+  public Optional<User> findUserByEmail(String email) {
     CriteriaBuilder builder = getCriteriaBuilder();
     CriteriaQuery<User> criteriaQuery = getCriteriaQuery(builder);
     Root<User> user = getRoot(criteriaQuery);
@@ -41,13 +40,8 @@ public class UserRepositoryHibernate extends AbstractRepositoryHibernate<User, L
   }
 
   @Override
-  public Optional<User> findById(Long id) {
+  public Optional<User> findUserById(Long id) {
     return Optional.ofNullable(entityManager.find(User.class, id));
-  }
-
-  @Override
-  public User update(User user) {
-    return entityManager.merge(user);
   }
 
   @Override
@@ -61,7 +55,7 @@ public class UserRepositoryHibernate extends AbstractRepositoryHibernate<User, L
   }
 
   @Override
-  public Optional<User> findByUsername(String username) {
+  public Optional<User> findByUsernameOptional(String username) {
     CriteriaBuilder builder = getCriteriaBuilder();
     CriteriaQuery<User> criteriaQuery = getCriteriaQuery(builder);
     Root<User> user = getRoot(criteriaQuery);

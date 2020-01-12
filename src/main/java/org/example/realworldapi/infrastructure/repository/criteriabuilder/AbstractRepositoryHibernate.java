@@ -1,4 +1,4 @@
-package org.example.realworldapi.infrastructure.repository;
+package org.example.realworldapi.infrastructure.repository.criteriabuilder;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;

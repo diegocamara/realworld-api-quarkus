@@ -1,4 +1,4 @@
-package org.example.realworldapi.infrastructure.repository;
+package org.example.realworldapi.infrastructure.repository.criteriabuilder;
 
 import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.repository.ArticleRepository;

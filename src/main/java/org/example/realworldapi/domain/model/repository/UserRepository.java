@@ -7,17 +7,15 @@ import java.util.Optional;
 public interface UserRepository {
   User create(User user);
 
-  Optional<User> findByEmail(String email);
+  Optional<User> findUserByEmail(String email);
 
   boolean existsBy(String field, String value);
 
-  Optional<User> findById(Long id);
-
-  User update(User user);
+  Optional<User> findUserById(Long id);
 
   boolean existsUsername(Long excludeId, String username);
 
   boolean existsEmail(Long excludeId, String email);
 
-  Optional<User> findByUsername(String username);
+  Optional<User> findByUsernameOptional(String username);
 }
