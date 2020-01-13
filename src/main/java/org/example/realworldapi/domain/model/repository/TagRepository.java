@@ -10,5 +10,5 @@ public interface TagRepository {
 
   Tag create(Tag tag);
 
-  List<Tag> findAll();
+  List<Tag> findAllTags();
 }

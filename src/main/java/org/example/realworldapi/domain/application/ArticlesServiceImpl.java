@@ -81,7 +81,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     List<Article> articles =
         articleRepository.findArticles(offset, getLimit(limit), tags, authors, favorited);
 
-    int articlesCount = articleRepository.count(tags, authors, favorited);
+    long articlesCount = articleRepository.count(tags, authors, favorited);
 
     return new ArticlesData(toResultList(articles, loggedUserId), articlesCount);
   }
@@ -131,7 +131,7 @@ public class ArticlesServiceImpl implements ArticlesService {
         articleRepository
             .findByIdAndSlug(authorId, slug)
             .orElseThrow(ArticleNotFoundException::new);
-    articleRepository.delete(article);
+    articleRepository.remove(article);
   }
 
   @Override
@@ -162,7 +162,7 @@ public class ArticlesServiceImpl implements ArticlesService {
         commentRepository
             .findComment(slug, commentId, loggedUserId)
             .orElseThrow(CommentNotFoundException::new);
-    commentRepository.delete(comment);
+    commentRepository.remove(comment);
   }
 
   @Override

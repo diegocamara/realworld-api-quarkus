@@ -3,7 +3,6 @@ package org.example.realworldapi.infrastructure.repository.criteriabuilder;
 import org.example.realworldapi.domain.model.entity.Tag;
 import org.example.realworldapi.domain.model.repository.TagRepository;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -11,7 +10,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-@ApplicationScoped
+// @ApplicationScoped
 public class TagRepositoryHibernate extends AbstractRepositoryHibernate<Tag, Long>
     implements TagRepository {
 
@@ -41,7 +40,7 @@ public class TagRepositoryHibernate extends AbstractRepositoryHibernate<Tag, Lon
   }
 
   @Override
-  public List<Tag> findAll() {
+  public List<Tag> findAllTags() {
 
     CriteriaBuilder builder = getCriteriaBuilder();
     CriteriaQuery<Tag> criteriaQuery = getCriteriaQuery(builder);

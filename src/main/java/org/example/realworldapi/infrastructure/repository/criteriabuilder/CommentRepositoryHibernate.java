@@ -5,7 +5,6 @@ import org.example.realworldapi.domain.model.entity.Comment;
 import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.repository.CommentRepository;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -13,7 +12,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import java.util.Optional;
 
-@ApplicationScoped
+// @ApplicationScoped
 public class CommentRepositoryHibernate extends AbstractRepositoryHibernate<Comment, Long>
     implements CommentRepository {
 
@@ -49,7 +48,7 @@ public class CommentRepositoryHibernate extends AbstractRepositoryHibernate<Comm
   }
 
   @Override
-  public void delete(Comment comment) {
+  public void remove(Comment comment) {
     entityManager.remove(comment);
   }
 

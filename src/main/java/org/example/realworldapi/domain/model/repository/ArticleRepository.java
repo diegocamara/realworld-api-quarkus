@@ -18,11 +18,11 @@ public interface ArticleRepository {
 
   Article update(Article article);
 
-  void delete(Article article);
+  void remove(Article article);
 
   Optional<Article> findByIdAndSlug(Long authorId, String slug);
 
   List<Comment> findComments(Long articleId);
 
-  int count(List<String> tags, List<String> authors, List<String> favorited);
+  long count(List<String> tags, List<String> authors, List<String> favorited);
 }

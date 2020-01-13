@@ -9,5 +9,5 @@ public interface CommentRepository {
 
   Optional<Comment> findComment(String slug, Long commentId, Long authorId);
 
-  void delete(Comment comment);
+  void remove(Comment comment);
 }

@@ -58,7 +58,7 @@ public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Arti
   }
 
   @Override
-  public int count(List<String> tags, List<String> authors, List<String> favorited) {
+  public long count(List<String> tags, List<String> authors, List<String> favorited) {
 
     CriteriaBuilder builder = getCriteriaBuilder();
     CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
@@ -87,7 +87,7 @@ public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Arti
 
     criteriaQuery.where(builder.and(predicates.toArray(new Predicate[0])));
 
-    return getSingleResult(criteriaQuery).intValue();
+    return getSingleResult(criteriaQuery);
   }
 
   @Override
@@ -125,7 +125,7 @@ public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Arti
   }
 
   @Override
-  public void delete(Article article) {
+  public void remove(Article article) {
     entityManager.remove(article);
   }
 

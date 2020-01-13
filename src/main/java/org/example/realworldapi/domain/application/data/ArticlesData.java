@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ArticlesData {
   private List<ArticleData> articles;
-  private int articlesCount;
+  private long articlesCount;
 }

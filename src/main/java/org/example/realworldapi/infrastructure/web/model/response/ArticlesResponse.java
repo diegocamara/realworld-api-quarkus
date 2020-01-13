@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class ArticlesResponse {
 
   private List<ArticleResponse> articles;
-  private int articlesCount;
+  private long articlesCount;
 
   public ArticlesResponse(ArticlesData result) {
     this.articles =

@@ -20,6 +20,6 @@ public class TagsServiceImpl implements TagsService {
   @Override
   @Transactional
   public List<Tag> findTags() {
-    return tagRepository.findAll();
+    return tagRepository.findAllTags();
   }
 }
