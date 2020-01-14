@@ -121,7 +121,7 @@ public class ArticlesServiceImpl implements ArticlesService {
       article.setBody(body);
     }
 
-    return getArticle(articleRepository.update(article), authorId);
+    return getArticle(article, authorId);
   }
 
   @Override

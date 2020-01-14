@@ -3,7 +3,6 @@ package org.example.realworldapi.infrastructure.repository.criteriabuilder;
 import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.repository.ArticleRepository;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.LinkedList;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@ApplicationScoped
+// @ApplicationScoped
 public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Article, Long>
     implements ArticleRepository {
 
@@ -117,11 +116,6 @@ public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Arti
     criteriaQuery.where(
         builder.equal(builder.upper(article.get("slug")), slug.toUpperCase().trim()));
     return Optional.ofNullable(getSingleResult(criteriaQuery));
-  }
-
-  @Override
-  public Article update(Article article) {
-    return entityManager.merge(article);
   }
 
   @Override

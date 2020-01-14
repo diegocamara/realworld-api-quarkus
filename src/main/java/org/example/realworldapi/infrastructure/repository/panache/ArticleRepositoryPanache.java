@@ -3,17 +3,19 @@ package org.example.realworldapi.infrastructure.repository.panache;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Parameters;
 import org.example.realworldapi.domain.model.entity.Article;
 import org.example.realworldapi.domain.model.entity.Comment;
 import org.example.realworldapi.domain.model.repository.ArticleRepository;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-// @ApplicationScoped
+@ApplicationScoped
 public class ArticleRepositoryPanache implements PanacheRepository<Article>, ArticleRepository {
   @Override
   public List<Article> findArticles(
@@ -30,35 +32,41 @@ public class ArticleRepositoryPanache implements PanacheRepository<Article>, Art
 
   @Override
   public Article create(Article article) {
-    return null;
+    persistAndFlush(article);
+    return article;
   }
 
   @Override
   public boolean existsBySlug(String slug) {
-    return false;
+    return count("upper(slug)", slug.toUpperCase().trim()) > 0;
   }
 
   @Override
   public Optional<Article> findBySlug(String slug) {
-    return Optional.empty();
+    return find("upper(slug)", slug.toUpperCase().trim()).firstResultOptional();
   }
 
   @Override
-  public Article update(Article article) {
-    return null;
+  public void remove(Article article) {
+    delete(article);
   }
-
-  @Override
-  public void remove(Article article) {}
 
   @Override
   public Optional<Article> findByIdAndSlug(Long authorId, String slug) {
-    return Optional.empty();
+    return find(
+            "author.id = :authorId and upper(slug) = :slug",
+            Parameters.with("authorId", authorId).and("slug", slug.toUpperCase().trim()))
+        .firstResultOptional();
   }
 
   @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public List<Comment> findComments(Long articleId) {
-    return null;
+    PanacheQuery panacheQuery =
+        find(
+            "select articles.comments from Article as articles where articles.id = :articleId",
+            Parameters.with("articleId", articleId));
+    return (List<Comment>) panacheQuery.list();
   }
 
   @Override
@@ -73,7 +81,7 @@ public class ArticleRepositoryPanache implements PanacheRepository<Article>, Art
     return (long) panacheQuery.firstResult();
   }
 
-  private SimpleQueryBuilder configFilterFindArticlesQueryBuilder(
+  private void configFilterFindArticlesQueryBuilder(
       SimpleQueryBuilder findArticlesQueryBuilder,
       List<String> tags,
       List<String> authors,
@@ -97,8 +105,6 @@ public class ArticleRepositoryPanache implements PanacheRepository<Article>, Art
         "inner join articles.favorites as favorites inner join favorites.primaryKey.user as user",
         "upper(user.username) in (:favorites)",
         () -> params.put("favorites", toUpperCase(favorited)));
-
-    return findArticlesQueryBuilder;
   }
 
   private boolean isNotEmpty(List<?> list) {
