@@ -3,7 +3,6 @@ package org.example.realworldapi.domain.model.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.domain.model.entity.Article;
 
 import javax.persistence.*;
 import java.util.List;
@@ -31,6 +30,12 @@ public class User {
   @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "author_id")
   private List<Article> articles;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+  private List<UsersFollowers> following;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "follower")
+  private List<UsersFollowers> followedBy;
 
   public User(Long id, String username, String bio, String image) {
     this.id = id;

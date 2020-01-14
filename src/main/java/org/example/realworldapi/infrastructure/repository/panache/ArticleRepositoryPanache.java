@@ -1,11 +1,10 @@
 package org.example.realworldapi.infrastructure.repository.panache;
 
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Parameters;
+import io.quarkus.panache.common.Sort;
 import org.example.realworldapi.domain.model.entity.Article;
-import org.example.realworldapi.domain.model.entity.Comment;
 import org.example.realworldapi.domain.model.repository.ArticleRepository;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,6 +16,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ArticleRepositoryPanache implements PanacheRepository<Article>, ArticleRepository {
+
   @Override
   public List<Article> findArticles(
       int offset, int limit, List<String> tags, List<String> authors, List<String> favorited) {
@@ -60,25 +60,30 @@ public class ArticleRepositoryPanache implements PanacheRepository<Article>, Art
   }
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public List<Comment> findComments(Long articleId) {
-    PanacheQuery panacheQuery =
-        find(
-            "select articles.comments from Article as articles where articles.id = :articleId",
-            Parameters.with("articleId", articleId));
-    return (List<Comment>) panacheQuery.list();
+  public List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit) {
+    return find(
+            "select articles from Article as articles inner join articles.author as author inner join author.followedBy as followedBy where followedBy.user.id = :loggedUserId",
+            Sort.descending("updatedAt"),
+            Parameters.with("loggedUserId", loggedUserId))
+        .page(Page.of(offset, limit))
+        .list();
   }
 
   @Override
-  @SuppressWarnings("rawtypes")
   public long count(List<String> tags, List<String> authors, List<String> favorited) {
     Map<String, Object> params = new LinkedHashMap<>();
     SimpleQueryBuilder countArticlesQueryBuilder = new SimpleQueryBuilder();
-    countArticlesQueryBuilder.addQueryStatement("select count(*) from Article as articles");
+    countArticlesQueryBuilder.addQueryStatement("from Article as articles");
     configFilterFindArticlesQueryBuilder(
         countArticlesQueryBuilder, tags, authors, favorited, params);
-    PanacheQuery panacheQuery = find(countArticlesQueryBuilder.toQueryString(), params);
-    return (long) panacheQuery.firstResult();
+    return count(countArticlesQueryBuilder.toQueryString(), params);
+  }
+
+  @Override
+  public long count(Long loggedUserId) {
+    return count(
+        "from Article as articles inner join articles.author as author inner join author.followedBy as followedBy where followedBy.user.id = :loggedUserId",
+        Parameters.with("loggedUserId", loggedUserId));
   }
 
   private void configFilterFindArticlesQueryBuilder(

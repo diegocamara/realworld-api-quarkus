@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class ArticlesServiceImpl implements ArticlesService {
 
   private static final int DEFAULT_LIMIT = 20;
-  private UsersFollowersRepository usersFollowersRepository;
+
   private ArticlesUsersRepository articlesUsersRepository;
   private ArticlesTagsRepository articlesTagsRepository;
   private UserRepository userRepository;
@@ -36,7 +36,6 @@ public class ArticlesServiceImpl implements ArticlesService {
   private SlugProvider slugProvider;
 
   public ArticlesServiceImpl(
-      UsersFollowersRepository usersFollowersRepository,
       ArticlesUsersRepository articlesUsersRepository,
       ArticlesTagsRepository articlesTagsRepository,
       UserRepository userRepository,
@@ -45,7 +44,6 @@ public class ArticlesServiceImpl implements ArticlesService {
       CommentRepository commentRepository,
       ProfilesService profilesService,
       SlugProvider slugProvider) {
-    this.usersFollowersRepository = usersFollowersRepository;
     this.articlesUsersRepository = articlesUsersRepository;
     this.articlesTagsRepository = articlesTagsRepository;
     this.userRepository = userRepository;
@@ -61,9 +59,9 @@ public class ArticlesServiceImpl implements ArticlesService {
   public ArticlesData findRecentArticles(Long loggedUserId, int offset, int limit) {
 
     List<Article> articles =
-        usersFollowersRepository.findMostRecentArticles(loggedUserId, offset, getLimit(limit));
+        articleRepository.findMostRecentArticles(loggedUserId, offset, getLimit(limit));
 
-    int articlesCount = usersFollowersRepository.count(loggedUserId);
+    long articlesCount = articleRepository.count(loggedUserId);
 
     return new ArticlesData(toResultList(articles, loggedUserId), articlesCount);
   }
@@ -138,7 +136,7 @@ public class ArticlesServiceImpl implements ArticlesService {
   @Transactional
   public List<CommentData> findCommentsBySlug(String slug, Long loggedUserId) {
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
-    List<Comment> comments = articleRepository.findComments(article.getId());
+    List<Comment> comments = commentRepository.findArticleComments(article.getId());
     ProfileData author =
         profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
     return getComments(comments, author);

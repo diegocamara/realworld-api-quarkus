@@ -5,6 +5,7 @@ import org.example.realworldapi.domain.model.entity.Comment;
 import org.example.realworldapi.domain.model.repository.CommentRepository;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.List;
 import java.util.Optional;
 
 import static io.quarkus.panache.common.Parameters.with;
@@ -21,12 +22,7 @@ public class CommentRepositoryPanache implements PanacheRepository<Comment>, Com
   @Override
   public Optional<Comment> findComment(String slug, Long commentId, Long authorId) {
     return find(
-            "select comment from Comment as comment "
-                + "inner join comment.article as article "
-                + "inner join comment.author as author "
-                + "where comment.id = :commentId and "
-                + "upper(article.slug) = :slug and "
-                + "author.id = :authorId",
+            "id = :commentId and upper(article.slug) = :slug and author.id = :authorId",
             with("commentId", commentId)
                 .and("slug", slug.toUpperCase().trim())
                 .and("authorId", authorId))
@@ -36,5 +32,10 @@ public class CommentRepositoryPanache implements PanacheRepository<Comment>, Com
   @Override
   public void remove(Comment comment) {
     delete(comment);
+  }
+
+  @Override
+  public List<Comment> findArticleComments(Long articleId) {
+    return find("article.id", articleId).list();
   }
 }

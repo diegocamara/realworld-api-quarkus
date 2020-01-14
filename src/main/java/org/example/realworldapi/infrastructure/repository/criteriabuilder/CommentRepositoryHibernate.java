@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.Optional;
 
 // @ApplicationScoped
@@ -50,6 +51,16 @@ public class CommentRepositoryHibernate extends AbstractRepositoryHibernate<Comm
   @Override
   public void remove(Comment comment) {
     entityManager.remove(comment);
+  }
+
+  @Override
+  public List<Comment> findArticleComments(Long articleId) {
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Comment> criteriaQuery = getCriteriaQuery(builder);
+    Root<Comment> comment = getRoot(criteriaQuery);
+    criteriaQuery.select(comment);
+    criteriaQuery.where(builder.equal(comment.get("article").get("id"), articleId));
+    return getResultList(criteriaQuery);
   }
 
   @Override

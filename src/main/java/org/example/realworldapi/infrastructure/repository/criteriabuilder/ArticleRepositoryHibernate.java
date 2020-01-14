@@ -90,6 +90,18 @@ public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Arti
   }
 
   @Override
+  public long count(Long loggedUserId) {
+    CriteriaBuilder builder = getCriteriaBuilder();
+    CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
+    Root<Article> articles = getRoot(criteriaQuery, Article.class);
+    Join<Article, User> author = articles.join("author");
+    ListJoin<User, UsersFollowers> followedBy = author.joinList("followedBy");
+    criteriaQuery.select(builder.count(articles));
+    criteriaQuery.where(builder.equal(followedBy.get("user").get("id"), loggedUserId));
+    return getSingleResult(criteriaQuery);
+  }
+
+  @Override
   public Article create(Article article) {
     return persist(article);
   }
@@ -138,18 +150,16 @@ public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Arti
   }
 
   @Override
-  public List<Comment> findComments(Long articleId) {
-
+  public List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit) {
     CriteriaBuilder builder = getCriteriaBuilder();
-    CriteriaQuery<Comment> criteriaQuery = getCriteriaQuery(builder, Comment.class);
-    Root<Article> article = getRoot(criteriaQuery, Article.class);
-
-    ListJoin<Article, Comment> comment = article.joinList("comments");
-
-    criteriaQuery.select(comment);
-    criteriaQuery.where(builder.equal(article.get("id"), articleId));
-
-    return getResultList(criteriaQuery);
+    CriteriaQuery<Article> criteriaQuery = getCriteriaQuery(builder);
+    Root<Article> articles = getRoot(criteriaQuery);
+    Join<Article, User> author = articles.join("author");
+    ListJoin<User, UsersFollowers> followedBy = author.joinList("followedBy");
+    criteriaQuery.select(articles);
+    criteriaQuery.where(builder.equal(followedBy.get("user").get("id"), loggedUserId));
+    criteriaQuery.orderBy(builder.desc(articles.get("updatedAt")));
+    return getPagedResultList(criteriaQuery, offset, limit);
   }
 
   private List<String> toUpperCase(List<String> tags) {

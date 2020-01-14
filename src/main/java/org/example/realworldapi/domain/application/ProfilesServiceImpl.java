@@ -1,7 +1,7 @@
 package org.example.realworldapi.domain.application;
 
-import org.example.realworldapi.domain.model.builder.ProfileBuilder;
 import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.domain.model.builder.ProfileBuilder;
 import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.entity.UsersFollowers;
 import org.example.realworldapi.domain.model.entity.UsersFollowersKey;
@@ -44,7 +44,7 @@ public class ProfilesServiceImpl implements ProfilesService {
   public ProfileData follow(Long loggedUserId, String username) {
     User loggedUser = usersService.findById(loggedUserId);
     User userToFollow = usersService.findByUsername(username);
-    usersFollowersRepository.insertOrUpdate(getUsersFollowers(loggedUser, userToFollow));
+    usersFollowersRepository.create(getUsersFollowers(loggedUser, userToFollow));
     return getProfile(username, loggedUserId);
   }
 
@@ -55,7 +55,7 @@ public class ProfilesServiceImpl implements ProfilesService {
     User userToUnfollow = usersService.findByUsername(username);
     UsersFollowers usersFollowers =
         usersFollowersRepository.findByKey(getUsersFollowersKey(loggedUser, userToUnfollow));
-    usersFollowersRepository.delete(usersFollowers);
+    usersFollowersRepository.remove(usersFollowers);
     return getProfile(username, loggedUserId);
   }
 

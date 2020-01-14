@@ -1,17 +1,15 @@
 package org.example.realworldapi.infrastructure.repository.criteriabuilder;
 
-import org.example.realworldapi.domain.model.entity.Article;
-import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.entity.UsersFollowers;
 import org.example.realworldapi.domain.model.entity.UsersFollowersKey;
 import org.example.realworldapi.domain.model.repository.UsersFollowersRepository;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-@ApplicationScoped
+// @ApplicationScoped
 public class UsersFollowersRepositoryHibernate
     extends AbstractRepositoryHibernate<UsersFollowers, UsersFollowersKey>
     implements UsersFollowersRepository {
@@ -52,55 +50,12 @@ public class UsersFollowersRepositoryHibernate
   }
 
   @Override
-  public UsersFollowers insertOrUpdate(UsersFollowers usersFollowers) {
-    entityManager.merge(usersFollowers);
-    return usersFollowers;
+  public UsersFollowers create(UsersFollowers usersFollowers) {
+    return persist(usersFollowers);
   }
 
   @Override
-  public void delete(UsersFollowers usersFollowers) {
+  public void remove(UsersFollowers usersFollowers) {
     entityManager.remove(usersFollowers);
-  }
-
-  @Override
-  public List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit) {
-    CriteriaBuilder builder = getCriteriaBuilder();
-    CriteriaQuery<Article> criteriaQuery = getCriteriaQuery(builder, Article.class);
-    Root<UsersFollowers> usersFollowers = getRoot(criteriaQuery, UsersFollowers.class);
-
-    Join<UsersFollowers, User> user = usersFollowers.join("primaryKey").join("user");
-
-    user.on(builder.equal(user.get("id"), loggedUserId));
-
-    Join<UsersFollowers, User> follower = usersFollowers.join("primaryKey").join("follower");
-
-    ListJoin<User, Article> articles = follower.joinList("articles");
-
-    criteriaQuery.select(articles);
-
-    criteriaQuery.orderBy(builder.desc(articles.get("updatedAt")));
-
-    return getPagedResultList(criteriaQuery, offset, limit);
-  }
-
-  @Override
-  public int count(Long userId) {
-    CriteriaBuilder builder = getCriteriaBuilder();
-
-    CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
-
-    Root<UsersFollowers> usersFollowers = getRoot(criteriaQuery, UsersFollowers.class);
-
-    Join<UsersFollowers, User> user = usersFollowers.join("primaryKey").join("user");
-
-    user.on(builder.equal(user.get("id"), userId));
-
-    Join<UsersFollowers, User> follower = usersFollowers.join("primaryKey").join("follower");
-
-    ListJoin<User, Article> articles = follower.joinList("articles");
-
-    criteriaQuery.select(builder.count(articles));
-
-    return getSingleResult(criteriaQuery).intValue();
   }
 }
