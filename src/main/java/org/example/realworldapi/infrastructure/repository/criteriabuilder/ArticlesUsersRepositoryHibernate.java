@@ -6,12 +6,11 @@ import org.example.realworldapi.domain.model.entity.ArticlesUsersKey;
 import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.repository.ArticlesUsersRepository;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.Optional;
 
-@ApplicationScoped
+@Deprecated
 public class ArticlesUsersRepositoryHibernate
     extends AbstractRepositoryHibernate<ArticlesUsers, ArticlesUsersKey>
     implements ArticlesUsersRepository {
@@ -45,7 +44,7 @@ public class ArticlesUsersRepositoryHibernate
   }
 
   @Override
-  public int favoritesCount(Long articleId) {
+  public long favoritesCount(Long articleId) {
     CriteriaBuilder builder = getCriteriaBuilder();
     CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
     Root<ArticlesUsers> articlesUsers = getRoot(criteriaQuery, ArticlesUsers.class);
@@ -53,7 +52,7 @@ public class ArticlesUsersRepositoryHibernate
     Path<Article> article = articlesUsersKey.get("article");
     criteriaQuery.select(builder.count(articlesUsers));
     criteriaQuery.where(builder.equal(article.get("id"), articleId));
-    return getSingleResult(criteriaQuery).intValue();
+    return getSingleResult(criteriaQuery);
   }
 
   @Override

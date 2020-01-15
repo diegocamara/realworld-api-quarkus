@@ -32,7 +32,7 @@ public class ArticleResponse {
   private LocalDateTime updatedAt;
 
   private boolean favorited;
-  private int favoritesCount;
+  private long favoritesCount;
   private ProfileData author;
 
   public ArticleResponse(ArticleData articleData) {

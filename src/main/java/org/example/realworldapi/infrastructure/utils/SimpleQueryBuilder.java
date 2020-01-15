@@ -1,4 +1,4 @@
-package org.example.realworldapi.infrastructure.repository.panache;
+package org.example.realworldapi.infrastructure.utils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,11 +18,14 @@ public class SimpleQueryBuilder {
   }
 
   public void updateQueryStatementConditional(
-      boolean updateCondition, String queryStatement, String whereStatement, Runnable runnable) {
+      boolean updateCondition,
+      String queryStatement,
+      String whereStatement,
+      Runnable afterAddStatements) {
     if (updateCondition) {
       queryStatements.add(queryStatement);
       whereStatements.add(whereStatement);
-      runnable.run();
+      afterAddStatements.run();
     }
   }
 

@@ -8,6 +8,8 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.Optional;
 
+import static io.quarkus.panache.common.Parameters.with;
+
 @ApplicationScoped
 public class TagRepositoryPanache implements PanacheRepository<Tag>, TagRepository {
 
@@ -25,5 +27,13 @@ public class TagRepositoryPanache implements PanacheRepository<Tag>, TagReposito
   @Override
   public List<Tag> findAllTags() {
     return listAll();
+  }
+
+  @Override
+  public List<Tag> findArticleTags(Long articleId) {
+    return find(
+            "select tags from Tag as tags inner join tags.articlesTags as articlesTags where articlesTags.article.id = :articleId",
+            with("articleId", articleId))
+        .list();
   }
 }

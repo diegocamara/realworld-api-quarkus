@@ -9,9 +9,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name = "USERS_FOLLOWERS")
-public class UsersFollowers {
-  @EmbeddedId private UsersFollowersKey primaryKey;
+@Table(name = "FOLLOWED_USERS")
+public class UsersFollowed {
+  @EmbeddedId private UsersFollowedKey primaryKey;
 
   @ManyToOne
   @JoinColumn(insertable = false, updatable = false)
@@ -19,7 +19,7 @@ public class UsersFollowers {
 
   @ManyToOne
   @JoinColumn(insertable = false, updatable = false)
-  private User follower;
+  private User followed;
 
   @Override
   public boolean equals(Object o) {
@@ -27,7 +27,7 @@ public class UsersFollowers {
 
     if (o == null || getClass() != o.getClass()) return false;
 
-    UsersFollowers that = (UsersFollowers) o;
+    UsersFollowed that = (UsersFollowed) o;
     return Objects.equals(primaryKey, that.primaryKey);
   }
 

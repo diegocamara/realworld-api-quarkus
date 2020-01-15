@@ -13,7 +13,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-// @ApplicationScoped
+@Deprecated
 public class CommentRepositoryHibernate extends AbstractRepositoryHibernate<Comment, Long>
     implements CommentRepository {
 

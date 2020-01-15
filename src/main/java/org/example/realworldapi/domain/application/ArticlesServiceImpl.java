@@ -298,13 +298,13 @@ public class ArticlesServiceImpl implements ArticlesService {
       isFavorited = articlesUsersRepository.isFavorited(article.getId(), loggedUserId);
     }
 
-    int favoritesCount = articlesUsersRepository.favoritesCount(article.getId());
+    long favoritesCount = articlesUsersRepository.favoritesCount(article.getId());
 
     ProfileData author =
         profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
 
     List<String> tags =
-        articlesTagsRepository.findTags(article.getId()).stream()
+        tagRepository.findArticleTags(article.getId()).stream()
             .map(Tag::getName)
             .collect(Collectors.toList());
     return new ArticleData(

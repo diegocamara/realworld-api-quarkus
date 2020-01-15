@@ -6,6 +6,7 @@ import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import org.example.realworldapi.domain.model.entity.Article;
 import org.example.realworldapi.domain.model.repository.ArticleRepository;
+import org.example.realworldapi.infrastructure.utils.SimpleQueryBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.LinkedHashMap;

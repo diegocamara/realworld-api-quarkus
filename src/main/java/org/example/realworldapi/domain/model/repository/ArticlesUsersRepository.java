@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface ArticlesUsersRepository {
   boolean isFavorited(Long articleId, Long currentUserId);
 
-  int favoritesCount(Long articleId);
+  long favoritesCount(Long articleId);
 
   ArticlesUsers create(ArticlesUsers articlesUsers);
 

@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.Optional;
 
-// @ApplicationScoped
+@Deprecated
 public class UserRepositoryHibernate extends AbstractRepositoryHibernate<User, Long>
     implements UserRepository {
 

@@ -32,10 +32,10 @@ public class User {
   private List<Article> articles;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-  private List<UsersFollowers> following;
+  private List<UsersFollowed> following;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "follower")
-  private List<UsersFollowers> followedBy;
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "followed")
+  private List<UsersFollowed> followedBy;
 
   public User(Long id, String username, String bio, String image) {
     this.id = id;

@@ -11,11 +11,11 @@ import java.util.Objects;
 @Getter
 @Setter
 @Embeddable
-public class UsersFollowersKey implements Serializable {
+public class UsersFollowedKey implements Serializable {
 
   @ManyToOne private User user;
 
-  @ManyToOne private User follower;
+  @ManyToOne private User followed;
 
   @Override
   public boolean equals(Object o) {
@@ -23,12 +23,12 @@ public class UsersFollowersKey implements Serializable {
 
     if (o == null || getClass() != o.getClass()) return false;
 
-    UsersFollowersKey that = (UsersFollowersKey) o;
-    return Objects.equals(user, that.user) && Objects.equals(follower, that.follower);
+    UsersFollowedKey that = (UsersFollowedKey) o;
+    return Objects.equals(user, that.user) && Objects.equals(followed, that.followed);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(user, follower);
+    return Objects.hash(user, followed);
   }
 }

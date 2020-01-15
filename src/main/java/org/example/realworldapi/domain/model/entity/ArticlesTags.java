@@ -23,6 +23,10 @@ public class ArticlesTags {
   @JoinColumn(insertable = false, updatable = false)
   private Article article;
 
+  @ManyToOne
+  @JoinColumn(insertable = false, updatable = false)
+  private Tag tag;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

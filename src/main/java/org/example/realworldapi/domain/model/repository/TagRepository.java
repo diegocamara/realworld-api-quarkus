@@ -11,4 +11,6 @@ public interface TagRepository {
   Tag create(Tag tag);
 
   List<Tag> findAllTags();
+
+  List<Tag> findArticleTags(Long articleId);
 }

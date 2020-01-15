@@ -12,6 +12,7 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.List;
 
+@Deprecated
 public abstract class AbstractRepositoryHibernate<T, ID> {
 
   protected CriteriaBuilder getCriteriaBuilder() {

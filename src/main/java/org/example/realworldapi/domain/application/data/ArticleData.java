@@ -20,7 +20,7 @@ public class ArticleData {
   private String body;
   private List<String> tagList;
   private boolean favorited;
-  private int favoritesCount;
+  private long favoritesCount;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private ProfileData author;

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-// @ApplicationScoped
+@Deprecated
 public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Article, Long>
     implements ArticleRepository {
 
@@ -95,7 +95,7 @@ public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Arti
     CriteriaQuery<Long> criteriaQuery = getCriteriaQuery(builder, Long.class);
     Root<Article> articles = getRoot(criteriaQuery, Article.class);
     Join<Article, User> author = articles.join("author");
-    ListJoin<User, UsersFollowers> followedBy = author.joinList("followedBy");
+    ListJoin<User, UsersFollowed> followedBy = author.joinList("followedBy");
     criteriaQuery.select(builder.count(articles));
     criteriaQuery.where(builder.equal(followedBy.get("user").get("id"), loggedUserId));
     return getSingleResult(criteriaQuery);
@@ -155,7 +155,7 @@ public class ArticleRepositoryHibernate extends AbstractRepositoryHibernate<Arti
     CriteriaQuery<Article> criteriaQuery = getCriteriaQuery(builder);
     Root<Article> articles = getRoot(criteriaQuery);
     Join<Article, User> author = articles.join("author");
-    ListJoin<User, UsersFollowers> followedBy = author.joinList("followedBy");
+    ListJoin<User, UsersFollowed> followedBy = author.joinList("followedBy");
     criteriaQuery.select(articles);
     criteriaQuery.where(builder.equal(followedBy.get("user").get("id"), loggedUserId));
     criteriaQuery.orderBy(builder.desc(articles.get("updatedAt")));
