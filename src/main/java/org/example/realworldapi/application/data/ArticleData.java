@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.application.data;
+package org.example.realworldapi.application.data;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.AllArgsConstructor;

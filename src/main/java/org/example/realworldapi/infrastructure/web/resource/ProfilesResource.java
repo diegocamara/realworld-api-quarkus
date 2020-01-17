@@ -1,11 +1,11 @@
 package org.example.realworldapi.infrastructure.web.resource;
 
+import org.example.realworldapi.application.data.ProfileData;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
-import org.example.realworldapi.domain.application.data.ProfileData;
-import org.example.realworldapi.infrastructure.web.security.profile.Role;
 import org.example.realworldapi.domain.service.ProfilesService;
 import org.example.realworldapi.infrastructure.web.model.response.ProfileResponse;
 import org.example.realworldapi.infrastructure.web.security.annotation.Secured;
+import org.example.realworldapi.infrastructure.web.security.profile.Role;
 
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.*;

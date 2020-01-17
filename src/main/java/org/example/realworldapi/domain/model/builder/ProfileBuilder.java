@@ -1,6 +1,6 @@
 package org.example.realworldapi.domain.model.builder;
 
-import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.application.data.ProfileData;
 import org.example.realworldapi.domain.model.entity.User;
 
 public class ProfileBuilder {

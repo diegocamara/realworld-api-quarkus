@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.application;
+package org.example.realworldapi.application;
 
 import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.exception.EmailAlreadyExistsException;

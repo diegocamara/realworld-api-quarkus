@@ -1,9 +1,9 @@
-package org.example.realworldapi.domain.application;
+package org.example.realworldapi.application;
 
-import org.example.realworldapi.domain.application.data.ArticleData;
-import org.example.realworldapi.domain.application.data.ArticlesData;
-import org.example.realworldapi.domain.application.data.CommentData;
-import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.application.data.ArticleData;
+import org.example.realworldapi.application.data.ArticlesData;
+import org.example.realworldapi.application.data.CommentData;
+import org.example.realworldapi.application.data.ProfileData;
 import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.exception.ArticleNotFoundException;
 import org.example.realworldapi.domain.model.exception.CommentNotFoundException;

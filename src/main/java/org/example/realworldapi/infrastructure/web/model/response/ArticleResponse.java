@@ -6,8 +6,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.domain.application.data.ArticleData;
-import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.application.data.ArticleData;
+import org.example.realworldapi.application.data.ProfileData;
 
 import java.time.LocalDateTime;
 import java.util.List;

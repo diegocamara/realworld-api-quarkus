@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.application;
+package org.example.realworldapi.application;
 
 import org.example.realworldapi.domain.model.entity.Tag;
 import org.example.realworldapi.domain.model.repository.TagRepository;

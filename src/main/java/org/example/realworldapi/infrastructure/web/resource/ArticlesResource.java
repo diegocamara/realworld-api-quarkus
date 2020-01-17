@@ -2,12 +2,11 @@ package org.example.realworldapi.infrastructure.web.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.realworldapi.application.data.ArticleData;
+import org.example.realworldapi.application.data.ArticlesData;
+import org.example.realworldapi.application.data.CommentData;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
-import org.example.realworldapi.domain.application.data.ArticleData;
-import org.example.realworldapi.domain.application.data.ArticlesData;
-import org.example.realworldapi.domain.application.data.CommentData;
 import org.example.realworldapi.domain.service.ArticlesService;
-import org.example.realworldapi.infrastructure.web.security.profile.Role;
 import org.example.realworldapi.infrastructure.web.model.request.NewArticleRequest;
 import org.example.realworldapi.infrastructure.web.model.request.NewCommentRequest;
 import org.example.realworldapi.infrastructure.web.model.request.UpdateArticleRequest;
@@ -17,6 +16,7 @@ import org.example.realworldapi.infrastructure.web.model.response.CommentRespons
 import org.example.realworldapi.infrastructure.web.model.response.CommentsResponse;
 import org.example.realworldapi.infrastructure.web.qualifiers.NoWrapRootValueObjectMapper;
 import org.example.realworldapi.infrastructure.web.security.annotation.Secured;
+import org.example.realworldapi.infrastructure.web.security.profile.Role;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;

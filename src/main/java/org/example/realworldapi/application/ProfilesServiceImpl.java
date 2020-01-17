@@ -1,6 +1,6 @@
-package org.example.realworldapi.domain.application;
+package org.example.realworldapi.application;
 
-import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.application.data.ProfileData;
 import org.example.realworldapi.domain.model.builder.ProfileBuilder;
 import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.entity.UsersFollowed;

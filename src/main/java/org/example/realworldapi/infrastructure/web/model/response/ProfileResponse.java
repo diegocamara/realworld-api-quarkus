@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.application.data.ProfileData;
 
 @Getter
 @Setter

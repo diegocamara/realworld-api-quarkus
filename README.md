@@ -22,9 +22,9 @@ This application basicaly uses Quarkus Framework with Java 8 with some other mod
 
 ### Project structure:
 ```
-domain/                     -> core business package
 +-- application/            -> business logic implementation
 |   +--data/                -> data aggregator classes
+domain/                     -> core business package
 +-- model/
 |   +-- builder/
 |   +-- constants/

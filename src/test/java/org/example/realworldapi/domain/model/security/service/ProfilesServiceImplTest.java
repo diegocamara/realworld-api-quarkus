@@ -1,8 +1,8 @@
 package org.example.realworldapi.domain.model.security.service;
 
 import io.quarkus.test.junit.QuarkusTest;
-import org.example.realworldapi.domain.application.ProfilesServiceImpl;
-import org.example.realworldapi.domain.application.data.ProfileData;
+import org.example.realworldapi.application.ProfilesServiceImpl;
+import org.example.realworldapi.application.data.ProfileData;
 import org.example.realworldapi.domain.model.builder.UserBuilder;
 import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.repository.UsersFollowedRepository;

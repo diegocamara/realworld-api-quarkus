@@ -1,4 +1,4 @@
-package org.example.realworldapi.domain.application.data;
+package org.example.realworldapi.application.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

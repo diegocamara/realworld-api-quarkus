@@ -1,8 +1,8 @@
 package org.example.realworldapi.domain.service;
 
-import org.example.realworldapi.domain.application.data.ArticleData;
-import org.example.realworldapi.domain.application.data.ArticlesData;
-import org.example.realworldapi.domain.application.data.CommentData;
+import org.example.realworldapi.application.data.ArticleData;
+import org.example.realworldapi.application.data.ArticlesData;
+import org.example.realworldapi.application.data.CommentData;
 
 import java.util.List;
 

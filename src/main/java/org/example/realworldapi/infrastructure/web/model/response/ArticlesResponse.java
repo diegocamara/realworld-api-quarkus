@@ -4,7 +4,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.domain.application.data.ArticlesData;
+import org.example.realworldapi.application.data.ArticlesData;
 
 import java.util.List;
 import java.util.stream.Collectors;
