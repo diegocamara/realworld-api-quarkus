@@ -26,7 +26,10 @@ public class ArticleRepositoryPanache implements PanacheRepository<Article>, Art
     findArticlesQueryBuilder.addQueryStatement("select articles from Article as articles");
     configFilterFindArticlesQueryBuilder(
         findArticlesQueryBuilder, tags, authors, favorited, params);
-    return find(findArticlesQueryBuilder.toQueryString(), params)
+    return find(
+            findArticlesQueryBuilder.toQueryString(),
+            Sort.descending("createdAt").and("updatedAt").descending(),
+            params)
         .page(Page.of(offset, limit))
         .list();
   }
@@ -64,7 +67,7 @@ public class ArticleRepositoryPanache implements PanacheRepository<Article>, Art
   public List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit) {
     return find(
             "select articles from Article as articles inner join articles.author as author inner join author.followedBy as followedBy where followedBy.user.id = :loggedUserId",
-            Sort.descending("updatedAt"),
+            Sort.descending("createdAt").and("updatedAt").descending(),
             Parameters.with("loggedUserId", loggedUserId))
         .page(Page.of(offset, limit))
         .list();
