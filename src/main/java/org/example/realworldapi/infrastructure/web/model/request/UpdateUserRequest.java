@@ -8,6 +8,7 @@ import org.example.realworldapi.domain.model.constants.ValidationMessages;
 import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.infrastructure.web.validation.constraint.AtLeastOneFieldMustBeNotNull;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -22,7 +23,7 @@ public class UpdateUserRequest {
 
   private String bio;
   private String image;
-  private String email;
+  @Email private String email;
 
   public User toUser(Long id) {
     User user = new User();
