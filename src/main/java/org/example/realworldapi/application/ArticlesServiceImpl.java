@@ -137,9 +137,14 @@ public class ArticlesServiceImpl implements ArticlesService {
   public List<CommentData> findCommentsBySlug(String slug, Long loggedUserId) {
     Article article = articleRepository.findBySlug(slug).orElseThrow(ArticleNotFoundException::new);
     List<Comment> comments = commentRepository.findArticleComments(article.getId());
-    ProfileData author =
-        profilesService.getProfile(article.getAuthor().getUsername(), loggedUserId);
-    return getComments(comments, author);
+    return comments.stream()
+        .map(
+            comment -> {
+              ProfileData author =
+                  profilesService.getProfile(comment.getAuthor().getUsername(), loggedUserId);
+              return getComment(comment, author);
+            })
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -226,19 +231,13 @@ public class ArticlesServiceImpl implements ArticlesService {
     return commentRepository.create(comment);
   }
 
-  private List<CommentData> getComments(List<Comment> comments, ProfileData profile) {
-    return comments.stream()
-        .map(comment -> getComment(comment, profile))
-        .collect(Collectors.toList());
-  }
-
-  private CommentData getComment(Comment comment, ProfileData profile) {
+  private CommentData getComment(Comment comment, ProfileData authorProfile) {
     return new CommentData(
         comment.getId(),
         comment.getCreatedAt(),
         comment.getUpdatedAt(),
         comment.getBody(),
-        profile);
+        authorProfile);
   }
 
   private void configTitle(String title, Article article) {
