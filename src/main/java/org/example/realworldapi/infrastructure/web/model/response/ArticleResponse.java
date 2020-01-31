@@ -6,8 +6,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.domain.model.entity.Article;
-import org.example.realworldapi.domain.model.entity.Profile;
+import org.example.realworldapi.application.data.ArticleData;
+import org.example.realworldapi.application.data.ProfileData;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,19 +32,19 @@ public class ArticleResponse {
   private LocalDateTime updatedAt;
 
   private boolean favorited;
-  private int favoritesCount;
-  private Profile author;
+  private long favoritesCount;
+  private ProfileData author;
 
-  public ArticleResponse(Article article) {
-    this.slug = article.getSlug();
-    this.title = article.getTitle();
-    this.description = article.getDescription();
-    this.body = article.getBody();
-    this.tagList = article.getTagList();
-    this.createdAt = article.getCreatedAt();
-    this.updatedAt = article.getUpdatedAt();
-    this.favorited = article.isFavorited();
-    this.favoritesCount = article.getFavoritesCount();
-    this.author = article.getAuthor();
+  public ArticleResponse(ArticleData articleData) {
+    this.slug = articleData.getSlug();
+    this.title = articleData.getTitle();
+    this.description = articleData.getDescription();
+    this.body = articleData.getBody();
+    this.tagList = articleData.getTagList();
+    this.createdAt = articleData.getCreatedAt();
+    this.updatedAt = articleData.getUpdatedAt();
+    this.favorited = articleData.isFavorited();
+    this.favoritesCount = articleData.getFavoritesCount();
+    this.author = articleData.getAuthor();
   }
 }

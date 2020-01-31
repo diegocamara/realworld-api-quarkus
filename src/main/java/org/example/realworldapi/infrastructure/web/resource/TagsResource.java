@@ -2,7 +2,7 @@ package org.example.realworldapi.infrastructure.web.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.realworldapi.domain.model.entity.persistent.Tag;
+import org.example.realworldapi.domain.model.entity.Tag;
 import org.example.realworldapi.domain.service.TagsService;
 import org.example.realworldapi.infrastructure.web.model.response.TagsResponse;
 import org.example.realworldapi.infrastructure.web.qualifiers.NoWrapRootValueObjectMapper;

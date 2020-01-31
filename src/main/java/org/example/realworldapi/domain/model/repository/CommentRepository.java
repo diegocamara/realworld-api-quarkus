@@ -1,7 +1,8 @@
 package org.example.realworldapi.domain.model.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.Comment;
+import org.example.realworldapi.domain.model.entity.Comment;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CommentRepository {
@@ -9,5 +10,7 @@ public interface CommentRepository {
 
   Optional<Comment> findComment(String slug, Long commentId, Long authorId);
 
-  void delete(Comment comment);
+  void remove(Comment comment);
+
+  List<Comment> findArticleComments(Long articleId);
 }

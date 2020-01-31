@@ -4,7 +4,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.domain.model.entity.Articles;
+import org.example.realworldapi.application.data.ArticlesData;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 public class ArticlesResponse {
 
   private List<ArticleResponse> articles;
-  private int articlesCount;
+  private long articlesCount;
 
-  public ArticlesResponse(Articles result) {
+  public ArticlesResponse(ArticlesData result) {
     this.articles =
         result.getArticles().stream().map(ArticleResponse::new).collect(Collectors.toList());
     this.articlesCount = result.getArticlesCount();

@@ -3,7 +3,7 @@ package org.example.realworldapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.slugify.Slugify;
 import org.example.realworldapi.domain.model.builder.ArticleBuilder;
-import org.example.realworldapi.domain.model.entity.persistent.*;
+import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.provider.TokenProvider;
 import org.example.realworldapi.util.UserUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,13 +42,13 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
           User user = entityManager.find(User.class, currentUser.getId());
 
           for (User follower : followers) {
-            UsersFollowersKey key = new UsersFollowersKey();
+            UsersFollowedKey key = new UsersFollowedKey();
             key.setUser(user);
-            key.setFollower(follower);
+            key.setFollowed(follower);
 
-            UsersFollowers usersFollowers = new UsersFollowers();
-            usersFollowers.setPrimaryKey(key);
-            entityManager.persist(usersFollowers);
+            UsersFollowed usersFollowed = new UsersFollowed();
+            usersFollowed.setPrimaryKey(key);
+            entityManager.persist(usersFollowed);
           }
 
           entityManager.persist(user);

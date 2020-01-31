@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
-import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.infrastructure.web.model.request.UpdateUserRequest;
 import org.example.realworldapi.util.UserUtils;
 import org.hamcrest.Matchers;

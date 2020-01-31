@@ -1,15 +1,15 @@
 package org.example.realworldapi.domain.service;
 
-import org.example.realworldapi.domain.model.entity.Article;
-import org.example.realworldapi.domain.model.entity.Articles;
-import org.example.realworldapi.domain.model.entity.Comment;
+import org.example.realworldapi.application.data.ArticleData;
+import org.example.realworldapi.application.data.ArticlesData;
+import org.example.realworldapi.application.data.CommentData;
 
 import java.util.List;
 
 public interface ArticlesService {
-  Articles findRecentArticles(Long loggedUserId, int offset, int limit);
+  ArticlesData findRecentArticles(Long loggedUserId, int offset, int limit);
 
-  Articles findArticles(
+  ArticlesData findArticles(
       int offset,
       int limit,
       Long loggedUserId,
@@ -17,22 +17,22 @@ public interface ArticlesService {
       List<String> authors,
       List<String> favorited);
 
-  Article create(
+  ArticleData create(
       String title, String description, String body, List<String> tagList, Long authorId);
 
-  Article findBySlug(String slug);
+  ArticleData findBySlug(String slug);
 
-  Article update(String slug, String title, String description, String body, Long authorId);
+  ArticleData update(String slug, String title, String description, String body, Long authorId);
 
   void delete(String slug, Long authorId);
 
-  List<Comment> findCommentsBySlug(String slug, Long loggedUserId);
+  List<CommentData> findCommentsBySlug(String slug, Long loggedUserId);
 
-  Comment createComment(String slug, String body, Long commentAuthorId);
+  CommentData createComment(String slug, String body, Long commentAuthorId);
 
   void deleteComment(String slug, Long commentId, Long loggedUserId);
 
-  Article favoriteArticle(String slug, Long loggedUserId);
+  ArticleData favoriteArticle(String slug, Long loggedUserId);
 
-  Article unfavoriteArticle(String slug, Long loggedUserId);
+  ArticleData unfavoriteArticle(String slug, Long loggedUserId);
 }

@@ -1,9 +1,9 @@
 package org.example.realworldapi.domain.model.security.service;
 
 import io.quarkus.test.junit.QuarkusTest;
-import org.example.realworldapi.domain.application.UsersServiceImpl;
+import org.example.realworldapi.application.UsersServiceImpl;
 import org.example.realworldapi.domain.model.builder.UserBuilder;
-import org.example.realworldapi.domain.model.entity.persistent.User;
+import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.domain.model.exception.EmailAlreadyExistsException;
 import org.example.realworldapi.domain.model.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.model.exception.UserNotFoundException;
@@ -100,8 +100,7 @@ public class UsersServiceImplTest {
 
     Optional<User> existingUser = Optional.of(UserUtils.create(1L, "user1", email, password));
 
-    when(userRepository.findByEmail(email)).thenReturn(existingUser);
-    when(userRepository.update(existingUser.get())).thenReturn(existingUser.get());
+    when(userRepository.findUserByEmail(email)).thenReturn(existingUser);
     when(hashProvider.checkPassword(password, existingUser.get().getPassword())).thenReturn(true);
     when(tokenProvider.createUserToken(existingUser.get().getId().toString())).thenReturn("token");
 
@@ -116,7 +115,7 @@ public class UsersServiceImplTest {
     String email = "user1@mail.com";
     String password = "123";
 
-    when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+    when(userRepository.findUserByEmail(email)).thenReturn(Optional.empty());
 
     Assertions.assertThrows(UserNotFoundException.class, () -> usersService.login(email, password));
   }
@@ -129,7 +128,7 @@ public class UsersServiceImplTest {
 
     Optional<User> existingUser = Optional.of(UserUtils.create("user1", email, password));
 
-    when(userRepository.findByEmail(email)).thenReturn(existingUser);
+    when(userRepository.findUserByEmail(email)).thenReturn(existingUser);
 
     Assertions.assertThrows(InvalidPasswordException.class, () -> usersService.login(email, "158"));
   }
@@ -142,7 +141,7 @@ public class UsersServiceImplTest {
 
     Optional<User> userResponse = Optional.of(user);
 
-    when(userRepository.findById(user.getId())).thenReturn(userResponse);
+    when(userRepository.findUserById(user.getId())).thenReturn(userResponse);
 
     User result = usersService.findById(user.getId());
 
@@ -154,7 +153,7 @@ public class UsersServiceImplTest {
 
     Long userId = 1L;
 
-    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    when(userRepository.findUserById(userId)).thenReturn(Optional.empty());
 
     Assertions.assertThrows(UserNotFoundException.class, () -> usersService.findById(userId));
   }
@@ -165,7 +164,7 @@ public class UsersServiceImplTest {
     User user =
         new UserBuilder().id(1L).username("user1").bio("user1 bio").email("user1@mail.com").build();
 
-    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    when(userRepository.findUserById(user.getId())).thenReturn(Optional.of(user));
 
     User result = usersService.update(user);
 
@@ -202,7 +201,7 @@ public class UsersServiceImplTest {
 
     Optional<User> userOptional = Optional.of(user);
 
-    when(userRepository.findByUsername(user.getUsername())).thenReturn(userOptional);
+    when(userRepository.findByUsernameOptional(user.getUsername())).thenReturn(userOptional);
 
     User result = usersService.findByUsername(user.getUsername());
 
@@ -214,7 +213,7 @@ public class UsersServiceImplTest {
 
     String username = "user";
 
-    when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+    when(userRepository.findByUsernameOptional(username)).thenReturn(Optional.empty());
 
     Assertions.assertThrows(
         UserNotFoundException.class, () -> usersService.findByUsername(username));

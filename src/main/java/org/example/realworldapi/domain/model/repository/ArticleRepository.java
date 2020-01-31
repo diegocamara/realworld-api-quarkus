@@ -1,7 +1,6 @@
 package org.example.realworldapi.domain.model.repository;
 
-import org.example.realworldapi.domain.model.entity.persistent.Article;
-import org.example.realworldapi.domain.model.entity.persistent.Comment;
+import org.example.realworldapi.domain.model.entity.Article;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +15,13 @@ public interface ArticleRepository {
 
   Optional<Article> findBySlug(String slug);
 
-  Article update(Article article);
-
-  void delete(Article article);
+  void remove(Article article);
 
   Optional<Article> findByIdAndSlug(Long authorId, String slug);
 
-  List<Comment> findComments(Long articleId);
+  List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit);
 
-  int count(List<String> tags, List<String> authors, List<String> favorited);
+  long count(List<String> tags, List<String> authors, List<String> favorited);
+
+  long count(Long loggedUserId);
 }

@@ -1,13 +1,13 @@
 package org.example.realworldapi.domain.model.security.service;
 
 import io.quarkus.test.junit.QuarkusTest;
+import org.example.realworldapi.application.ProfilesServiceImpl;
+import org.example.realworldapi.application.data.ProfileData;
 import org.example.realworldapi.domain.model.builder.UserBuilder;
-import org.example.realworldapi.domain.model.entity.Profile;
-import org.example.realworldapi.domain.model.entity.persistent.User;
-import org.example.realworldapi.domain.model.repository.UsersFollowersRepository;
+import org.example.realworldapi.domain.model.entity.User;
+import org.example.realworldapi.domain.model.repository.UsersFollowedRepository;
 import org.example.realworldapi.domain.service.ProfilesService;
 import org.example.realworldapi.domain.service.UsersService;
-import org.example.realworldapi.domain.application.ProfilesServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,14 +19,14 @@ import static org.mockito.Mockito.when;
 public class ProfilesServiceImplTest {
 
   private UsersService usersService;
-  private UsersFollowersRepository usersFollowersRepository;
+  private UsersFollowedRepository usersFollowedRepository;
   private ProfilesService profilesService;
 
   @BeforeEach
   private void beforeEach() {
     usersService = mock(UsersService.class);
-    usersFollowersRepository = mock(UsersFollowersRepository.class);
-    profilesService = new ProfilesServiceImpl(usersService, usersFollowersRepository);
+    usersFollowedRepository = mock(UsersFollowedRepository.class);
+    profilesService = new ProfilesServiceImpl(usersService, usersFollowedRepository);
   }
 
   @Test
@@ -40,7 +40,7 @@ public class ProfilesServiceImplTest {
 
     when(usersService.findByUsername(username)).thenReturn(existingUser);
 
-    Profile result = profilesService.getProfile(username, loggedUserId);
+    ProfileData result = profilesService.getProfile(username, loggedUserId);
 
     Assertions.assertEquals(existingUser.getUsername(), result.getUsername());
     Assertions.assertEquals(existingUser.getBio(), result.getBio());
@@ -59,9 +59,9 @@ public class ProfilesServiceImplTest {
 
     when(usersService.findByUsername(username)).thenReturn(existingUser);
 
-    when(usersFollowersRepository.isFollowing(loggedUserId, existingUser.getId())).thenReturn(true);
+    when(usersFollowedRepository.isFollowing(loggedUserId, existingUser.getId())).thenReturn(true);
 
-    Profile result = profilesService.getProfile(username, loggedUserId);
+    ProfileData result = profilesService.getProfile(username, loggedUserId);
 
     Assertions.assertEquals(existingUser.getUsername(), result.getUsername());
     Assertions.assertEquals(existingUser.getBio(), result.getBio());
