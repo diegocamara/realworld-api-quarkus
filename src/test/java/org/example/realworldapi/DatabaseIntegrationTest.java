@@ -51,7 +51,7 @@ public class DatabaseIntegrationTest {
   private static Configuration configuration() {
     Configuration configuration = new Configuration();
     configuration.setProperties(properties());
-    configEntityClasses(configuration, "");
+    configEntityClasses(configuration, "org.example.realworldapi");
     return configuration;
   }
 
