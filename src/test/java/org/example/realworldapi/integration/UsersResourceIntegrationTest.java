@@ -66,7 +66,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword);
+    final var user = createUserEntity("user1", "user1@mail.com", "bio", "image", userPassword);
 
     NewUserRequest newUser = new NewUserRequest();
     newUser.setUsername("user2");
@@ -90,7 +90,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword);
+    final var user = createUserEntity("user1", "user1@mail.com", "bio", "image", userPassword);
 
     NewUserRequest newUser = new NewUserRequest();
     newUser.setUsername(user.getUsername());
@@ -157,7 +157,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword);
+    final var user = createUserEntity("user1", "user1@mail.com", "bio", "image", userPassword);
 
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setEmail(user.getEmail());
@@ -181,7 +181,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
                 "user.email",
                 Matchers.notNullValue(),
                 "user.token",
-                is(not(user.getToken())),
+                notNullValue(),
                 "user.bio",
                 is(user.getBio()),
                 "user.image",
@@ -218,7 +218,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
 
     String userPassword = "123";
 
-    User user = createUser("user1", "user1@mail.com", "bio", "image", userPassword);
+    final var user = createUserEntity("user1", "user1@mail.com", "bio", "image", userPassword);
 
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setEmail("user2@mail.com");
@@ -238,7 +238,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
   public void givenAInvalidLoginPassword_whenExecuteLoginEndpoint_shouldReturnUnauthorized()
       throws JsonProcessingException {
 
-    User user = createUser("user1", "user1@mail.com", "123", "bio", "image");
+    final var user = createUserEntity("user1", "user1@mail.com", "123", "bio", "image");
 
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setEmail(user.getEmail());

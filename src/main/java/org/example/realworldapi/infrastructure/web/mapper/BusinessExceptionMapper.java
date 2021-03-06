@@ -1,20 +1,22 @@
 package org.example.realworldapi.infrastructure.web.mapper;
 
 import org.example.realworldapi.domain.model.exception.*;
-import org.example.realworldapi.infrastructure.web.model.response.ErrorResponse;
 import org.example.realworldapi.infrastructure.web.exception.ResourceNotFoundException;
 import org.example.realworldapi.infrastructure.web.exception.UnauthorizedException;
+import org.example.realworldapi.infrastructure.web.model.response.ErrorResponse;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @Provider
 public class BusinessExceptionMapper implements ExceptionMapper<BusinessException> {
 
-  private Map<Class<? extends BusinessException>, BusinessExceptionHandler> exceptionMapper;
+  private final Map<Class<? extends BusinessException>, BusinessExceptionHandler> exceptionMapper;
 
   public BusinessExceptionMapper() {
     this.exceptionMapper = configureExceptionMapper();
@@ -33,6 +35,7 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
     handlerMap.put(UsernameAlreadyExistsException.class, conflict());
     handlerMap.put(TagNotFoundException.class, notFound());
     handlerMap.put(ArticleNotFoundException.class, notFound());
+    handlerMap.put(ModelValidationException.class, unprocessableEntity());
 
     return handlerMap;
   }
@@ -52,18 +55,23 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
         Response.Status.UNAUTHORIZED.name(), Response.Status.UNAUTHORIZED.getStatusCode());
   }
 
+  private BusinessExceptionHandler unprocessableEntity() {
+    return exceptionHandler("Unprocessable Entity", 422);
+  }
+
   private BusinessExceptionHandler exceptionHandler(String message, int httpStatusCode) {
     return ex -> {
-      String resultMessage = message;
-      if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-        resultMessage = ex.getMessage();
+      var resultMessages = new LinkedList<String>();
+      resultMessages.add(message);
+      if (ex.messages() != null && !ex.messages().isEmpty()) {
+        resultMessages = new LinkedList<>(ex.messages());
       }
-      return errorResponse(resultMessage, httpStatusCode);
+      return errorResponse(resultMessages, httpStatusCode);
     };
   }
 
-  private Response errorResponse(String errorMessage, int httpStatusCode) {
-    return Response.ok(new ErrorResponse(errorMessage)).status(httpStatusCode).build();
+  private Response errorResponse(List<String> errors, int httpStatusCode) {
+    return Response.ok(new ErrorResponse(errors)).status(httpStatusCode).build();
   }
 
   @Override

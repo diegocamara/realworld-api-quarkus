@@ -27,4 +27,12 @@ public class UserResponse {
     this.email = user.getEmail();
     this.token = user.getToken();
   }
+
+  public UserResponse(org.example.realworldapi.domain.model.user.User user, String token) {
+    this.username = user.getUsername();
+    this.bio = user.getBio();
+    this.image = user.getImage();
+    this.email = user.getEmail();
+    this.token = token;
+  }
 }

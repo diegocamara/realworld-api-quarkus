@@ -24,4 +24,8 @@ public class ErrorResponse {
     this();
     this.body.add(error);
   }
+
+  public ErrorResponse(List<String> errors) {
+    this.body = errors;
+  }
 }

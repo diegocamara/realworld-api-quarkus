@@ -5,7 +5,10 @@ import com.github.slugify.Slugify;
 import org.example.realworldapi.domain.model.builder.ArticleBuilder;
 import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.provider.TokenProvider;
-import org.example.realworldapi.util.UserUtils;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.UserEntity;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.UsersFollowedEntity;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.UsersFollowedEntityKey;
+import org.example.realworldapi.util.UserEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
 
 import javax.inject.Inject;
@@ -23,32 +26,30 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
     clear();
   }
 
-  protected User createUser(
+  protected UserEntity createUserEntity(
       String username, String email, String bio, String image, String password) {
     return transaction(
         () -> {
-          User user = UserUtils.create(username, email, password, bio, image);
-          entityManager.persist(user);
-          user.setToken(tokenProvider.createUserToken(user.getId().toString()));
-          entityManager.merge(user);
-          return user;
+          final var userEntity = UserEntityUtils.create(username, email, password, bio, image);
+          entityManager.persist(userEntity);
+          return userEntity;
         });
   }
 
-  protected void follow(User currentUser, User... followers) {
+  protected void follow(UserEntity currentUser, UserEntity... followers) {
 
     transaction(
         () -> {
-          User user = entityManager.find(User.class, currentUser.getId());
+          final var user = entityManager.find(UserEntity.class, currentUser.getId());
 
-          for (User follower : followers) {
-            UsersFollowedKey key = new UsersFollowedKey();
+          for (UserEntity follower : followers) {
+            UsersFollowedEntityKey key = new UsersFollowedEntityKey();
             key.setUser(user);
             key.setFollowed(follower);
 
-            UsersFollowed usersFollowed = new UsersFollowed();
-            usersFollowed.setPrimaryKey(key);
-            entityManager.persist(usersFollowed);
+            UsersFollowedEntity usersFollowedEntity = new UsersFollowedEntity();
+            usersFollowedEntity.setPrimaryKey(key);
+            entityManager.persist(usersFollowedEntity);
           }
 
           entityManager.persist(user);
@@ -144,7 +145,8 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
           entityManager.persist(comment);
           return comment;
         });
-  };
+  }
+  ;
 
   private ArticlesUsers getArticlesUsers(Article article, User loggedUser) {
     ArticlesUsersKey articlesUsersKey = getArticlesUsersKey(article, loggedUser);
