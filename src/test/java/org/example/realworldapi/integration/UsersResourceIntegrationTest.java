@@ -4,20 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
-import org.example.realworldapi.domain.model.entity.User;
 import org.example.realworldapi.infrastructure.web.model.request.LoginRequest;
 import org.example.realworldapi.infrastructure.web.model.request.NewUserRequest;
-import org.example.realworldapi.infrastructure.web.model.response.UserResponse;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
 import static org.example.realworldapi.constants.TestConstants.API_PREFIX;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
 
 @QuarkusTest
 public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
@@ -149,51 +146,6 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
             hasSize(1),
             "errors.body",
             hasItems("must be a well-formed email address"));
-  }
-
-  @Test
-  public void givenAValidLogin_whenExecuteLoginEndpoint_shouldReturnExistingUserWithUpdatedToken()
-      throws IOException {
-
-    String userPassword = "123";
-
-    final var user = createUserEntity("user1", "user1@mail.com", "bio", "image", userPassword);
-
-    LoginRequest loginRequest = new LoginRequest();
-    loginRequest.setEmail(user.getEmail());
-    loginRequest.setPassword(userPassword);
-
-    String resultUserJson =
-        given()
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(objectMapper.writeValueAsString(loginRequest))
-            .when()
-            .post(LOGIN_PATH)
-            .then()
-            .statusCode(HttpStatus.SC_OK)
-            .body(
-                "user.id",
-                Matchers.nullValue(),
-                "user.password",
-                Matchers.nullValue(),
-                "user.username",
-                Matchers.notNullValue(),
-                "user.email",
-                Matchers.notNullValue(),
-                "user.token",
-                notNullValue(),
-                "user.bio",
-                is(user.getBio()),
-                "user.image",
-                is(user.getImage()))
-            .extract()
-            .asString();
-
-    UserResponse resultUser = objectMapper.readValue(resultUserJson, UserResponse.class);
-
-    User persistedUser = transaction(() -> entityManager.find(User.class, user.getId()));
-
-    Assertions.assertEquals(resultUser.getToken(), persistedUser.getToken());
   }
 
   @Test

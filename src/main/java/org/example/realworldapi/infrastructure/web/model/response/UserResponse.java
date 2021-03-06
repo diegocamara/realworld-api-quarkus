@@ -5,7 +5,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.domain.model.entity.User;
+import org.example.realworldapi.domain.model.user.User;
 
 @Getter
 @Setter
@@ -20,15 +20,7 @@ public class UserResponse {
   private String email;
   private String token;
 
-  public UserResponse(User user) {
-    this.username = user.getUsername();
-    this.bio = user.getBio();
-    this.image = user.getImage();
-    this.email = user.getEmail();
-    this.token = user.getToken();
-  }
-
-  public UserResponse(org.example.realworldapi.domain.model.user.User user, String token) {
+  public UserResponse(User user, String token) {
     this.username = user.getUsername();
     this.bio = user.getBio();
     this.image = user.getImage();

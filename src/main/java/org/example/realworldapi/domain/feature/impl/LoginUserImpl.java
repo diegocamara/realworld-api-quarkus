@@ -22,7 +22,7 @@ public class LoginUserImpl implements LoginUser {
   public User handle(LoginUserInput loginUserInput) {
     final var user =
         userRepository
-            .findUserByEmail(loginUserInput.getEmail())
+            .findByEmail(loginUserInput.getEmail())
             .orElseThrow(UserNotFoundException::new);
     if (isPasswordInvalid(loginUserInput.getPassword(), user.getPassword())) {
       throw new InvalidPasswordException();

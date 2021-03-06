@@ -36,6 +36,10 @@ public class UserEntity {
 
   public UserEntity(User user) {
     this.id = user.getId();
+    update(user);
+  }
+
+  public void update(User user) {
     this.username = user.getUsername();
     this.bio = user.getBio();
     this.image = user.getImage();

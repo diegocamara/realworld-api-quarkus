@@ -6,10 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
 import org.example.realworldapi.domain.model.entity.User;
+import org.example.realworldapi.domain.model.user.UpdateUserInput;
 import org.example.realworldapi.infrastructure.web.validation.constraint.AtLeastOneFieldMustBeNotNull;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -33,5 +35,9 @@ public class UpdateUserRequest {
     user.setImage(this.image);
     user.setEmail(this.email);
     return user;
+  }
+
+  public UpdateUserInput toUpdateUserInput(UUID userId) {
+    return new UpdateUserInput(userId, this.username, this.bio, this.image, this.email);
   }
 }

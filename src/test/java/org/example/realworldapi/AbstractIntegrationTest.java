@@ -36,6 +36,10 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
         });
   }
 
+  protected String token(UserEntity userEntity) {
+    return tokenProvider.createUserToken(userEntity.getId().toString());
+  }
+
   protected void follow(UserEntity currentUser, UserEntity... followers) {
 
     transaction(
