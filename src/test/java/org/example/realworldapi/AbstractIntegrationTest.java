@@ -5,15 +5,14 @@ import com.github.slugify.Slugify;
 import org.example.realworldapi.domain.model.builder.ArticleBuilder;
 import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.provider.TokenProvider;
-import org.example.realworldapi.infrastructure.repository.hibernate.entity.UserEntity;
-import org.example.realworldapi.infrastructure.repository.hibernate.entity.UsersFollowedEntity;
-import org.example.realworldapi.infrastructure.repository.hibernate.entity.UsersFollowedEntityKey;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.*;
 import org.example.realworldapi.util.UserEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
 
 import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class AbstractIntegrationTest extends DatabaseIntegrationTest {
 
@@ -47,49 +46,52 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
           final var user = entityManager.find(UserEntity.class, currentUser.getId());
 
           for (UserEntity follower : followers) {
-            UsersFollowedEntityKey key = new UsersFollowedEntityKey();
+            FollowRelationshipEntityKey key = new FollowRelationshipEntityKey();
             key.setUser(user);
             key.setFollowed(follower);
 
-            UsersFollowedEntity usersFollowedEntity = new UsersFollowedEntity();
-            usersFollowedEntity.setPrimaryKey(key);
-            entityManager.persist(usersFollowedEntity);
+            FollowRelationshipEntity followRelationshipEntity = new FollowRelationshipEntity();
+            followRelationshipEntity.setPrimaryKey(key);
+            entityManager.persist(followRelationshipEntity);
           }
 
           entityManager.persist(user);
         });
   }
 
-  protected Tag createTag(String name) {
+  protected TagEntity createTagEntity(String name) {
     return transaction(
         () -> {
-          Tag tag = new Tag(name);
+          final var tag = new TagEntity();
+          tag.setId(UUID.randomUUID());
+          tag.setName(name);
           entityManager.persist(tag);
           return tag;
         });
   }
 
-  protected List<ArticlesTags> createArticlesTags(List<Article> articles, Tag... tags) {
+  protected List<ArticlesTagsEntity> createArticlesTags(
+      List<ArticleEntity> articles, TagEntity... tags) {
     return transaction(
         () -> {
-          List<ArticlesTags> resultList = new LinkedList<>();
+          final var resultList = new LinkedList<ArticlesTagsEntity>();
 
-          for (Article article : articles) {
+          for (ArticleEntity article : articles) {
 
-            Article managedArticle = entityManager.find(Article.class, article.getId());
+            final var managedArticle = entityManager.find(ArticleEntity.class, article.getId());
 
-            for (Tag tag : tags) {
-              Tag managedTag = entityManager.find(Tag.class, tag.getId());
+            for (TagEntity tag : tags) {
+              final var managedTag = entityManager.find(TagEntity.class, tag.getId());
 
-              ArticlesTagsKey articlesTagsKey = new ArticlesTagsKey();
-              articlesTagsKey.setArticle(managedArticle);
-              articlesTagsKey.setTag(managedTag);
+              final var articlesTagsEntityKey = new ArticlesTagsEntityKey();
+              articlesTagsEntityKey.setArticle(managedArticle);
+              articlesTagsEntityKey.setTag(managedTag);
 
-              ArticlesTags articlesTags = new ArticlesTags();
-              articlesTags.setPrimaryKey(articlesTagsKey);
+              final var articlesTagsEntity = new ArticlesTagsEntity();
+              articlesTagsEntity.setPrimaryKey(articlesTagsEntityKey);
 
-              entityManager.persist(articlesTags);
-              resultList.add(articlesTags);
+              entityManager.persist(articlesTagsEntity);
+              resultList.add(articlesTagsEntity);
             }
           }
 

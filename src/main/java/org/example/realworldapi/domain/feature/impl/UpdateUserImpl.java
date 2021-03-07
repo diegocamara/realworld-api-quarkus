@@ -5,16 +5,13 @@ import org.example.realworldapi.domain.feature.FindUserById;
 import org.example.realworldapi.domain.feature.UpdateUser;
 import org.example.realworldapi.domain.model.exception.EmailAlreadyExistsException;
 import org.example.realworldapi.domain.model.exception.UsernameAlreadyExistsException;
-import org.example.realworldapi.domain.model.repository.NewUserRepository;
+import org.example.realworldapi.domain.model.user.NewUserRepository;
 import org.example.realworldapi.domain.model.user.UpdateUserInput;
 import org.example.realworldapi.domain.model.user.User;
 import org.example.realworldapi.domain.validator.ModelValidator;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.transaction.Transactional;
 import java.util.UUID;
 
-@ApplicationScoped
 @AllArgsConstructor
 public class UpdateUserImpl implements UpdateUser {
 
@@ -23,7 +20,6 @@ public class UpdateUserImpl implements UpdateUser {
   private final ModelValidator modelValidator;
 
   @Override
-  @Transactional
   public User handle(UpdateUserInput updateUserInput) {
     final var user = findUserById.handle(updateUserInput.getId());
     checkValidations(updateUserInput, updateUserInput.getId());

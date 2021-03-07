@@ -3,7 +3,6 @@ package org.example.realworldapi.integration;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
-import org.example.realworldapi.domain.model.entity.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MediaType;
@@ -21,10 +20,10 @@ public class TagsResourceIntegrationTest extends AbstractIntegrationTest {
   @Test
   public void givenExistentTags_whenExecuteGetTagsEndpoint_shouldReturnTagListWithStatusCode200() {
 
-    Tag tag1 = createTag("tag 1");
-    Tag tag2 = createTag("tag 2");
-    Tag tag3 = createTag("tag 3");
-    Tag tag4 = createTag("tag 4");
+    final var tag1 = createTagEntity("tag 1");
+    final var tag2 = createTagEntity("tag 2");
+    final var tag3 = createTagEntity("tag 3");
+    final var tag4 = createTagEntity("tag 4");
 
     given()
         .contentType(MediaType.APPLICATION_JSON)

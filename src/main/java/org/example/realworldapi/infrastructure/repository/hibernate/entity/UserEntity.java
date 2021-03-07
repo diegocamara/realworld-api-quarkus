@@ -29,10 +29,10 @@ public class UserEntity {
   private List<ArticleEntity> articles;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-  private List<UsersFollowedEntity> following;
+  private List<FollowRelationshipEntity> following;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "followed")
-  private List<UsersFollowedEntity> followedBy;
+  private List<FollowRelationshipEntity> followedBy;
 
   public UserEntity(User user) {
     this.id = user.getId();

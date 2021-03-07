@@ -3,6 +3,7 @@ package org.example.realworldapi.infrastructure.repository.hibernate.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.realworldapi.domain.model.tag.Tag;
 
 import javax.persistence.*;
 import java.util.List;
@@ -22,7 +23,8 @@ public class TagEntity {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "tag")
   private List<ArticlesTagsEntity> articlesTags;
 
-  public TagEntity(String name) {
-    this.name = name;
+  public TagEntity(Tag tag) {
+    this.id = tag.getId();
+    this.name = tag.getName();
   }
 }

@@ -1,9 +1,9 @@
 package org.example.realworldapi.infrastructure.web.mapper;
 
+import org.example.realworldapi.application.web.model.response.ErrorResponse;
 import org.example.realworldapi.domain.model.exception.*;
 import org.example.realworldapi.infrastructure.web.exception.ResourceNotFoundException;
 import org.example.realworldapi.infrastructure.web.exception.UnauthorizedException;
-import org.example.realworldapi.infrastructure.web.model.response.ErrorResponse;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

@@ -5,13 +5,10 @@ import org.example.realworldapi.domain.feature.LoginUser;
 import org.example.realworldapi.domain.model.exception.InvalidPasswordException;
 import org.example.realworldapi.domain.model.exception.UserNotFoundException;
 import org.example.realworldapi.domain.model.provider.HashProvider;
-import org.example.realworldapi.domain.model.repository.NewUserRepository;
 import org.example.realworldapi.domain.model.user.LoginUserInput;
+import org.example.realworldapi.domain.model.user.NewUserRepository;
 import org.example.realworldapi.domain.model.user.User;
 
-import javax.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 @AllArgsConstructor
 public class LoginUserImpl implements LoginUser {
 
