@@ -1,5 +1,6 @@
 language: java
 jdk: openjdk11
 node_js: "lts/*"
+install: "npm install"
 script:
   - ./ci-build.sh
