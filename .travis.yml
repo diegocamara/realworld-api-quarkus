@@ -6,6 +6,6 @@ before_install:
   - node --version
   - npm --version
 install:
-  - npm install newman
+  - npm install -g n
 script:
   - ./ci-build.sh
