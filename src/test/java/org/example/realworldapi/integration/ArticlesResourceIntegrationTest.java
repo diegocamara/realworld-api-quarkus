@@ -405,33 +405,31 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
             "article",
             hasKey("author"));
   }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenExistentArticle_whenExecuteGetArticleBySlugEndpoint_shouldReturnArticleWithStatusCode200()
-  // {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //    Article article = createArticle(loggedUser, "Title", "Description", "Body");
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .pathParam("slug", article.getSlug())
-  //        .get(ARTICLES_PATH + "/{slug}")
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "article.title",
-  //            is(article.getTitle()),
-  //            "article.description",
-  //            is(article.getDescription()),
-  //            "article.body",
-  //            is(article.getBody()));
-  //  }
-  //
+
+  @Test
+  public void
+      givenExistentArticle_whenExecuteGetArticleBySlugEndpoint_shouldReturnArticleWithStatusCode200() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+    final var article = createArticleEntity(loggedUser, "Title", "Description", "Body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .pathParam("slug", article.getSlug())
+        .get(ARTICLES_PATH + "/{slug}")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "article.title",
+            is(article.getTitle()),
+            "article.description",
+            is(article.getDescription()),
+            "article.body",
+            is(article.getBody()));
+  }
+
   @Test
   public void
       givenExistentArticle_whenExecuteUpdateArticleEndpoint_shouldReturnUpdatedArticleWithStatusCode200()
@@ -485,40 +483,39 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
 
     Assertions.assertNull(findArticleEntityById(article.getId()));
   }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenExistentArticleWithComments_whenExecuteGetCommentsBySlugEndpoint_shouldReturnCommentWithStatusCode200() {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //    Article article = createArticle(loggedUser, "Title", "Description", "Body");
-  //
-  //    createComment(loggedUser, article, "comment1");
-  //    createComment(loggedUser, article, "comment2");
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .pathParam("slug", article.getSlug())
-  //        .get(ARTICLES_PATH + "/{slug}/comments")
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "comments.size()",
-  //            is(2),
-  //            "comments[0]",
-  //            hasKey("id"),
-  //            "comments[0]",
-  //            hasKey("createdAt"),
-  //            "comments[0]",
-  //            hasKey("updatedAt"),
-  //            "comments[0]",
-  //            hasKey("body"),
-  //            "comments[0]",
-  //            hasKey("author"));
-  //  }
-  //
+
+  @Test
+  public void
+      givenExistentArticleWithComments_whenExecuteGetCommentsBySlugEndpoint_shouldReturnCommentWithStatusCode200() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+    final var article = createArticleEntity(loggedUser, "Title", "Description", "Body");
+
+    createComment(loggedUser, article, "comment1");
+    createComment(loggedUser, article, "comment2");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .pathParam("slug", article.getSlug())
+        .get(ARTICLES_PATH + "/{slug}/comments")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "comments.size()",
+            is(2),
+            "comments[0]",
+            hasKey("id"),
+            "comments[0]",
+            hasKey("createdAt"),
+            "comments[0]",
+            hasKey("updatedAt"),
+            "comments[0]",
+            hasKey("body"),
+            "comments[0]",
+            hasKey("author"));
+  }
+
   @Test
   public void
       givenExistentArticleWithoutComments_whenExecuteCreateCommentEndpoint_shouldReturnCommentWithStatusCode200()
@@ -553,122 +550,121 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
             "comment.author.username",
             is(loggedUser.getUsername()));
   }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenExistentArticleWithComments_whenExecuteDeleteCommentEndpoint_shouldReturnStatusCode200() {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    User user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
-  //
-  //    Article article = createArticle(user, "Title", "Description", "Body");
-  //
-  //    Comment comment1 = createComment(loggedUser, article, "comment 1 body");
-  //    createComment(loggedUser, article, "comment 2 body");
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .pathParam("slug", article.getSlug())
-  //        .pathParam("id", comment1.getId())
-  //        .delete(ARTICLES_PATH + "/{slug}/comments/{id}")
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK);
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenExistentArticle_whenExecuteFaroriteArticleEndpoint_shouldReturnFavoritedArticleWithStatusCode200() {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    User user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
-  //
-  //    Article article = createArticle(user, "Title", "Description", "Body");
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .pathParam("slug", article.getSlug())
-  //        .post(ARTICLES_PATH + "/{slug}/favorite")
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "article.size()",
-  //            is(10),
-  //            "article",
-  //            hasKey("slug"),
-  //            "article.title",
-  //            is(article.getTitle()),
-  //            "article.description",
-  //            is(article.getDescription()),
-  //            "article.body",
-  //            is(article.getBody()),
-  //            "article",
-  //            hasKey("tagList"),
-  //            "article",
-  //            hasKey("createdAt"),
-  //            "article",
-  //            hasKey("updatedAt"),
-  //            "article.favorited",
-  //            is(true),
-  //            "article.favoritesCount",
-  //            is(1),
-  //            "article",
-  //            hasKey("author"));
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenExistentArticleFavorited_whenExecuteUnfaroriteArticleEndpoint_shouldReturnUnfavoritedArticleWithStatusCode200() {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    User user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
-  //
-  //    Article article = createArticle(user, "Title", "Description", "Body");
-  //
-  //    favorite(article, loggedUser);
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .pathParam("slug", article.getSlug())
-  //        .delete(ARTICLES_PATH + "/{slug}/favorite")
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "article.size()",
-  //            is(10),
-  //            "article",
-  //            hasKey("slug"),
-  //            "article.title",
-  //            is(article.getTitle()),
-  //            "article.description",
-  //            is(article.getDescription()),
-  //            "article.body",
-  //            is(article.getBody()),
-  //            "article",
-  //            hasKey("tagList"),
-  //            "article",
-  //            hasKey("createdAt"),
-  //            "article",
-  //            hasKey("updatedAt"),
-  //            "article.favorited",
-  //            is(false),
-  //            "article.favoritesCount",
-  //            is(0),
-  //            "article",
-  //            hasKey("author"));
-  //  }
-  //
+
+  @Test
+  public void
+      givenExistentArticleWithComments_whenExecuteDeleteCommentEndpoint_shouldReturnStatusCode200() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    final var user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
+
+    final var article = createArticleEntity(user, "Title", "Description", "Body");
+
+    final var comment1 = createComment(loggedUser, article, "comment 1 body");
+    createComment(loggedUser, article, "comment 2 body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .pathParam("slug", article.getSlug())
+        .pathParam("id", comment1.getId())
+        .delete(ARTICLES_PATH + "/{slug}/comments/{id}")
+        .then()
+        .statusCode(HttpStatus.SC_OK);
+
+    Assertions.assertNull(findCommentEntityById(comment1.getId()));
+  }
+
+  @Test
+  public void
+      givenExistentArticle_whenExecuteFaroriteArticleEndpoint_shouldReturnFavoritedArticleWithStatusCode200() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    final var user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
+
+    final var article = createArticleEntity(user, "Title", "Description", "Body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .pathParam("slug", article.getSlug())
+        .post(ARTICLES_PATH + "/{slug}/favorite")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "article.size()",
+            is(10),
+            "article",
+            hasKey("slug"),
+            "article.title",
+            is(article.getTitle()),
+            "article.description",
+            is(article.getDescription()),
+            "article.body",
+            is(article.getBody()),
+            "article",
+            hasKey("tagList"),
+            "article",
+            hasKey("createdAt"),
+            "article",
+            hasKey("updatedAt"),
+            "article.favorited",
+            is(true),
+            "article.favoritesCount",
+            is(1),
+            "article",
+            hasKey("author"));
+  }
+
+  @Test
+  public void
+      givenExistentArticleFavorited_whenExecuteUnfaroriteArticleEndpoint_shouldReturnUnfavoritedArticleWithStatusCode200() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    final var user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
+
+    final var article = createArticleEntity(user, "Title", "Description", "Body");
+
+    favorite(article, loggedUser);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .pathParam("slug", article.getSlug())
+        .delete(ARTICLES_PATH + "/{slug}/favorite")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "article.size()",
+            is(10),
+            "article",
+            hasKey("slug"),
+            "article.title",
+            is(article.getTitle()),
+            "article.description",
+            is(article.getDescription()),
+            "article.body",
+            is(article.getBody()),
+            "article",
+            hasKey("tagList"),
+            "article",
+            hasKey("createdAt"),
+            "article",
+            hasKey("updatedAt"),
+            "article.favorited",
+            is(false),
+            "article.favoritesCount",
+            is(0),
+            "article",
+            hasKey("author"));
+  }
+
   private NewArticleRequest createNewArticle(
       String title, String description, String body, String... tagList) {
     NewArticleRequest newArticleRequest = new NewArticleRequest();

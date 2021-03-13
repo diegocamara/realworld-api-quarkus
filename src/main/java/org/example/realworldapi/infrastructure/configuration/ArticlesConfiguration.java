@@ -115,6 +115,23 @@ public class ArticlesConfiguration {
 
   @Produces
   @Singleton
+  public FavoriteArticle favoriteArticle(
+      FindArticleBySlug findArticleBySlug,
+      FindUserById findUserById,
+      FavoriteRelationshipRepository favoriteRelationshipRepository) {
+    return new FavoriteArticleImpl(findArticleBySlug, findUserById, favoriteRelationshipRepository);
+  }
+
+  @Produces
+  @Singleton
+  public UnfavoriteArticle unfavoriteArticle(
+      FindArticleBySlug findArticleBySlug,
+      FavoriteRelationshipRepository favoriteRelationshipRepository) {
+    return new UnfavoriteArticleImpl(findArticleBySlug, favoriteRelationshipRepository);
+  }
+
+  @Produces
+  @Singleton
   public ArticleModelBuilder articleBuilder(ModelValidator modelValidator) {
     return new ArticleModelBuilder(modelValidator);
   }

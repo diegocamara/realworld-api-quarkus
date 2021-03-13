@@ -9,8 +9,8 @@ import org.example.realworldapi.application.web.model.request.NewCommentRequest;
 import org.example.realworldapi.application.web.model.request.UpdateArticleRequest;
 import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.model.article.ArticleFilter;
+import org.example.realworldapi.domain.model.comment.DeleteCommentInput;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
-import org.example.realworldapi.domain.service.ArticlesService;
 import org.example.realworldapi.infrastructure.web.qualifiers.NoWrapRootValueObjectMapper;
 import org.example.realworldapi.infrastructure.web.security.annotation.Secured;
 import org.example.realworldapi.infrastructure.web.security.profile.Role;
@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
+import java.util.UUID;
 
 @Path("/articles")
 @AllArgsConstructor
@@ -37,7 +38,10 @@ public class ArticlesResource {
   private final UpdateArticleBySlug updateArticleBySlug;
   private final DeleteArticleBySlug deleteArticleBySlug;
   private final CreateComment createComment;
-  private final ArticlesService articlesService;
+  private final DeleteComment deleteComment;
+  private final FindCommentsByArticleSlug findCommentsByArticleSlug;
+  private final FavoriteArticle favoriteArticle;
+  private final UnfavoriteArticle unfavoriteArticle;
   @NoWrapRootValueObjectMapper ObjectMapper objectMapper;
   private final ResourceUtils resourceUtils;
 
@@ -51,7 +55,8 @@ public class ArticlesResource {
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
-    final var articlesFilter = new ArticleFilter(offset, limit, loggedUserId, null, null, null);
+    final var articlesFilter =
+        new ArticleFilter(offset, resourceUtils.getLimit(limit), loggedUserId, null, null, null);
     final var articlesPageResult = findMostRecentArticlesByFilter.handle(articlesFilter);
     return Response.ok(
             objectMapper.writeValueAsString(
@@ -72,7 +77,9 @@ public class ArticlesResource {
       @Context SecurityContext securityContext)
       throws JsonProcessingException {
     final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
-    final var filter = new ArticleFilter(offset, limit, loggedUserId, tags, authors, favorited);
+    final var filter =
+        new ArticleFilter(
+            offset, resourceUtils.getLimit(limit), loggedUserId, tags, authors, favorited);
     final var articlesPageResult = findArticlesByFilter.handle(filter);
     return Response.ok(
             objectMapper.writeValueAsString(
@@ -140,21 +147,21 @@ public class ArticlesResource {
     return Response.ok().build();
   }
 
-  //  @GET
-  //  @Path("/{slug}/comments")
-  //  @Secured(optional = true)
-  //  @Produces(MediaType.APPLICATION_JSON)
-  //  public Response getCommentsBySlug(
-  //      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String
-  // slug,
-  //      @Context SecurityContext securityContext)
-  //      throws JsonProcessingException {
-  //    Long loggedUserId = getLoggedUserId(securityContext);
-  //    List<CommentData> comments = articlesService.findCommentsBySlug(slug, loggedUserId);
-  //    return Response.ok(objectMapper.writeValueAsString(new CommentsResponse(comments)))
-  //        .status(Response.Status.OK)
-  //        .build();
-  //  }
+  @GET
+  @Path("/{slug}/comments")
+  @Secured(optional = true)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getCommentsBySlug(
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
+      @Context SecurityContext securityContext)
+      throws JsonProcessingException {
+    final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
+    final var comments = findCommentsByArticleSlug.handle(slug);
+    return Response.ok(
+            objectMapper.writeValueAsString(resourceUtils.commentsResponse(comments, loggedUserId)))
+        .status(Response.Status.OK)
+        .build();
+  }
 
   @POST
   @Transactional
@@ -174,45 +181,49 @@ public class ArticlesResource {
         .build();
   }
 
-  //  @DELETE
-  //  @Path("/{slug}/comments/{id}")
-  //  @Secured({Role.ADMIN, Role.USER})
-  //  @Produces(MediaType.APPLICATION_JSON)
-  //  public Response deleteComment(
-  //      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String
-  // slug,
-  //      @PathParam("id") @NotNull(message = ValidationMessages.COMMENT_ID_MUST_BE_NOT_NULL) Long
-  // id,
-  //      @Context SecurityContext securityContext) {
-  //    Long loggedUserId = getLoggedUserId(securityContext);
-  //    articlesService.deleteComment(slug, id, loggedUserId);
-  //    return Response.ok().build();
-  //  }
+  @DELETE
+  @Transactional
+  @Path("/{slug}/comments/{id}")
+  @Secured({Role.ADMIN, Role.USER})
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response deleteComment(
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
+      @PathParam("id") @NotNull(message = ValidationMessages.COMMENT_ID_MUST_BE_NOT_NULL) UUID id,
+      @Context SecurityContext securityContext) {
+    final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
+    deleteComment.handle(new DeleteCommentInput(id, loggedUserId, slug));
+    return Response.ok().build();
+  }
 
-  //  @POST
-  //  @Path("/{slug}/favorite")
-  //  @Secured({Role.ADMIN, Role.USER})
-  //  @Produces(MediaType.APPLICATION_JSON)
-  //  public Response favoriteArticle(
-  //      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String
-  // slug,
-  //      @Context SecurityContext securityContext) {
-  //    Long loggedUserId = getLoggedUserId(securityContext);
-  //    ArticleData articleData = articlesService.favoriteArticle(slug, loggedUserId);
-  //    return Response.ok(new ArticleResponse(articleData)).status(Response.Status.OK).build();
-  //  }
+  @POST
+  @Transactional
+  @Path("/{slug}/favorite")
+  @Secured({Role.ADMIN, Role.USER})
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response favoriteArticle(
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
+      @Context SecurityContext securityContext) {
+    final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
+    favoriteArticle.handle(slug, loggedUserId);
+    final var article = findArticleBySlug.handle(slug);
+    return Response.ok(resourceUtils.articleResponse(article, loggedUserId))
+        .status(Response.Status.OK)
+        .build();
+  }
 
-  //  @DELETE
-  //  @Path("/{slug}/favorite")
-  //  @Secured({Role.ADMIN, Role.USER})
-  //  @Produces(MediaType.APPLICATION_JSON)
-  //  public Response unfavoriteArticle(
-  //      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String
-  // slug,
-  //      @Context SecurityContext securityContext) {
-  //    Long loggedUserId = getLoggedUserId(securityContext);
-  //    ArticleData articleData = articlesService.unfavoriteArticle(slug, loggedUserId);
-  //    return Response.ok(new ArticleResponse(articleData)).status(Response.Status.OK).build();
-  //  }
-
+  @DELETE
+  @Transactional
+  @Path("/{slug}/favorite")
+  @Secured({Role.ADMIN, Role.USER})
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response unfavoriteArticle(
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
+      @Context SecurityContext securityContext) {
+    final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
+    unfavoriteArticle.handle(slug, loggedUserId);
+    final var article = findArticleBySlug.handle(slug);
+    return Response.ok(resourceUtils.articleResponse(article, loggedUserId))
+        .status(Response.Status.OK)
+        .build();
+  }
 }

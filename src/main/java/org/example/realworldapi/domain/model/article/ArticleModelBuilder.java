@@ -15,7 +15,8 @@ public class ArticleModelBuilder {
   public Article build(String slug, String title, String description, String body, User author) {
     final var createdAt = LocalDateTime.now();
     return modelValidator.validate(
-        new Article(UUID.randomUUID(), slug, title, description, body, createdAt, null, author));
+        new Article(
+            UUID.randomUUID(), slug, title, description, body, createdAt, createdAt, author));
   }
 
   public Article build(

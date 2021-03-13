@@ -2,7 +2,6 @@ package org.example.realworldapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.slugify.Slugify;
-import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.provider.TokenProvider;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.*;
 import org.example.realworldapi.util.UserEntityUtils;
@@ -132,19 +131,24 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
     return transaction(() -> entityManager.find(ArticleEntity.class, id));
   }
 
-  protected ArticlesUsers favorite(Article article, User user) {
+  protected CommentEntity findCommentEntityById(UUID id) {
+    return transaction(() -> entityManager.find(CommentEntity.class, id));
+  }
+
+  protected FavoriteRelationshipEntity favorite(ArticleEntity article, UserEntity user) {
     return transaction(
         () -> {
-          ArticlesUsers articlesUsers = getArticlesUsers(article, user);
-          entityManager.persist(articlesUsers);
-          return articlesUsers;
+          final var favoriteRelationshipEntity = favoriteRelationshipEntity(article, user);
+          entityManager.persist(favoriteRelationshipEntity);
+          return favoriteRelationshipEntity;
         });
   }
 
-  protected Comment createComment(User author, Article article, String body) {
+  protected CommentEntity createComment(UserEntity author, ArticleEntity article, String body) {
     return transaction(
         () -> {
-          Comment comment = new Comment();
+          final var comment = new CommentEntity();
+          comment.setId(UUID.randomUUID());
           comment.setBody(body);
           comment.setArticle(article);
           comment.setAuthor(author);
@@ -154,17 +158,19 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
   }
   ;
 
-  private ArticlesUsers getArticlesUsers(Article article, User loggedUser) {
-    ArticlesUsersKey articlesUsersKey = getArticlesUsersKey(article, loggedUser);
-    ArticlesUsers articlesUsers = new ArticlesUsers();
-    articlesUsers.setPrimaryKey(articlesUsersKey);
-    return articlesUsers;
+  private FavoriteRelationshipEntity favoriteRelationshipEntity(
+      ArticleEntity article, UserEntity loggedUser) {
+    final var favoriteRelationshipEntityKey = favoriteRelationshipEntityKey(article, loggedUser);
+    final var favoriteRelationshipEntity = new FavoriteRelationshipEntity();
+    favoriteRelationshipEntity.setPrimaryKey(favoriteRelationshipEntityKey);
+    return favoriteRelationshipEntity;
   }
 
-  private ArticlesUsersKey getArticlesUsersKey(Article article, User loggedUser) {
-    ArticlesUsersKey articlesUsersKey = new ArticlesUsersKey();
-    articlesUsersKey.setArticle(article);
-    articlesUsersKey.setUser(loggedUser);
-    return articlesUsersKey;
+  private FavoriteRelationshipEntityKey favoriteRelationshipEntityKey(
+      ArticleEntity article, UserEntity loggedUser) {
+    final var favoriteRelationshipEntityKey = new FavoriteRelationshipEntityKey();
+    favoriteRelationshipEntityKey.setArticle(article);
+    favoriteRelationshipEntityKey.setUser(loggedUser);
+    return favoriteRelationshipEntityKey;
   }
 }

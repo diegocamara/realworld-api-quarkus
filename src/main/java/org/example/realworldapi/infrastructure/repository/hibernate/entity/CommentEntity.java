@@ -13,8 +13,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor
 @Table(name = "NEWCOMMENTS")
 public class CommentEntity {
 
@@ -25,10 +25,12 @@ public class CommentEntity {
 
   private String body;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne
+  @JoinColumn(name = "article_id", referencedColumnName = "id", nullable = false)
   private ArticleEntity article;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne
+  @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
   private UserEntity author;
 
   public CommentEntity(UserEntity author, ArticleEntity article, Comment comment) {

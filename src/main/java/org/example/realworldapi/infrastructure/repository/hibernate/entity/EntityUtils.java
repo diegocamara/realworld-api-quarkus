@@ -3,6 +3,9 @@ package org.example.realworldapi.infrastructure.repository.hibernate.entity;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.model.article.Article;
 import org.example.realworldapi.domain.model.article.ArticleModelBuilder;
+import org.example.realworldapi.domain.model.article.FavoriteRelationship;
+import org.example.realworldapi.domain.model.comment.Comment;
+import org.example.realworldapi.domain.model.comment.CommentBuilder;
 import org.example.realworldapi.domain.model.tag.Tag;
 import org.example.realworldapi.domain.model.tag.TagBuilder;
 import org.example.realworldapi.domain.model.user.User;
@@ -16,6 +19,7 @@ public class EntityUtils {
   private final UserModelBuilder userBuilder;
   private final TagBuilder tagBuilder;
   private final ArticleModelBuilder articleBuilder;
+  private final CommentBuilder commentBuilder;
 
   public User user(UserEntity userEntity) {
     final var id = userEntity.getId();
@@ -45,5 +49,22 @@ public class EntityUtils {
         articleEntity.getCreatedAt(),
         articleEntity.getUpdatedAt(),
         user(articleEntity.getAuthor()));
+  }
+
+  public Comment comment(CommentEntity commentEntity) {
+    return commentBuilder.build(
+        commentEntity.getId(),
+        user(commentEntity.getAuthor()),
+        article(commentEntity.getArticle()),
+        commentEntity.getBody(),
+        commentEntity.getCreatedAt(),
+        commentEntity.getUpdatedAt());
+  }
+
+  public FavoriteRelationship favoriteRelationship(
+      FavoriteRelationshipEntity favoriteRelationshipEntity) {
+    return new FavoriteRelationship(
+        user(favoriteRelationshipEntity.getUser()),
+        article(favoriteRelationshipEntity.getArticle()));
   }
 }

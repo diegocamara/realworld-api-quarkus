@@ -1,6 +1,7 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "FAVORITE_RELATIONSHIP")
 public class FavoriteRelationshipEntity {
 
@@ -21,6 +23,13 @@ public class FavoriteRelationshipEntity {
   @ManyToOne
   @JoinColumn(insertable = false, updatable = false)
   private UserEntity user;
+
+  public FavoriteRelationshipEntity(UserEntity user, ArticleEntity article) {
+    final var favoriteRelationshipEntityKey = new FavoriteRelationshipEntityKey();
+    favoriteRelationshipEntityKey.setUser(user);
+    favoriteRelationshipEntityKey.setArticle(article);
+    this.primaryKey = favoriteRelationshipEntityKey;
+  }
 
   @Override
   public boolean equals(Object o) {

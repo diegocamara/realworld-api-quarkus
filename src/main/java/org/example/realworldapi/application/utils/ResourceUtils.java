@@ -1,10 +1,7 @@
 package org.example.realworldapi.application.utils;
 
 import lombok.AllArgsConstructor;
-import org.example.realworldapi.application.web.model.response.ArticleResponse;
-import org.example.realworldapi.application.web.model.response.ArticlesResponse;
-import org.example.realworldapi.application.web.model.response.CommentResponse;
-import org.example.realworldapi.application.web.model.response.ProfileResponse;
+import org.example.realworldapi.application.web.model.response.*;
 import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.model.article.Article;
 import org.example.realworldapi.domain.model.article.PageResult;
@@ -13,6 +10,7 @@ import org.example.realworldapi.domain.model.comment.Comment;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,6 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ResourceUtils {
 
+  private static final int DEFAULT_LIMIT = 20;
   private final FindUserByUsername findUserByUsername;
   private final IsFollowingUser isFollowingUser;
   private final FindArticleTags findArticleTags;
@@ -64,5 +63,17 @@ public class ResourceUtils {
   public UUID getLoggedUserId(SecurityContext securityContext) {
     Principal principal = securityContext.getUserPrincipal();
     return principal != null ? UUID.fromString(principal.getName()) : null;
+  }
+
+  public CommentsResponse commentsResponse(List<Comment> comments, UUID loggedUserId) {
+    final var resultResponse =
+        comments.stream()
+            .map(comment -> commentResponse(comment, loggedUserId))
+            .collect(Collectors.toList());
+    return new CommentsResponse(resultResponse);
+  }
+
+  public int getLimit(int limit) {
+    return limit > 0 ? limit : DEFAULT_LIMIT;
   }
 }

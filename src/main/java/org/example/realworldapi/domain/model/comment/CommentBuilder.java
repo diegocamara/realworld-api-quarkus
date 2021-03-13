@@ -16,7 +16,7 @@ public class CommentBuilder {
   public Comment build(User author, Article article, String body) {
     final var createdAt = LocalDateTime.now();
     return modelValidator.validate(
-        new Comment(UUID.randomUUID(), author, article, body, createdAt, null));
+        new Comment(UUID.randomUUID(), author, article, body, createdAt, createdAt));
   }
 
   public Comment build(
