@@ -6,7 +6,7 @@ import org.example.realworldapi.domain.feature.impl.DeleteCommentImpl;
 import org.example.realworldapi.domain.feature.impl.FindCommentByIdAndAuthorImpl;
 import org.example.realworldapi.domain.feature.impl.FindCommentsByArticleSlugImpl;
 import org.example.realworldapi.domain.model.comment.CommentBuilder;
-import org.example.realworldapi.domain.model.comment.NewCommentRepository;
+import org.example.realworldapi.domain.model.comment.CommentRepository;
 import org.example.realworldapi.domain.validator.ModelValidator;
 
 import javax.enterprise.context.Dependent;
@@ -19,7 +19,7 @@ public class CommentsConfiguration {
   @Produces
   @Singleton
   public CreateComment createComment(
-      NewCommentRepository commentRepository,
+      CommentRepository commentRepository,
       FindUserById findUserById,
       FindArticleBySlug findArticleBySlug,
       CommentBuilder commentBuilder) {
@@ -30,20 +30,20 @@ public class CommentsConfiguration {
   @Produces
   @Singleton
   public DeleteComment deleteComment(
-      FindCommentByIdAndAuthor findCommentByIdAndAuthor, NewCommentRepository commentRepository) {
+      FindCommentByIdAndAuthor findCommentByIdAndAuthor, CommentRepository commentRepository) {
     return new DeleteCommentImpl(findCommentByIdAndAuthor, commentRepository);
   }
 
   @Produces
   @Singleton
-  public FindCommentByIdAndAuthor findCommentByIdAndAuthor(NewCommentRepository commentRepository) {
+  public FindCommentByIdAndAuthor findCommentByIdAndAuthor(CommentRepository commentRepository) {
     return new FindCommentByIdAndAuthorImpl(commentRepository);
   }
 
   @Produces
   @Singleton
   public FindCommentsByArticleSlug findCommentsByArticleSlug(
-      FindArticleBySlug findArticleBySlug, NewCommentRepository commentRepository) {
+      FindArticleBySlug findArticleBySlug, CommentRepository commentRepository) {
     return new FindCommentsByArticleSlugImpl(findArticleBySlug, commentRepository);
   }
 

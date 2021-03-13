@@ -183,7 +183,7 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
         .post(LOGIN_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNAUTHORIZED)
-        .body("errors.body", hasItems("UNAUTHORIZED"));
+        .body("errors.body", hasItems("Unauthorized"));
   }
 
   @Test
@@ -203,6 +203,6 @@ public class UsersResourceIntegrationTest extends AbstractIntegrationTest {
         .post(LOGIN_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNAUTHORIZED)
-        .body("errors.body", hasItems("UNAUTHORIZED"));
+        .body("errors.body", hasItems("Unauthorized"));
   }
 }

@@ -6,7 +6,7 @@ import org.example.realworldapi.application.web.model.response.UserResponse;
 import org.example.realworldapi.domain.feature.FindUserById;
 import org.example.realworldapi.domain.feature.UpdateUser;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
-import org.example.realworldapi.domain.model.provider.TokenProvider;
+import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
 import org.example.realworldapi.infrastructure.web.security.annotation.Secured;
 import org.example.realworldapi.infrastructure.web.security.profile.Role;
 

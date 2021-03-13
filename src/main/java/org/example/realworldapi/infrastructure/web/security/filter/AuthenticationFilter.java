@@ -2,8 +2,8 @@ package org.example.realworldapi.infrastructure.web.security.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.example.realworldapi.domain.model.provider.TokenProvider;
 import org.example.realworldapi.infrastructure.web.exception.UnauthorizedException;
+import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
 import org.example.realworldapi.infrastructure.web.security.annotation.Secured;
 import org.example.realworldapi.infrastructure.web.security.context.DecodedJWTSecurityContext;
 import org.example.realworldapi.infrastructure.web.security.context.EmptySecurityContext;
@@ -28,8 +28,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
   private final String AUTHORIZATION_HEADER_PREFIX = "Token ";
 
-  @Inject
-  TokenProvider tokenProvider;
+  @Inject TokenProvider tokenProvider;
 
   @Context private ResourceInfo resourceInfo;
 

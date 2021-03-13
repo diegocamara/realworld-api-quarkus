@@ -5,7 +5,7 @@ import org.example.realworldapi.domain.feature.CreateSlugByTitle;
 import org.example.realworldapi.domain.feature.FindArticleBySlug;
 import org.example.realworldapi.domain.feature.UpdateArticleBySlug;
 import org.example.realworldapi.domain.model.article.Article;
-import org.example.realworldapi.domain.model.article.NewArticleRepository;
+import org.example.realworldapi.domain.model.article.ArticleRepository;
 import org.example.realworldapi.domain.model.article.UpdateArticleInput;
 import org.example.realworldapi.domain.validator.ModelValidator;
 
@@ -18,7 +18,7 @@ public class UpdateArticleBySlugImpl implements UpdateArticleBySlug {
 
   private final FindArticleBySlug findArticleBySlug;
   private final CreateSlugByTitle createSlugByTitle;
-  private final NewArticleRepository articleRepository;
+  private final ArticleRepository articleRepository;
   private final ModelValidator modelValidator;
 
   @Override

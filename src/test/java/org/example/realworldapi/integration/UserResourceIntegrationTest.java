@@ -63,7 +63,7 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
         .get(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_NOT_FOUND)
-        .body("errors.body", hasItems("NOT_FOUND"));
+        .body("errors.body", hasItems("user not found"));
   }
 
   @Test
@@ -79,7 +79,7 @@ public class UserResourceIntegrationTest extends AbstractIntegrationTest {
         .get(USER_RESOURCE_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNAUTHORIZED)
-        .body("errors.body", hasItems("UNAUTHORIZED"));
+        .body("errors.body", hasItems("Unauthorized"));
   }
 
   @Test

@@ -1,26 +1,27 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.panache;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import org.example.realworldapi.domain.model.entity.User;
-import org.example.realworldapi.domain.model.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import org.example.realworldapi.domain.model.user.User;
+import org.example.realworldapi.domain.model.user.UserRepository;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.UserEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
+import java.util.UUID;
 
 import static io.quarkus.panache.common.Parameters.with;
 
 @ApplicationScoped
-public class UserRepositoryPanache implements PanacheRepository<User>, UserRepository {
+@AllArgsConstructor
+public class UserRepositoryPanache extends AbstractPanacheRepository<UserEntity, UUID>
+    implements UserRepository {
+
+  private final EntityUtils entityUtils;
 
   @Override
-  public User create(User user) {
-    persistAndFlush(user);
-    return user;
-  }
-
-  @Override
-  public Optional<User> findUserByEmail(String email) {
-    return find("upper(email)", email.toUpperCase().trim()).firstResultOptional();
+  public void save(User user) {
+    persist(new UserEntity(user));
   }
 
   @Override
@@ -29,12 +30,19 @@ public class UserRepositoryPanache implements PanacheRepository<User>, UserRepos
   }
 
   @Override
-  public Optional<User> findUserById(Long id) {
-    return findByIdOptional(id);
+  public Optional<User> findByEmail(String email) {
+    return find("upper(email)", email.toUpperCase().trim())
+        .firstResultOptional()
+        .map(entityUtils::user);
   }
 
   @Override
-  public boolean existsUsername(Long excludeId, String username) {
+  public Optional<User> findUserById(UUID id) {
+    return findByIdOptional(id).map(entityUtils::user);
+  }
+
+  @Override
+  public boolean existsUsername(UUID excludeId, String username) {
     return count(
             "id != :excludeId and upper(username) = :username",
             with("excludeId", excludeId).and("username", username.toUpperCase().trim()))
@@ -42,7 +50,7 @@ public class UserRepositoryPanache implements PanacheRepository<User>, UserRepos
   }
 
   @Override
-  public boolean existsEmail(Long excludeId, String email) {
+  public boolean existsEmail(UUID excludeId, String email) {
     return count(
             "id != :excludeId and upper(email) = :email",
             with("excludeId", excludeId).and("email", email.toUpperCase().trim()))
@@ -50,7 +58,15 @@ public class UserRepositoryPanache implements PanacheRepository<User>, UserRepos
   }
 
   @Override
-  public Optional<User> findByUsernameOptional(String username) {
-    return find("upper(username)", username.toUpperCase().trim()).firstResultOptional();
+  public void update(User user) {
+    final var userEntity = findById(user.getId());
+    userEntity.update(user);
+  }
+
+  @Override
+  public Optional<User> findByUsername(String username) {
+    return find("upper(username)", username.toUpperCase().trim())
+        .firstResultOptional()
+        .map(entityUtils::user);
   }
 }

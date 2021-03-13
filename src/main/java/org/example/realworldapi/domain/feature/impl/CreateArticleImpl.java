@@ -14,7 +14,7 @@ import java.util.List;
 public class CreateArticleImpl implements CreateArticle {
 
   private final FindUserById findUserById;
-  private final NewArticleRepository articleRepository;
+  private final ArticleRepository articleRepository;
   private final ArticleModelBuilder articleBuilder;
   private final CreateSlugByTitle createSlugByTitle;
   private final FindTagsByNameCreateIfNotExists findTagsByNameCreateIfNotExists;

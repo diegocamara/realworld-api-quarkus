@@ -6,8 +6,8 @@ import org.example.realworldapi.domain.feature.FindTagsByNameCreateIfNotExists;
 import org.example.realworldapi.domain.feature.impl.CreateTagImpl;
 import org.example.realworldapi.domain.feature.impl.FindTagsByNameCreateIfNotExistsImpl;
 import org.example.realworldapi.domain.feature.impl.FindTagsImpl;
-import org.example.realworldapi.domain.model.tag.NewTagRepository;
 import org.example.realworldapi.domain.model.tag.TagBuilder;
+import org.example.realworldapi.domain.model.tag.TagRepository;
 import org.example.realworldapi.domain.validator.ModelValidator;
 
 import javax.enterprise.context.Dependent;
@@ -19,20 +19,20 @@ public class TagsConfiguration {
 
   @Produces
   @Singleton
-  public FindTags findTags(NewTagRepository tagRepository) {
+  public FindTags findTags(TagRepository tagRepository) {
     return new FindTagsImpl(tagRepository);
   }
 
   @Produces
   @Singleton
-  public CreateTag createTag(NewTagRepository tagRepository, TagBuilder tagBuilder) {
+  public CreateTag createTag(TagRepository tagRepository, TagBuilder tagBuilder) {
     return new CreateTagImpl(tagRepository, tagBuilder);
   }
 
   @Produces
   @Singleton
   public FindTagsByNameCreateIfNotExists findTagsByNameCreateIfNotExists(
-      NewTagRepository tagRepository, CreateTag createTag) {
+      TagRepository tagRepository, CreateTag createTag) {
     return new FindTagsByNameCreateIfNotExistsImpl(tagRepository, createTag);
   }
 

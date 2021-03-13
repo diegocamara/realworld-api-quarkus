@@ -13,7 +13,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "NEWUSERS")
+@Table(name = "USERS")
 public class UserEntity {
 
   @Id private UUID id;

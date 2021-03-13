@@ -2,8 +2,8 @@ package org.example.realworldapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.slugify.Slugify;
-import org.example.realworldapi.domain.model.provider.TokenProvider;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.*;
+import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
 import org.example.realworldapi.util.UserEntityUtils;
 import org.junit.jupiter.api.BeforeEach;
 

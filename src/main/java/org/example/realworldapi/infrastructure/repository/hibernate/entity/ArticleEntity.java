@@ -19,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "NEWARTICLES")
+@Table(name = "ARTICLES")
 public class ArticleEntity {
 
   @Id private UUID id;

@@ -3,8 +3,8 @@ package org.example.realworldapi.infrastructure.configuration;
 import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.feature.impl.*;
 import org.example.realworldapi.domain.model.article.ArticleModelBuilder;
+import org.example.realworldapi.domain.model.article.ArticleRepository;
 import org.example.realworldapi.domain.model.article.FavoriteRelationshipRepository;
-import org.example.realworldapi.domain.model.article.NewArticleRepository;
 import org.example.realworldapi.domain.model.article.TagRelationshipRepository;
 import org.example.realworldapi.domain.model.provider.SlugProvider;
 import org.example.realworldapi.domain.validator.ModelValidator;
@@ -20,7 +20,7 @@ public class ArticlesConfiguration {
   @Singleton
   public CreateArticle createArticle(
       FindUserById findUserById,
-      NewArticleRepository articleRepository,
+      ArticleRepository articleRepository,
       ArticleModelBuilder articleBuilder,
       CreateSlugByTitle createSlugByTitle,
       FindTagsByNameCreateIfNotExists findTagsByNameCreateIfNotExists,
@@ -39,7 +39,7 @@ public class ArticlesConfiguration {
   public UpdateArticleBySlug updateArticleBySlug(
       FindArticleBySlug findArticleBySlug,
       CreateSlugByTitle createSlugByTitle,
-      NewArticleRepository articleRepository,
+      ArticleRepository articleRepository,
       ModelValidator modelValidator) {
     return new UpdateArticleBySlugImpl(
         findArticleBySlug, createSlugByTitle, articleRepository, modelValidator);
@@ -48,27 +48,26 @@ public class ArticlesConfiguration {
   @Produces
   @Singleton
   public DeleteArticleBySlug deleteArticleBySlug(
-      FindArticleByAuthorAndSlug findArticleByAuthorAndSlug,
-      NewArticleRepository articleRepository) {
+      FindArticleByAuthorAndSlug findArticleByAuthorAndSlug, ArticleRepository articleRepository) {
     return new DeleteArticleBySlugImpl(findArticleByAuthorAndSlug, articleRepository);
   }
 
   @Produces
   @Singleton
-  public FindArticleById findArticleById(NewArticleRepository articleRepository) {
+  public FindArticleById findArticleById(ArticleRepository articleRepository) {
     return new FindArticleByIdImpl(articleRepository);
   }
 
   @Produces
   @Singleton
   public FindArticleByAuthorAndSlug findArticleByAuthorAndSlug(
-      NewArticleRepository articleRepository) {
+      ArticleRepository articleRepository) {
     return new FindArticleByAuthorAndSlugImpl(articleRepository);
   }
 
   @Produces
   @Singleton
-  public FindArticleBySlug findArticleBySlug(NewArticleRepository articleRepository) {
+  public FindArticleBySlug findArticleBySlug(ArticleRepository articleRepository) {
     return new FindArticleBySlugImpl(articleRepository);
   }
 
@@ -81,13 +80,13 @@ public class ArticlesConfiguration {
   @Produces
   @Singleton
   public FindMostRecentArticlesByFilter findMostRecentArticlesByFilter(
-      NewArticleRepository articleRepository) {
+      ArticleRepository articleRepository) {
     return new FindMostRecentArticlesByFilterImpl(articleRepository);
   }
 
   @Produces
   @Singleton
-  public FindArticlesByFilter findArticlesByFilter(NewArticleRepository articleRepository) {
+  public FindArticlesByFilter findArticlesByFilter(ArticleRepository articleRepository) {
     return new FindArticlesByFilterImpl(articleRepository);
   }
 
@@ -109,7 +108,7 @@ public class ArticlesConfiguration {
   @Produces
   @Singleton
   public CreateSlugByTitle createSlugByTitle(
-      NewArticleRepository articleRepository, SlugProvider slugProvider) {
+      ArticleRepository articleRepository, SlugProvider slugProvider) {
     return new CreateSlugByTitleImpl(articleRepository, slugProvider);
   }
 

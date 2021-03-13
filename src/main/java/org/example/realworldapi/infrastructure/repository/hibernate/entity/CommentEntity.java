@@ -15,7 +15,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "NEWCOMMENTS")
+@Table(name = "COMMENTS")
 public class CommentEntity {
 
   @Id private UUID id;

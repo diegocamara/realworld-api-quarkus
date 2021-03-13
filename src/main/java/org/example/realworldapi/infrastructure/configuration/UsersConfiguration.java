@@ -4,8 +4,8 @@ import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.feature.impl.*;
 import org.example.realworldapi.domain.model.provider.HashProvider;
 import org.example.realworldapi.domain.model.user.FollowRelationshipRepository;
-import org.example.realworldapi.domain.model.user.NewUserRepository;
 import org.example.realworldapi.domain.model.user.UserModelBuilder;
+import org.example.realworldapi.domain.model.user.UserRepository;
 import org.example.realworldapi.domain.validator.ModelValidator;
 
 import javax.enterprise.context.Dependent;
@@ -19,32 +19,32 @@ public class UsersConfiguration {
   @Produces
   @Singleton
   public CreateUser createUser(
-      NewUserRepository userRepository, HashProvider hashProvider, UserModelBuilder userBuilder) {
+      UserRepository userRepository, HashProvider hashProvider, UserModelBuilder userBuilder) {
     return new CreateUserImpl(userRepository, hashProvider, userBuilder);
   }
 
   @Produces
   @Singleton
   public UpdateUser updateUser(
-      FindUserById findUserById, NewUserRepository userRepository, ModelValidator modelValidator) {
+      FindUserById findUserById, UserRepository userRepository, ModelValidator modelValidator) {
     return new UpdateUserImpl(findUserById, userRepository, modelValidator);
   }
 
   @Produces
   @Singleton
-  public FindUserById findUserById(NewUserRepository userRepository) {
+  public FindUserById findUserById(UserRepository userRepository) {
     return new FindUserByIdImpl(userRepository);
   }
 
   @Produces
   @Singleton
-  public LoginUser loginUser(NewUserRepository userRepository, HashProvider hashProvider) {
+  public LoginUser loginUser(UserRepository userRepository, HashProvider hashProvider) {
     return new LoginUserImpl(userRepository, hashProvider);
   }
 
   @Produces
   @Singleton
-  public FindUserByUsername findUserByUsername(NewUserRepository userRepository) {
+  public FindUserByUsername findUserByUsername(UserRepository userRepository) {
     return new FindUserByUsernameImpl(userRepository);
   }
 

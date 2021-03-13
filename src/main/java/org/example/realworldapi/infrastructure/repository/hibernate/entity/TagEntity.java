@@ -13,7 +13,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "NEWTAGS")
+@Table(name = "TAGS")
 public class TagEntity {
 
   @Id private UUID id;

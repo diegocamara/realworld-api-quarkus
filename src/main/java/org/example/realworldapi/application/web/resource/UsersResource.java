@@ -4,13 +4,14 @@ import lombok.AllArgsConstructor;
 import org.example.realworldapi.application.web.model.request.LoginRequest;
 import org.example.realworldapi.application.web.model.request.NewUserRequest;
 import org.example.realworldapi.application.web.model.response.UserResponse;
+import org.example.realworldapi.domain.exception.InvalidPasswordException;
+import org.example.realworldapi.domain.exception.UserNotFoundException;
 import org.example.realworldapi.domain.feature.CreateUser;
 import org.example.realworldapi.domain.feature.LoginUser;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
-import org.example.realworldapi.domain.model.exception.UserNotFoundException;
-import org.example.realworldapi.domain.model.provider.TokenProvider;
 import org.example.realworldapi.domain.model.user.User;
 import org.example.realworldapi.infrastructure.web.exception.UnauthorizedException;
+import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -54,7 +55,7 @@ public class UsersResource {
     User user;
     try {
       user = loginUser.handle(loginRequest.toLoginUserInput());
-    } catch (UserNotFoundException ex) {
+    } catch (UserNotFoundException | InvalidPasswordException ex) {
       throw new UnauthorizedException();
     }
     final var token = tokenProvider.createUserToken(user.getId().toString());

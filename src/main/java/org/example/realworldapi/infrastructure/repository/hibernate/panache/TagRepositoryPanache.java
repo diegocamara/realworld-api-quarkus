@@ -1,39 +1,49 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.panache;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import org.example.realworldapi.domain.model.entity.Tag;
-import org.example.realworldapi.domain.model.repository.TagRepository;
+import io.quarkus.panache.common.Parameters;
+import lombok.AllArgsConstructor;
+import org.example.realworldapi.domain.model.tag.Tag;
+import org.example.realworldapi.domain.model.tag.TagRepository;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.TagEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.Optional;
-
-import static io.quarkus.panache.common.Parameters.with;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class TagRepositoryPanache implements PanacheRepository<Tag>, TagRepository {
+@AllArgsConstructor
+public class TagRepositoryPanache extends AbstractPanacheRepository<TagEntity, UUID>
+    implements TagRepository {
 
-  @Override
-  public Optional<Tag> findByName(String tagName) {
-    return find("upper(name)", tagName.toUpperCase().trim()).firstResultOptional();
-  }
-
-  @Override
-  public Tag create(Tag tag) {
-    persistAndFlush(tag);
-    return tag;
-  }
+  private final EntityUtils entityUtils;
 
   @Override
   public List<Tag> findAllTags() {
-    return listAll();
+    return listAll().stream().map(entityUtils::tag).collect(Collectors.toList());
   }
 
   @Override
-  public List<Tag> findArticleTags(Long articleId) {
-    return find(
-            "select tags from Tag as tags inner join tags.articlesTags as articlesTags where articlesTags.article.id = :articleId",
-            with("articleId", articleId))
-        .list();
+  public Optional<Tag> findByName(String name) {
+    return find("upper(name)", name.toUpperCase().trim())
+        .firstResultOptional()
+        .map(entityUtils::tag);
+  }
+
+  @Override
+  public void save(Tag tag) {
+    persist(new TagEntity(tag));
+  }
+
+  @Override
+  public List<Tag> findByNames(List<String> names) {
+    final var tagsEntity =
+        find(
+                "select tags from TagEntity as tags where upper(tags.name) in (:names)",
+                Parameters.with("names", toUpperCase(names)))
+            .list();
+    return tagsEntity.stream().map(entityUtils::tag).collect(Collectors.toList());
   }
 }

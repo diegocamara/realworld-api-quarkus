@@ -1,19 +1,19 @@
 package org.example.realworldapi.domain.feature.impl;
 
 import lombok.AllArgsConstructor;
+import org.example.realworldapi.domain.exception.EmailAlreadyExistsException;
+import org.example.realworldapi.domain.exception.UsernameAlreadyExistsException;
 import org.example.realworldapi.domain.feature.CreateUser;
-import org.example.realworldapi.domain.model.exception.EmailAlreadyExistsException;
-import org.example.realworldapi.domain.model.exception.UsernameAlreadyExistsException;
 import org.example.realworldapi.domain.model.provider.HashProvider;
 import org.example.realworldapi.domain.model.user.CreateUserInput;
-import org.example.realworldapi.domain.model.user.NewUserRepository;
 import org.example.realworldapi.domain.model.user.User;
 import org.example.realworldapi.domain.model.user.UserModelBuilder;
+import org.example.realworldapi.domain.model.user.UserRepository;
 
 @AllArgsConstructor
 public class CreateUserImpl implements CreateUser {
 
-  private final NewUserRepository userRepository;
+  private final UserRepository userRepository;
   private final HashProvider hashProvider;
   private final UserModelBuilder userBuilder;
 

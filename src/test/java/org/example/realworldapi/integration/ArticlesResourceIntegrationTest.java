@@ -34,7 +34,7 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
         .get(FEED_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNAUTHORIZED)
-        .body("errors.body", hasItem("UNAUTHORIZED"));
+        .body("errors.body", hasItem("Unauthorized"));
   }
 
   @Test

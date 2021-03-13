@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.feature.FindArticleBySlug;
 import org.example.realworldapi.domain.feature.FindCommentsByArticleSlug;
 import org.example.realworldapi.domain.model.comment.Comment;
-import org.example.realworldapi.domain.model.comment.NewCommentRepository;
+import org.example.realworldapi.domain.model.comment.CommentRepository;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
 public class FindCommentsByArticleSlugImpl implements FindCommentsByArticleSlug {
 
   private final FindArticleBySlug findArticleBySlug;
-  private final NewCommentRepository commentRepository;
+  private final CommentRepository commentRepository;
 
   @Override
   public List<Comment> handle(String slug) {

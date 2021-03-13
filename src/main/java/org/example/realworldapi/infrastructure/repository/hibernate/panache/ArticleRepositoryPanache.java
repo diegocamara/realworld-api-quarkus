@@ -1,44 +1,27 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.panache;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
-import org.example.realworldapi.domain.model.entity.Article;
-import org.example.realworldapi.domain.model.repository.ArticleRepository;
+import lombok.AllArgsConstructor;
+import org.example.realworldapi.domain.model.article.Article;
+import org.example.realworldapi.domain.model.article.ArticleFilter;
+import org.example.realworldapi.domain.model.article.ArticleRepository;
+import org.example.realworldapi.domain.model.article.PageResult;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.ArticleEntity;
+import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
 import org.example.realworldapi.infrastructure.utils.SimpleQueryBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class ArticleRepositoryPanache implements PanacheRepository<Article>, ArticleRepository {
+@AllArgsConstructor
+public class ArticleRepositoryPanache extends AbstractPanacheRepository<ArticleEntity, UUID>
+    implements ArticleRepository {
 
-  @Override
-  public List<Article> findArticles(
-      int offset, int limit, List<String> tags, List<String> authors, List<String> favorited) {
-    Map<String, Object> params = new LinkedHashMap<>();
-    SimpleQueryBuilder findArticlesQueryBuilder = new SimpleQueryBuilder();
-    findArticlesQueryBuilder.addQueryStatement("select articles from Article as articles");
-    configFilterFindArticlesQueryBuilder(
-        findArticlesQueryBuilder, tags, authors, favorited, params);
-    return find(
-            findArticlesQueryBuilder.toQueryString(),
-            Sort.descending("createdAt").and("updatedAt").descending(),
-            params)
-        .page(Page.of(offset, limit))
-        .list();
-  }
-
-  @Override
-  public Article create(Article article) {
-    persistAndFlush(article);
-    return article;
-  }
+  private final EntityUtils entityUtils;
 
   @Override
   public boolean existsBySlug(String slug) {
@@ -46,47 +29,95 @@ public class ArticleRepositoryPanache implements PanacheRepository<Article>, Art
   }
 
   @Override
+  public void save(Article article) {
+    final var author = findUserEntityById(article.getAuthor().getId());
+    persistAndFlush(new ArticleEntity(article, author));
+  }
+
+  @Override
+  public Optional<Article> findArticleById(UUID id) {
+    return findByIdOptional(id).map(entityUtils::article);
+  }
+
+  @Override
   public Optional<Article> findBySlug(String slug) {
-    return find("upper(slug)", slug.toUpperCase().trim()).firstResultOptional();
+    return find("upper(slug)", slug.toUpperCase().trim())
+        .firstResultOptional()
+        .map(entityUtils::article);
   }
 
   @Override
-  public void remove(Article article) {
-    delete(article);
+  public void update(Article article) {
+    final var articleEntity = findArticleEntityById(article.getId());
+    articleEntity.update(article);
   }
 
   @Override
-  public Optional<Article> findByIdAndSlug(Long authorId, String slug) {
+  public Optional<Article> findByAuthorAndSlug(UUID authorId, String slug) {
     return find(
             "author.id = :authorId and upper(slug) = :slug",
             Parameters.with("authorId", authorId).and("slug", slug.toUpperCase().trim()))
-        .firstResultOptional();
+        .firstResultOptional()
+        .map(entityUtils::article);
   }
 
   @Override
-  public List<Article> findMostRecentArticles(Long loggedUserId, int offset, int limit) {
-    return find(
-            "select articles from Article as articles inner join articles.author as author inner join author.followedBy as followedBy where followedBy.user.id = :loggedUserId",
-            Sort.descending("createdAt").and("updatedAt").descending(),
-            Parameters.with("loggedUserId", loggedUserId))
-        .page(Page.of(offset, limit))
-        .list();
+  public void delete(Article article) {
+    deleteById(article.getId());
+  }
+
+  @Override
+  public PageResult<Article> findMostRecentArticlesByFilter(ArticleFilter articleFilter) {
+    final var articlesEntity =
+        find(
+                "select articles from ArticleEntity as articles inner join articles.author as author inner join author.followedBy as followedBy where followedBy.user.id = :loggedUserId",
+                Sort.descending("createdAt").and("updatedAt").descending(),
+                Parameters.with("loggedUserId", articleFilter.getLoggedUserId()))
+            .page(Page.of(articleFilter.getOffset(), articleFilter.getLimit()))
+            .list();
+    final var articlesResult =
+        articlesEntity.stream().map(entityUtils::article).collect(Collectors.toList());
+    final var total = count(articleFilter.getLoggedUserId());
+    return new PageResult<>(articlesResult, total);
+  }
+
+  @Override
+  public PageResult<Article> findArticlesByFilter(ArticleFilter filter) {
+    Map<String, Object> params = new LinkedHashMap<>();
+    SimpleQueryBuilder findArticlesQueryBuilder = new SimpleQueryBuilder();
+    findArticlesQueryBuilder.addQueryStatement("select articles from ArticleEntity as articles");
+    configFilterFindArticlesQueryBuilder(
+        findArticlesQueryBuilder,
+        filter.getTags(),
+        filter.getAuthors(),
+        filter.getFavorited(),
+        params);
+    final var articlesEntity =
+        find(
+                findArticlesQueryBuilder.toQueryString(),
+                Sort.descending("createdAt").and("updatedAt").descending(),
+                params)
+            .page(Page.of(filter.getOffset(), filter.getLimit()))
+            .list();
+    final var articlesResult =
+        articlesEntity.stream().map(entityUtils::article).collect(Collectors.toList());
+    final var total = count(filter.getTags(), filter.getAuthors(), filter.getFavorited());
+    return new PageResult<>(articlesResult, total);
   }
 
   @Override
   public long count(List<String> tags, List<String> authors, List<String> favorited) {
     Map<String, Object> params = new LinkedHashMap<>();
     SimpleQueryBuilder countArticlesQueryBuilder = new SimpleQueryBuilder();
-    countArticlesQueryBuilder.addQueryStatement("from Article as articles");
+    countArticlesQueryBuilder.addQueryStatement("from ArticleEntity as articles");
     configFilterFindArticlesQueryBuilder(
         countArticlesQueryBuilder, tags, authors, favorited, params);
     return count(countArticlesQueryBuilder.toQueryString(), params);
   }
 
-  @Override
-  public long count(Long loggedUserId) {
+  public long count(UUID loggedUserId) {
     return count(
-        "from Article as articles inner join articles.author as author inner join author.followedBy as followedBy where followedBy.user.id = :loggedUserId",
+        "from ArticleEntity as articles inner join articles.author as author inner join author.followedBy as followedBy where followedBy.user.id = :loggedUserId",
         Parameters.with("loggedUserId", loggedUserId));
   }
 
@@ -114,13 +145,5 @@ public class ArticleRepositoryPanache implements PanacheRepository<Article>, Art
         "inner join articles.favorites as favorites inner join favorites.primaryKey.user as user",
         "upper(user.username) in (:favorites)",
         () -> params.put("favorites", toUpperCase(favorited)));
-  }
-
-  private boolean isNotEmpty(List<?> list) {
-    return list != null && !list.isEmpty();
-  }
-
-  private List<String> toUpperCase(List<String> tags) {
-    return tags.stream().map(String::toUpperCase).collect(Collectors.toList());
   }
 }

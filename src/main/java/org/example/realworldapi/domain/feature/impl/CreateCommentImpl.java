@@ -6,13 +6,13 @@ import org.example.realworldapi.domain.feature.FindArticleBySlug;
 import org.example.realworldapi.domain.feature.FindUserById;
 import org.example.realworldapi.domain.model.comment.Comment;
 import org.example.realworldapi.domain.model.comment.CommentBuilder;
+import org.example.realworldapi.domain.model.comment.CommentRepository;
 import org.example.realworldapi.domain.model.comment.NewCommentInput;
-import org.example.realworldapi.domain.model.comment.NewCommentRepository;
 
 @AllArgsConstructor
 public class CreateCommentImpl implements CreateComment {
 
-  private final NewCommentRepository commentRepository;
+  private final CommentRepository commentRepository;
   private final FindUserById findUserById;
   private final FindArticleBySlug findArticleBySlug;
   private final CommentBuilder commentBuilder;
