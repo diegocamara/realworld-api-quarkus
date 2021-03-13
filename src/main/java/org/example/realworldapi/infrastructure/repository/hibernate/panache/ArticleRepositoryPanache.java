@@ -10,7 +10,7 @@ import org.example.realworldapi.domain.model.article.ArticleRepository;
 import org.example.realworldapi.domain.model.article.PageResult;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.ArticleEntity;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
-import org.example.realworldapi.infrastructure.utils.SimpleQueryBuilder;
+import org.example.realworldapi.infrastructure.repository.hibernate.panache.utils.SimpleQueryBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.*;

@@ -2,11 +2,13 @@
 
 > ### Quarkus Framework codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 
-This codebase was created to demonstrate a fully fledged fullstack application built with [Quarkus](https://quarkus.io/) including CRUD operations, authentication, routing, pagination, and more.
+This codebase was created to demonstrate a fully fledged fullstack application built with [Quarkus](https://quarkus.io/)
+including CRUD operations, authentication, routing, pagination, and more.
 
 We've gone to great lengths to adhere to the Quarkus community styleguides & best practices.
 
-For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
+For more information on how to this works with other frontends/backends, head over to
+the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
 [![Build Status](https://travis-ci.org/diegocamara/realworld-api-quarkus.svg?branch=master)](https://travis-ci.org/diegocamara/realworld-api-quarkus)
 
@@ -21,36 +23,20 @@ This application basically uses Quarkus Framework with Java 11 with some other m
 * Auth0 java-jwt
 
 ### Project structure:
+
 ```
-application/            -> business logic implementation
-+--data/                -> data aggregator classes
-domain/                     -> core business package
-+-- model/
-|   +-- builder/
-|   +-- constants/
-|   +-- entity/             -> only persistent model classes
-|   +-- exception/          -> domain exceptions
-|   +-- repository/         -> persistent context abstractions
-|   +-- provider/           -> providers abstraction (token, hash, slug)
-+-- service                 -> domain bussiness abstraction
-infrastructure/             -> technical details package
-+-- provider/               -> providers implementaion
-+-- repository/             -> repository implementation
-+-- web/                    -> web layer package
-    +-- config/             -> serializer/deserializer singleton options
-    +-- exception/          -> web layer exceptions
-    +-- mapper/             -> exception handler mapping
-    +-- model/              -> request/response models for web layer
-    |   +-- request/        -> request model objects
-    |   +-- response/       -> response model objects
-    +-- qualifiers/         -> qualifiers for dependency injection 
-    +-- resources/          -> http routes and their handlers
-    +-- security/           -> web layer security implementation
-    |   +-- annotation/     -> name binding annotations
-    |   +-- context/        -> security context options
-    |   +-- filter/         -> filters implementation for check authentication/authorization rules
-    |   +-- profile/        -> security profiles options
-    +-- validation/         -> custom validations for request model
+application/            -> business orchestration layer
++-- web/                -> web layer models and resources
+domain/                 -> core business implementation layer
++-- model/              -> core business entity models
++-- feature/            -> all features logic implementation
++-- validator/          -> model validation implementation 
++-- exception/          -> all business exceptions
+infrastructure/         -> technical details layer
++-- configuration/      -> dependency injection configuration
++-- repository/         -> adapters for domain repositories
++-- provider/           -> adapters for domain providers
++-- web/                -> web layer infrastructure models and security
 ```
 
 # Getting started
@@ -60,8 +46,8 @@ infrastructure/             -> technical details package
 ```bash
  ./mvnw compile quarkus:dev
  ```
-The server should be running at http://localhost:8080
 
+The server should be running at http://localhost:8080
 
 ### Running the application tests
 
@@ -83,8 +69,8 @@ The server should be running at http://localhost:8080
 
 ### Building native executable
 
-GraalVM is necessary for building native executable, more information about
-setting up GraalVM can be found in [Quarkus guides](https://quarkus.io/guides/)
+GraalVM is necessary for building native executable, more information about setting up GraalVM can be found
+in [Quarkus guides](https://quarkus.io/guides/)
 and database engine need to be changed.
 
 ```
@@ -95,11 +81,13 @@ and database engine need to be changed.
 
 ```properties
 # Database configuration
-quarkus.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-quarkus.datasource.driver=org.h2.Driver
+quarkus.datasource.db-kind=h2
+quarkus.datasource.jdbc.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+quarkus.datasource.jdbc.driver=org.h2.Driver
 quarkus.datasource.username=sa
 quarkus.datasource.password=
 ```
 
 ## Help
+
 Improvements are welcome, feel free to contribute.

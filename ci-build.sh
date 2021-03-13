@@ -1,6 +1,6 @@
 #!/bin/bash
 ./mvnw clean package
-java -jar target/realworld-api-quarkus-runner.jar > service.log &
+java -jar target/quarkus-app/quarkus-run.jar > service.log &
 SERVICE_PROCESS=$!
 tail -f -n0 service.log | grep -q 'Listening on'
 echo "Application started"

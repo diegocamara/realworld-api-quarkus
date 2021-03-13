@@ -1,7 +1,7 @@
 package org.example.realworldapi.application.web.resource;
 
 import lombok.AllArgsConstructor;
-import org.example.realworldapi.application.utils.ResourceUtils;
+import org.example.realworldapi.application.web.utils.ResourceUtils;
 import org.example.realworldapi.domain.feature.FollowUserByUsername;
 import org.example.realworldapi.domain.feature.UnfollowUserByUsername;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;

@@ -7,15 +7,15 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.slugify.Slugify;
 import org.example.realworldapi.infrastructure.web.qualifiers.NoWrapRootValueObjectMapper;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
 
-@ApplicationScoped
+@Dependent
 public class ApplicationConfiguration {
 
-  @Singleton
   @Produces
+  @Singleton
   public Slugify slugify() {
     return new Slugify();
   }
