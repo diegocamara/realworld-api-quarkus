@@ -2,7 +2,6 @@ package org.example.realworldapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.slugify.Slugify;
-import org.example.realworldapi.domain.model.builder.ArticleBuilder;
 import org.example.realworldapi.domain.model.entity.*;
 import org.example.realworldapi.domain.model.provider.TokenProvider;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.*;
@@ -99,37 +98,38 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
         });
   }
 
-  protected List<Article> createArticles(
-      User author, String title, String description, String body, int quantity) {
-
-    List<Article> articles = new LinkedList<>();
-
+  protected List<ArticleEntity> createArticles(
+      UserEntity author, String title, String description, String body, int quantity) {
+    final var articles = new LinkedList<ArticleEntity>();
     for (int articleIndex = 0; articleIndex < quantity; articleIndex++) {
       articles.add(
-          createArticle(
+          createArticleEntity(
               author,
               title + "_" + articleIndex,
               description + "_" + articleIndex,
               body + "_" + articleIndex));
     }
-
     return articles;
   }
 
-  protected Article createArticle(User author, String title, String description, String body) {
+  protected ArticleEntity createArticleEntity(
+      UserEntity author, String title, String description, String body) {
     return transaction(
         () -> {
-          Article article =
-              new ArticleBuilder()
-                  .title(title)
-                  .slug(slugify.slugify(title))
-                  .description(description)
-                  .body(body)
-                  .author(author)
-                  .build();
+          final var article = new ArticleEntity();
+          article.setId(UUID.randomUUID());
+          article.setTitle(title);
+          article.setSlug(slugify.slugify(title));
+          article.setDescription(description);
+          article.setBody(body);
+          article.setAuthor(author);
           entityManager.persist(article);
           return article;
         });
+  }
+
+  protected ArticleEntity findArticleEntityById(UUID id) {
+    return transaction(() -> entityManager.find(ArticleEntity.class, id));
   }
 
   protected ArticlesUsers favorite(Article article, User user) {

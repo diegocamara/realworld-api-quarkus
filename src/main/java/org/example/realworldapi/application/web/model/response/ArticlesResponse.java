@@ -4,7 +4,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.application.data.ArticlesData;
 
 import java.util.List;
 
@@ -17,9 +16,8 @@ public class ArticlesResponse {
   private List<ArticleResponse> articles;
   private long articlesCount;
 
-  public ArticlesResponse(ArticlesData result) {
-    //    this.articles =
-    //        result.getArticles().stream().map(ArticleResponse::new).collect(Collectors.toList());
-    this.articlesCount = result.getArticlesCount();
+  public ArticlesResponse(List<ArticleResponse> articles, long articlesCount) {
+    this.articles = articles;
+    this.articlesCount = articlesCount;
   }
 }

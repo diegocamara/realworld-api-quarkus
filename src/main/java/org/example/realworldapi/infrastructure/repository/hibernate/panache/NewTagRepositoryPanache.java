@@ -46,8 +46,4 @@ public class NewTagRepositoryPanache extends AbstractPanacheRepository<TagEntity
             .list();
     return tagsEntity.stream().map(entityUtils::tag).collect(Collectors.toList());
   }
-
-  private List<String> toUpperCase(List<String> tags) {
-    return tags.stream().map(String::toUpperCase).collect(Collectors.toList());
-  }
 }

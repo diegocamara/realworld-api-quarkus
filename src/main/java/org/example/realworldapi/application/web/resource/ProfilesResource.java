@@ -33,7 +33,7 @@ public class ProfilesResource {
           String username,
       @Context SecurityContext securityContext) {
     final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
-    final var profileResponse = resourceUtils.getProfileResponse(username, loggedUserId);
+    final var profileResponse = resourceUtils.profileResponse(username, loggedUserId);
     return Response.ok(profileResponse).status(Response.Status.OK).build();
   }
 
@@ -48,7 +48,7 @@ public class ProfilesResource {
       @Context SecurityContext securityContext) {
     final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
     followUserByUsername.handle(loggedUserId, username);
-    return Response.ok(resourceUtils.getProfileResponse(username, loggedUserId))
+    return Response.ok(resourceUtils.profileResponse(username, loggedUserId))
         .status(Response.Status.OK)
         .build();
   }
@@ -64,7 +64,7 @@ public class ProfilesResource {
       @Context SecurityContext securityContext) {
     final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
     unfollowUserByUsername.handle(loggedUserId, username);
-    return Response.ok(resourceUtils.getProfileResponse(username, loggedUserId))
+    return Response.ok(resourceUtils.profileResponse(username, loggedUserId))
         .status(Response.Status.OK)
         .build();
   }

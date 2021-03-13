@@ -22,16 +22,35 @@ public class ArticlesConfiguration {
       FindUserById findUserById,
       NewArticleRepository articleRepository,
       ArticleModelBuilder articleBuilder,
-      SlugProvider slugProvider,
+      CreateSlugByTitle createSlugByTitle,
       FindTagsByNameCreateIfNotExists findTagsByNameCreateIfNotExists,
       TagRelationshipRepository tagRelationshipRepository) {
     return new CreateArticleImpl(
         findUserById,
         articleRepository,
         articleBuilder,
-        slugProvider,
+        createSlugByTitle,
         findTagsByNameCreateIfNotExists,
         tagRelationshipRepository);
+  }
+
+  @Produces
+  @Singleton
+  public UpdateArticleBySlug updateArticleBySlug(
+      FindArticleBySlug findArticleBySlug,
+      CreateSlugByTitle createSlugByTitle,
+      NewArticleRepository articleRepository,
+      ModelValidator modelValidator) {
+    return new UpdateArticleBySlugImpl(
+        findArticleBySlug, createSlugByTitle, articleRepository, modelValidator);
+  }
+
+  @Produces
+  @Singleton
+  public DeleteArticleBySlug deleteArticleBySlug(
+      FindArticleByAuthorAndSlug findArticleByAuthorAndSlug,
+      NewArticleRepository articleRepository) {
+    return new DeleteArticleBySlugImpl(findArticleByAuthorAndSlug, articleRepository);
   }
 
   @Produces
@@ -42,8 +61,34 @@ public class ArticlesConfiguration {
 
   @Produces
   @Singleton
+  public FindArticleByAuthorAndSlug findArticleByAuthorAndSlug(
+      NewArticleRepository articleRepository) {
+    return new FindArticleByAuthorAndSlugImpl(articleRepository);
+  }
+
+  @Produces
+  @Singleton
+  public FindArticleBySlug findArticleBySlug(NewArticleRepository articleRepository) {
+    return new FindArticleBySlugImpl(articleRepository);
+  }
+
+  @Produces
+  @Singleton
   public FindArticleTags findArticleTags(TagRelationshipRepository tagRelationshipRepository) {
     return new FindArticleTagsImpl(tagRelationshipRepository);
+  }
+
+  @Produces
+  @Singleton
+  public FindMostRecentArticlesByFilter findMostRecentArticlesByFilter(
+      NewArticleRepository articleRepository) {
+    return new FindMostRecentArticlesByFilterImpl(articleRepository);
+  }
+
+  @Produces
+  @Singleton
+  public FindArticlesByFilter findArticlesByFilter(NewArticleRepository articleRepository) {
+    return new FindArticlesByFilterImpl(articleRepository);
   }
 
   @Produces
@@ -59,6 +104,13 @@ public class ArticlesConfiguration {
       FindArticleById findArticleById,
       FavoriteRelationshipRepository favoriteRelationshipRepository) {
     return new ArticleFavoritesCountImpl(findArticleById, favoriteRelationshipRepository);
+  }
+
+  @Produces
+  @Singleton
+  public CreateSlugByTitle createSlugByTitle(
+      NewArticleRepository articleRepository, SlugProvider slugProvider) {
+    return new CreateSlugByTitleImpl(articleRepository, slugProvider);
   }
 
   @Produces

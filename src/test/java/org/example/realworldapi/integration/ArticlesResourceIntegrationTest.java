@@ -5,7 +5,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
 import org.example.realworldapi.application.web.model.request.NewArticleRequest;
-import org.hamcrest.CoreMatchers;
+import org.example.realworldapi.application.web.model.request.UpdateArticleRequest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MediaType;
@@ -13,8 +14,7 @@ import java.util.Arrays;
 
 import static io.restassured.RestAssured.given;
 import static org.example.realworldapi.constants.TestConstants.*;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.hasKey;
 
 @QuarkusTest
@@ -33,284 +33,277 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
         .get(FEED_PATH)
         .then()
         .statusCode(HttpStatus.SC_UNAUTHORIZED)
-        .body("errors.body", CoreMatchers.hasItem("UNAUTHORIZED"));
+        .body("errors.body", hasItem("UNAUTHORIZED"));
   }
-  //
-  //  @Test
-  //  public void
-  //
-  // given10ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit5_shouldReturnListOf5Articles() {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    User follower1 =
-  //        createUserEntity("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
-  //
-  //    List<Article> articlesFollower = createArticles(follower1, "Title", "Description", "Body",
-  // 10);
-  //
-  //    Tag tag1 = createTag("Tag 1");
-  //
-  //    Tag tag2 = createTag("Tag 2");
-  //
-  //    createArticlesTags(articlesFollower, tag1, tag2);
-  //
-  //    User user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
-  //
-  //    createArticles(user, "Title", "Description", "Body", 4);
-  //
-  //    follow(loggedUser, follower1);
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .queryParam("offset", 0)
-  //        .queryParam("limit", 5)
-  //        .get(FEED_PATH)
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "articles[0]",
-  //            hasKey("slug"),
-  //            "articles[0]",
-  //            hasKey("title"),
-  //            "articles[0]",
-  //            hasKey("description"),
-  //            "articles[0]",
-  //            hasKey("body"),
-  //            "articles[0].tagList.size()",
-  //            is(2),
-  //            "articles[0].tagList",
-  //            hasItems(tag1.getName(), tag2.getName()),
-  //            "articles[0]",
-  //            hasKey("createdAt"),
-  //            "articles[0]",
-  //            hasKey("updatedAt"),
-  //            "articles[0]",
-  //            hasKey("favorited"),
-  //            "articles[0]",
-  //            hasKey("favoritesCount"),
-  //            "articles[0]",
-  //            hasKey("author"),
-  //            "articlesCount",
-  //            is(10));
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // given8ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit10_shouldReturnListOf8Articles() {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    User follower1 =
-  //        createUserEntity("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
-  //
-  //    createArticles(follower1, "Title", "Description", "Body", 8);
-  //
-  //    User user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
-  //
-  //    createArticles(user, "Title", "Description", "Body", 4);
-  //
-  //    follow(loggedUser, follower1);
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .queryParam("offset", 0)
-  //        .queryParam("limit", 10)
-  //        .get(FEED_PATH)
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "articles[0]",
-  //            hasKey("slug"),
-  //            "articles[0]",
-  //            hasKey("title"),
-  //            "articles[0]",
-  //            hasKey("description"),
-  //            "articles[0]",
-  //            hasKey("body"),
-  //            "articles[0]",
-  //            hasKey("tagList"),
-  //            "articles[0]",
-  //            hasKey("createdAt"),
-  //            "articles[0]",
-  //            hasKey("updatedAt"),
-  //            "articles[0]",
-  //            hasKey("favorited"),
-  //            "articles[0]",
-  //            hasKey("favoritesCount"),
-  //            "articles[0]",
-  //            hasKey("author"),
-  //            "articlesCount",
-  //            is(8));
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // given9ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit10_shouldReturnListOf9Articles() {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    User follower1 =
-  //        createUserEntity("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
-  //
-  //    createArticles(follower1, "Title", "Description", "Body", 5);
-  //
-  //    User user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
-  //
-  //    createArticles(user, "Title", "Description", "Body", 4);
-  //
-  //    follow(loggedUser, follower1);
-  //
-  //    follow(loggedUser, user);
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .queryParam("offset", 0)
-  //        .queryParam("limit", 10)
-  //        .get(FEED_PATH)
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "articles[0]",
-  //            hasKey("slug"),
-  //            "articles[0]",
-  //            hasKey("title"),
-  //            "articles[0]",
-  //            hasKey("description"),
-  //            "articles[0]",
-  //            hasKey("body"),
-  //            "articles[0]",
-  //            hasKey("tagList"),
-  //            "articles[0]",
-  //            hasKey("createdAt"),
-  //            "articles[0]",
-  //            hasKey("updatedAt"),
-  //            "articles[0]",
-  //            hasKey("favorited"),
-  //            "articles[0]",
-  //            hasKey("favoritesCount"),
-  //            "articles[0]",
-  //            hasKey("author"),
-  //            "articlesCount",
-  //            is(9));
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // given20ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit10_shouldReturnListOf10Articles() {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    User follower1 =
-  //        createUserEntity("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
-  //
-  //    createArticles(follower1, "Title", "Description", "Body", 2);
-  //
-  //    User user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
-  //
-  //    createArticles(user, "Title", "Description", "Body", 18);
-  //
-  //    follow(loggedUser, follower1);
-  //
-  //    follow(loggedUser, user);
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .queryParam("offset", 0)
-  //        .queryParam("limit", 10)
-  //        .get(FEED_PATH)
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "articles[0]",
-  //            hasKey("slug"),
-  //            "articles[0]",
-  //            hasKey("title"),
-  //            "articles[0]",
-  //            hasKey("description"),
-  //            "articles[0]",
-  //            hasKey("body"),
-  //            "articles[0]",
-  //            hasKey("tagList"),
-  //            "articles[0]",
-  //            hasKey("createdAt"),
-  //            "articles[0]",
-  //            hasKey("updatedAt"),
-  //            "articles[0]",
-  //            hasKey("favorited"),
-  //            "articles[0]",
-  //            hasKey("favoritesCount"),
-  //            "articles[0]",
-  //            hasKey("author"),
-  //            "articlesCount",
-  //            is(20));
-  //  }
-  //
-  //  @Test
-  //  public void
-  //      given10ArticlesWithDifferentTags_whenExecuteGlobalArticlesEndpoint_shouldReturn5Articles()
-  // {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    List<Article> articlesLoggedUser =
-  //        createArticles(loggedUser, "Title", "Description", "Body", 5);
-  //
-  //    Tag tag1 = createTag("Tag 1");
-  //
-  //    createArticlesTags(articlesLoggedUser, tag1);
-  //
-  //    articlesLoggedUser = createArticles(loggedUser, "Title", "Description", "Body", 5);
-  //
-  //    Tag tag2 = createTag("Tag 2");
-  //
-  //    createArticlesTags(articlesLoggedUser, tag2);
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .queryParam("offset", 0)
-  //        .queryParam("limit", 10)
-  //        .queryParam("tag", tag1.getName())
-  //        .get(ARTICLES_PATH)
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "articles[0]",
-  //            hasKey("slug"),
-  //            "articles[0]",
-  //            hasKey("title"),
-  //            "articles[0]",
-  //            hasKey("description"),
-  //            "articles[0]",
-  //            hasKey("body"),
-  //            "articles[0].tagList",
-  //            hasItem(tag1.getName()),
-  //            "articles[0]",
-  //            hasKey("createdAt"),
-  //            "articles[0]",
-  //            hasKey("updatedAt"),
-  //            "articles[0]",
-  //            hasKey("favorited"),
-  //            "articles[0]",
-  //            hasKey("favoritesCount"),
-  //            "articles[0]",
-  //            hasKey("author"),
-  //            "articlesCount",
-  //            is(5));
-  //  }
-  //
+
+  @Test
+  public void
+      given10ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit5_shouldReturnListOf5Articles() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    final var follower1 =
+        createUserEntity("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
+
+    final var articlesFollower = createArticles(follower1, "Title", "Description", "Body", 10);
+
+    final var tag1 = createTagEntity("Tag 1");
+
+    final var tag2 = createTagEntity("Tag 2");
+
+    createArticlesTags(articlesFollower, tag1, tag2);
+
+    final var user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
+
+    createArticles(user, "Title", "Description", "Body", 4);
+
+    follow(loggedUser, follower1);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .queryParam("offset", 0)
+        .queryParam("limit", 5)
+        .get(FEED_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "articles[0]",
+            hasKey("slug"),
+            "articles[0]",
+            hasKey("title"),
+            "articles[0]",
+            hasKey("description"),
+            "articles[0]",
+            hasKey("body"),
+            "articles[0].tagList.size()",
+            is(2),
+            "articles[0].tagList",
+            hasItems(tag1.getName(), tag2.getName()),
+            "articles[0]",
+            hasKey("createdAt"),
+            "articles[0]",
+            hasKey("updatedAt"),
+            "articles[0]",
+            hasKey("favorited"),
+            "articles[0]",
+            hasKey("favoritesCount"),
+            "articles[0]",
+            hasKey("author"),
+            "articlesCount",
+            is(10));
+  }
+
+  @Test
+  public void
+      given8ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit10_shouldReturnListOf8Articles() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    final var follower1 =
+        createUserEntity("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
+
+    createArticles(follower1, "Title", "Description", "Body", 8);
+
+    final var user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
+
+    createArticles(user, "Title", "Description", "Body", 4);
+
+    follow(loggedUser, follower1);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .queryParam("offset", 0)
+        .queryParam("limit", 10)
+        .get(FEED_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "articles[0]",
+            hasKey("slug"),
+            "articles[0]",
+            hasKey("title"),
+            "articles[0]",
+            hasKey("description"),
+            "articles[0]",
+            hasKey("body"),
+            "articles[0]",
+            hasKey("tagList"),
+            "articles[0]",
+            hasKey("createdAt"),
+            "articles[0]",
+            hasKey("updatedAt"),
+            "articles[0]",
+            hasKey("favorited"),
+            "articles[0]",
+            hasKey("favoritesCount"),
+            "articles[0]",
+            hasKey("author"),
+            "articlesCount",
+            is(8));
+  }
+
+  @Test
+  public void
+      given9ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit10_shouldReturnListOf9Articles() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    final var follower1 =
+        createUserEntity("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
+
+    createArticles(follower1, "Title", "Description", "Body", 5);
+
+    final var user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
+
+    createArticles(user, "Title", "Description", "Body", 4);
+
+    follow(loggedUser, follower1);
+
+    follow(loggedUser, user);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .queryParam("offset", 0)
+        .queryParam("limit", 10)
+        .get(FEED_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "articles[0]",
+            hasKey("slug"),
+            "articles[0]",
+            hasKey("title"),
+            "articles[0]",
+            hasKey("description"),
+            "articles[0]",
+            hasKey("body"),
+            "articles[0]",
+            hasKey("tagList"),
+            "articles[0]",
+            hasKey("createdAt"),
+            "articles[0]",
+            hasKey("updatedAt"),
+            "articles[0]",
+            hasKey("favorited"),
+            "articles[0]",
+            hasKey("favoritesCount"),
+            "articles[0]",
+            hasKey("author"),
+            "articlesCount",
+            is(9));
+  }
+
+  @Test
+  public void
+      given20ArticlesForLoggedUser_whenExecuteFeedEndpointWithOffset0AndLimit10_shouldReturnListOf10Articles() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    final var follower1 =
+        createUserEntity("follower1", "follower1@mail.com", "bio", "image", "follower1_123");
+
+    createArticles(follower1, "Title", "Description", "Body", 2);
+
+    final var user = createUserEntity("user", "user@mail.com", "bio", "image", "user123");
+
+    createArticles(user, "Title", "Description", "Body", 18);
+
+    follow(loggedUser, follower1);
+
+    follow(loggedUser, user);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .queryParam("offset", 0)
+        .queryParam("limit", 10)
+        .get(FEED_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "articles[0]",
+            hasKey("slug"),
+            "articles[0]",
+            hasKey("title"),
+            "articles[0]",
+            hasKey("description"),
+            "articles[0]",
+            hasKey("body"),
+            "articles[0]",
+            hasKey("tagList"),
+            "articles[0]",
+            hasKey("createdAt"),
+            "articles[0]",
+            hasKey("updatedAt"),
+            "articles[0]",
+            hasKey("favorited"),
+            "articles[0]",
+            hasKey("favoritesCount"),
+            "articles[0]",
+            hasKey("author"),
+            "articlesCount",
+            is(20));
+  }
+
+  @Test
+  public void
+      given10ArticlesWithDifferentTags_whenExecuteGlobalArticlesEndpoint_shouldReturn5Articles() {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    var articlesLoggedUser = createArticles(loggedUser, "Title", "Description", "Body", 5);
+
+    final var tag1 = createTagEntity("Tag 1");
+
+    createArticlesTags(articlesLoggedUser, tag1);
+
+    articlesLoggedUser = createArticles(loggedUser, "Title", "Description", "Body", 5);
+
+    final var tag2 = createTagEntity("Tag 2");
+
+    createArticlesTags(articlesLoggedUser, tag2);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .queryParam("offset", 0)
+        .queryParam("limit", 10)
+        .queryParam("tag", tag1.getName())
+        .get(ARTICLES_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "articles[0]",
+            hasKey("slug"),
+            "articles[0]",
+            hasKey("title"),
+            "articles[0]",
+            hasKey("description"),
+            "articles[0]",
+            hasKey("body"),
+            "articles[0].tagList",
+            hasItem(tag1.getName()),
+            "articles[0]",
+            hasKey("createdAt"),
+            "articles[0]",
+            hasKey("updatedAt"),
+            "articles[0]",
+            hasKey("favorited"),
+            "articles[0]",
+            hasKey("favoritesCount"),
+            "articles[0]",
+            hasKey("author"),
+            "articlesCount",
+            is(5));
+  }
+
   @Test
   public void shouldReturn401WhenExecuteCreateArticleEndpointWithoutToken() {
 
@@ -438,55 +431,59 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
   //            is(article.getBody()));
   //  }
   //
-  //  @Test
-  //  public void
-  //
-  // givenExistentArticle_whenExecuteUpdateArticleEndpoint_shouldReturnUpdatedArticleWithStatusCode200()
-  //          throws JsonProcessingException {
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //    Article article = createArticle(loggedUser, "Title", "Description", "Body");
-  //
-  //    UpdateArticleRequest updateArticleRequest = new UpdateArticleRequest();
-  //    updateArticleRequest.setTitle("updated title");
-  //    updateArticleRequest.setDescription("updated description");
-  //    updateArticleRequest.setBody("updated body");
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .body(objectMapper.writeValueAsString(updateArticleRequest))
-  //        .pathParam("slug", article.getSlug())
-  //        .put(ARTICLES_PATH + "/{slug}")
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "article.title",
-  //            is(updateArticleRequest.getTitle()),
-  //            "article.description",
-  //            is(updateArticleRequest.getDescription()),
-  //            "article.body",
-  //            is(updateArticleRequest.getBody()));
-  //  }
-  //
-  //  @Test
-  //  public void givenExistentArticle_whenExecuteDeleteArticleEndpoint_shouldReturnStatusCode200()
-  // {
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //    Article article = createArticle(loggedUser, "Title", "Description", "Body");
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .pathParam("slug", article.getSlug())
-  //        .delete(ARTICLES_PATH + "/{slug}")
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK);
-  //
-  //    Assertions.assertNull(transaction(() -> entityManager.find(Article.class,
-  // article.getId())));
-  //  }
+  @Test
+  public void
+      givenExistentArticle_whenExecuteUpdateArticleEndpoint_shouldReturnUpdatedArticleWithStatusCode200()
+          throws JsonProcessingException {
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+    final var article = createArticleEntity(loggedUser, "Title", "Description", "Body");
+
+    final var updateArticleRequest = new UpdateArticleRequest();
+    updateArticleRequest.setTitle("updated title");
+    updateArticleRequest.setDescription("updated description");
+    updateArticleRequest.setBody("updated body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .body(objectMapper.writeValueAsString(updateArticleRequest))
+        .pathParam("slug", article.getSlug())
+        .put(ARTICLES_PATH + "/{slug}")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "article.title",
+            is(updateArticleRequest.getTitle()),
+            "article.description",
+            is(updateArticleRequest.getDescription()),
+            "article.body",
+            is(updateArticleRequest.getBody()));
+
+    final var updatedArticleEntity = findArticleEntityById(article.getId());
+
+    Assertions.assertEquals(updateArticleRequest.getTitle(), updatedArticleEntity.getTitle());
+    Assertions.assertEquals(
+        updateArticleRequest.getDescription(), updatedArticleEntity.getDescription());
+    Assertions.assertEquals(updateArticleRequest.getBody(), updatedArticleEntity.getBody());
+  }
+
+  @Test
+  public void givenExistentArticle_whenExecuteDeleteArticleEndpoint_shouldReturnStatusCode200() {
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+    final var article = createArticleEntity(loggedUser, "Title", "Description", "Body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .pathParam("slug", article.getSlug())
+        .delete(ARTICLES_PATH + "/{slug}")
+        .then()
+        .statusCode(HttpStatus.SC_OK);
+
+    Assertions.assertNull(findArticleEntityById(article.getId()));
+  }
   //
   //  @Test
   //  public void

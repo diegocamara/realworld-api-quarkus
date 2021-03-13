@@ -2,14 +2,17 @@ package org.example.realworldapi.application.utils;
 
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.application.web.model.response.ArticleResponse;
+import org.example.realworldapi.application.web.model.response.ArticlesResponse;
 import org.example.realworldapi.application.web.model.response.ProfileResponse;
 import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.model.article.Article;
+import org.example.realworldapi.domain.model.article.PageResult;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 @AllArgsConstructor
@@ -21,7 +24,7 @@ public class ResourceUtils {
   private final IsArticleFavorited isArticleFavorited;
   private final ArticleFavoritesCount articleFavoritesCount;
 
-  public ProfileResponse getProfileResponse(String username, UUID loggedUserId) {
+  public ProfileResponse profileResponse(String username, UUID loggedUserId) {
     final var user = findUserByUsername.handle(username);
     final var profileResponse = new ProfileResponse(user);
     if (loggedUserId != null) {
@@ -30,9 +33,9 @@ public class ResourceUtils {
     return profileResponse;
   }
 
-  public ArticleResponse getArticleResponse(Article article, UUID loggedUserId) {
+  public ArticleResponse articleResponse(Article article, UUID loggedUserId) {
     final var author = article.getAuthor();
-    final var profileResponse = getProfileResponse(author.getUsername(), author.getId());
+    final var profileResponse = profileResponse(author.getUsername(), author.getId());
     final var tags = findArticleTags.handle(article);
     final var favoritesCount = articleFavoritesCount.handle(article.getId());
     final var articleResponse = new ArticleResponse(article, profileResponse, favoritesCount, tags);
@@ -40,6 +43,14 @@ public class ResourceUtils {
       articleResponse.setFavorited(isArticleFavorited.handle(article, loggedUserId));
     }
     return articleResponse;
+  }
+
+  public ArticlesResponse articlesResponse(PageResult<Article> pageResult, UUID loggedUserId) {
+    final var resultResponse =
+        pageResult.getResult().stream()
+            .map(article -> articleResponse(article, loggedUserId))
+            .collect(Collectors.toList());
+    return new ArticlesResponse(resultResponse, pageResult.getTotal());
   }
 
   public UUID getLoggedUserId(SecurityContext securityContext) {

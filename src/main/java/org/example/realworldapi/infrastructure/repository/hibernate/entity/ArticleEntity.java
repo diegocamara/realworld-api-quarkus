@@ -45,13 +45,17 @@ public class ArticleEntity {
 
   public ArticleEntity(Article article, UserEntity author) {
     this.id = article.getId();
+    this.createdAt = article.getCreatedAt();
+    this.author = author;
+    update(article);
+  }
+
+  public void update(Article article) {
     this.slug = article.getSlug();
     this.title = article.getTitle();
     this.description = article.getDescription();
-    this.body = article.getDescription();
-    this.createdAt = article.getCreatedAt();
+    this.body = article.getBody();
     this.updatedAt = article.getUpdatedAt();
-    this.author = author;
   }
 
   @Override
