@@ -1,6 +1,5 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.panache;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Parameters;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.model.user.FollowRelationship;
@@ -18,8 +17,8 @@ import java.util.UUID;
 @ApplicationScoped
 @AllArgsConstructor
 public class FollowRelationshipRepositoryPanache
-    implements FollowRelationshipRepository,
-        PanacheRepositoryBase<FollowRelationshipEntity, FollowRelationshipEntityKey> {
+    extends AbstractPanacheRepository<FollowRelationshipEntity, FollowRelationshipEntityKey>
+    implements FollowRelationshipRepository {
 
   private final EntityUtils entityUtils;
 
@@ -66,10 +65,6 @@ public class FollowRelationshipRepositoryPanache
     final var user = entityUtils.user(followRelationshipEntity.getUser());
     final var followed = entityUtils.user(followRelationshipEntity.getFollowed());
     return new FollowRelationship(user, followed);
-  }
-
-  private UserEntity findUserEntityById(UUID id) {
-    return getEntityManager().find(UserEntity.class, id);
   }
 
   private FollowRelationshipEntityKey usersFollowedKey(UserEntity user, UserEntity followed) {

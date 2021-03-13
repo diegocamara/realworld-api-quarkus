@@ -21,7 +21,7 @@ public class TagEntity {
   private String name;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "tag")
-  private List<ArticlesTagsEntity> articlesTags;
+  private List<TagRelationshipEntity> articlesTags;
 
   public TagEntity(Tag tag) {
     this.id = tag.getId();

@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TagsResource {
 
-  @NoWrapRootValueObjectMapper private final ObjectMapper objectMapper;
+  @NoWrapRootValueObjectMapper ObjectMapper objectMapper;
   private final FindTags findTags;
 
   @GET

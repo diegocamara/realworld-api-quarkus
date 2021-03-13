@@ -1,6 +1,5 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.panache;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.model.user.NewUserRepository;
 import org.example.realworldapi.domain.model.user.User;
@@ -15,8 +14,8 @@ import static io.quarkus.panache.common.Parameters.with;
 
 @ApplicationScoped
 @AllArgsConstructor
-public class NewUserRepositoryPanache
-    implements NewUserRepository, PanacheRepositoryBase<UserEntity, UUID> {
+public class NewUserRepositoryPanache extends AbstractPanacheRepository<UserEntity, UUID>
+    implements NewUserRepository {
 
   private final EntityUtils entityUtils;
 

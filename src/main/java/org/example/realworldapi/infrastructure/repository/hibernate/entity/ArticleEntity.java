@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.realworldapi.domain.model.article.Article;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -29,18 +30,29 @@ public class ArticleEntity {
   @CreationTimestamp private LocalDateTime createdAt;
   @UpdateTimestamp private LocalDateTime updatedAt;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "author_id")
+  @ManyToOne
+  @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
   private UserEntity author;
 
   @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<CommentEntity> comments;
 
   @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<ArticlesTagsEntity> tags;
+  private List<TagRelationshipEntity> tags;
 
   @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<ArticlesUsersEntity> favorites;
+  private List<FavoriteRelationshipEntity> favorites;
+
+  public ArticleEntity(Article article, UserEntity author) {
+    this.id = article.getId();
+    this.slug = article.getSlug();
+    this.title = article.getTitle();
+    this.description = article.getDescription();
+    this.body = article.getDescription();
+    this.createdAt = article.getCreatedAt();
+    this.updatedAt = article.getUpdatedAt();
+    this.author = author;
+  }
 
   @Override
   public boolean equals(Object o) {

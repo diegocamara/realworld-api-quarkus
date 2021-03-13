@@ -1,9 +1,21 @@
 package org.example.realworldapi.integration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.junit.QuarkusTest;
+import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
+import org.example.realworldapi.application.web.model.request.NewArticleRequest;
+import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.Test;
 
-import static org.example.realworldapi.constants.TestConstants.API_PREFIX;
+import javax.ws.rs.core.MediaType;
+import java.util.Arrays;
+
+import static io.restassured.RestAssured.given;
+import static org.example.realworldapi.constants.TestConstants.*;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasKey;
 
 @QuarkusTest
 public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
@@ -11,18 +23,18 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
   private final String ARTICLES_PATH = API_PREFIX + "/articles";
   private final String FEED_PATH = ARTICLES_PATH + "/feed";
 
-  //  @Test
-  //  public void shouldReturn401WhenExecuteFeedEndpointWithoutAuthorization() {
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .queryParam("offset", 0)
-  //        .queryParam("limit", 5)
-  //        .get(FEED_PATH)
-  //        .then()
-  //        .statusCode(HttpStatus.SC_UNAUTHORIZED)
-  //        .body("errors.body", hasItem("UNAUTHORIZED"));
-  //  }
+  @Test
+  public void shouldReturn401WhenExecuteFeedEndpointWithoutAuthorization() {
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .queryParam("offset", 0)
+        .queryParam("limit", 5)
+        .get(FEED_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_UNAUTHORIZED)
+        .body("errors.body", CoreMatchers.hasItem("UNAUTHORIZED"));
+  }
   //
   //  @Test
   //  public void
@@ -299,108 +311,106 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
   //            is(5));
   //  }
   //
-  //  @Test
-  //  public void shouldReturn401WhenExecuteCreateArticleEndpointWithoutToken() {
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .post(ARTICLES_PATH)
-  //        .then()
-  //        .statusCode(HttpStatus.SC_UNAUTHORIZED);
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenValidArticleRequestWithoutTags_whenExecuteCreateArticleEndpoint_shouldReturnACreatedArticle()
-  //          throws JsonProcessingException {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    NewArticleRequest newArticleRequest = createNewArticle("Title", "Description", "Body");
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .body(objectMapper.writeValueAsString(newArticleRequest))
-  //        .post(ARTICLES_PATH)
-  //        .then()
-  //        .statusCode(HttpStatus.SC_CREATED)
-  //        .body(
-  //            "article.size()",
-  //            is(10),
-  //            "article",
-  //            hasKey("slug"),
-  //            "article.title",
-  //            is(newArticleRequest.getTitle()),
-  //            "article.description",
-  //            is(newArticleRequest.getDescription()),
-  //            "article.body",
-  //            is(newArticleRequest.getBody()),
-  //            "article",
-  //            hasKey("tagList"),
-  //            "article",
-  //            hasKey("createdAt"),
-  //            "article",
-  //            hasKey("updatedAt"),
-  //            "article",
-  //            hasKey("favorited"),
-  //            "article",
-  //            hasKey("favoritesCount"),
-  //            "article",
-  //            hasKey("author"));
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenValidArticleRequestWithTags_whenExecuteCreateArticleEndpoint_shouldReturnACreatedArticle()
-  //          throws JsonProcessingException {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //
-  //    Tag tag1 = createTag("Tag 1");
-  //    Tag tag2 = createTag("Tag 2");
-  //    String tag3 = "Tag 3";
-  //    String tag4 = "Tag 4";
-  //
-  //    NewArticleRequest newArticleRequest =
-  //        createNewArticle(
-  //            "Title 1", "Description", "Body", tag1.getName(), tag2.getName(), tag3, tag4);
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .body(objectMapper.writeValueAsString(newArticleRequest))
-  //        .post(ARTICLES_PATH)
-  //        .then()
-  //        .statusCode(HttpStatus.SC_CREATED)
-  //        .body(
-  //            "article.size()",
-  //            is(10),
-  //            "article",
-  //            hasKey("slug"),
-  //            "article.title",
-  //            is(newArticleRequest.getTitle()),
-  //            "article.description",
-  //            is(newArticleRequest.getDescription()),
-  //            "article.body",
-  //            is(newArticleRequest.getBody()),
-  //            "article.tagList",
-  //            hasItems(tag1.getName(), tag2.getName(), tag3, tag4),
-  //            "article",
-  //            hasKey("createdAt"),
-  //            "article",
-  //            hasKey("updatedAt"),
-  //            "article",
-  //            hasKey("favorited"),
-  //            "article",
-  //            hasKey("favoritesCount"),
-  //            "article",
-  //            hasKey("author"));
-  //  }
+  @Test
+  public void shouldReturn401WhenExecuteCreateArticleEndpointWithoutToken() {
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .post(ARTICLES_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void
+      givenValidArticleRequestWithoutTags_whenExecuteCreateArticleEndpoint_shouldReturnACreatedArticle()
+          throws JsonProcessingException {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    NewArticleRequest newArticleRequest = createNewArticle("Title", "Description", "Body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .body(objectMapper.writeValueAsString(newArticleRequest))
+        .post(ARTICLES_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_CREATED)
+        .body(
+            "article.size()",
+            is(10),
+            "article",
+            hasKey("slug"),
+            "article.title",
+            is(newArticleRequest.getTitle()),
+            "article.description",
+            is(newArticleRequest.getDescription()),
+            "article.body",
+            is(newArticleRequest.getBody()),
+            "article",
+            hasKey("tagList"),
+            "article",
+            hasKey("createdAt"),
+            "article",
+            hasKey("updatedAt"),
+            "article",
+            hasKey("favorited"),
+            "article",
+            hasKey("favoritesCount"),
+            "article",
+            hasKey("author"));
+  }
+
+  @Test
+  public void
+      givenValidArticleRequestWithTags_whenExecuteCreateArticleEndpoint_shouldReturnACreatedArticle()
+          throws JsonProcessingException {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+
+    final var tag1 = createTagEntity("Tag 1");
+    final var tag2 = createTagEntity("Tag 2");
+    String tag3 = "Tag 3";
+    String tag4 = "Tag 4";
+
+    final var newArticleRequest =
+        createNewArticle(
+            "Title 1", "Description", "Body", tag1.getName(), tag2.getName(), tag3, tag4);
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .body(objectMapper.writeValueAsString(newArticleRequest))
+        .post(ARTICLES_PATH)
+        .then()
+        .statusCode(HttpStatus.SC_CREATED)
+        .body(
+            "article.size()",
+            is(10),
+            "article",
+            hasKey("slug"),
+            "article.title",
+            is(newArticleRequest.getTitle()),
+            "article.description",
+            is(newArticleRequest.getDescription()),
+            "article.body",
+            is(newArticleRequest.getBody()),
+            "article.tagList",
+            hasItems(tag1.getName(), tag2.getName(), tag3, tag4),
+            "article",
+            hasKey("createdAt"),
+            "article",
+            hasKey("updatedAt"),
+            "article",
+            hasKey("favorited"),
+            "article",
+            hasKey("favoritesCount"),
+            "article",
+            hasKey("author"));
+  }
   //
   //  @Test
   //  public void
@@ -662,13 +672,13 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
   //            hasKey("author"));
   //  }
   //
-  //  private NewArticleRequest createNewArticle(
-  //      String title, String description, String body, String... tagList) {
-  //    NewArticleRequest newArticleRequest = new NewArticleRequest();
-  //    newArticleRequest.setTitle(title);
-  //    newArticleRequest.setDescription(description);
-  //    newArticleRequest.setBody(body);
-  //    newArticleRequest.setTagList(Arrays.asList(tagList));
-  //    return newArticleRequest;
-  //  }
+  private NewArticleRequest createNewArticle(
+      String title, String description, String body, String... tagList) {
+    NewArticleRequest newArticleRequest = new NewArticleRequest();
+    newArticleRequest.setTitle(title);
+    newArticleRequest.setDescription(description);
+    newArticleRequest.setBody(body);
+    newArticleRequest.setTagList(Arrays.asList(tagList));
+    return newArticleRequest;
+  }
 }

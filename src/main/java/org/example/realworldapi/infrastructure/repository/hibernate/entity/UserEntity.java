@@ -24,8 +24,7 @@ public class UserEntity {
   private String password;
   private String email;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumn(name = "author_id")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
   private List<ArticleEntity> articles;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")

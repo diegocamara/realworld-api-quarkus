@@ -70,11 +70,11 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
         });
   }
 
-  protected List<ArticlesTagsEntity> createArticlesTags(
+  protected List<TagRelationshipEntity> createArticlesTags(
       List<ArticleEntity> articles, TagEntity... tags) {
     return transaction(
         () -> {
-          final var resultList = new LinkedList<ArticlesTagsEntity>();
+          final var resultList = new LinkedList<TagRelationshipEntity>();
 
           for (ArticleEntity article : articles) {
 
@@ -83,11 +83,11 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
             for (TagEntity tag : tags) {
               final var managedTag = entityManager.find(TagEntity.class, tag.getId());
 
-              final var articlesTagsEntityKey = new ArticlesTagsEntityKey();
+              final var articlesTagsEntityKey = new TagRelationshipEntityKey();
               articlesTagsEntityKey.setArticle(managedArticle);
               articlesTagsEntityKey.setTag(managedTag);
 
-              final var articlesTagsEntity = new ArticlesTagsEntity();
+              final var articlesTagsEntity = new TagRelationshipEntity();
               articlesTagsEntity.setPrimaryKey(articlesTagsEntityKey);
 
               entityManager.persist(articlesTagsEntity);

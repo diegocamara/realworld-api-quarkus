@@ -11,11 +11,11 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "NEWARTICLES_TAGS")
-public class ArticlesTagsEntity {
-  @EmbeddedId private ArticlesTagsEntityKey primaryKey;
+@Table(name = "TAG_RELATIONSHIP")
+public class TagRelationshipEntity {
+  @EmbeddedId private TagRelationshipEntityKey primaryKey;
 
-  public ArticlesTagsEntity(ArticlesTagsEntityKey primaryKey) {
+  public TagRelationshipEntity(TagRelationshipEntityKey primaryKey) {
     this.primaryKey = primaryKey;
   }
 
@@ -27,13 +27,20 @@ public class ArticlesTagsEntity {
   @JoinColumn(insertable = false, updatable = false)
   private TagEntity tag;
 
+  public TagRelationshipEntity(ArticleEntity article, TagEntity tag) {
+    final var tagRelationshipEntityKey = new TagRelationshipEntityKey();
+    tagRelationshipEntityKey.setArticle(article);
+    tagRelationshipEntityKey.setTag(tag);
+    this.primaryKey = tagRelationshipEntityKey;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
 
     if (o == null || getClass() != o.getClass()) return false;
 
-    ArticlesTagsEntity that = (ArticlesTagsEntity) o;
+    TagRelationshipEntity that = (TagRelationshipEntity) o;
     return Objects.equals(primaryKey, that.primaryKey);
   }
 

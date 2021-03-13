@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.example.realworldapi.application.data.ArticlesData;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -19,8 +18,8 @@ public class ArticlesResponse {
   private long articlesCount;
 
   public ArticlesResponse(ArticlesData result) {
-    this.articles =
-        result.getArticles().stream().map(ArticleResponse::new).collect(Collectors.toList());
+    //    this.articles =
+    //        result.getArticles().stream().map(ArticleResponse::new).collect(Collectors.toList());
     this.articlesCount = result.getArticlesCount();
   }
 }

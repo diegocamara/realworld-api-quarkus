@@ -9,10 +9,10 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name = "NEWARTICLES_USERS")
-public class ArticlesUsersEntity {
+@Table(name = "FAVORITE_RELATIONSHIP")
+public class FavoriteRelationshipEntity {
 
-  @EmbeddedId private ArticlesUsersEntityKey primaryKey;
+  @EmbeddedId private FavoriteRelationshipEntityKey primaryKey;
 
   @ManyToOne
   @JoinColumn(insertable = false, updatable = false)
@@ -28,7 +28,7 @@ public class ArticlesUsersEntity {
 
     if (o == null || getClass() != o.getClass()) return false;
 
-    ArticlesUsersEntity that = (ArticlesUsersEntity) o;
+    FavoriteRelationshipEntity that = (FavoriteRelationshipEntity) o;
     return Objects.equals(primaryKey, that.primaryKey);
   }
 

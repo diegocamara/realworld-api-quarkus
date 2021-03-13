@@ -1,6 +1,10 @@
 package org.example.realworldapi.infrastructure.configuration;
 
+import org.example.realworldapi.domain.feature.CreateTag;
 import org.example.realworldapi.domain.feature.FindTags;
+import org.example.realworldapi.domain.feature.FindTagsByNameCreateIfNotExists;
+import org.example.realworldapi.domain.feature.impl.CreateTagImpl;
+import org.example.realworldapi.domain.feature.impl.FindTagsByNameCreateIfNotExistsImpl;
 import org.example.realworldapi.domain.feature.impl.FindTagsImpl;
 import org.example.realworldapi.domain.model.tag.NewTagRepository;
 import org.example.realworldapi.domain.model.tag.TagBuilder;
@@ -17,6 +21,19 @@ public class TagsConfiguration {
   @Singleton
   public FindTags findTags(NewTagRepository tagRepository) {
     return new FindTagsImpl(tagRepository);
+  }
+
+  @Produces
+  @Singleton
+  public CreateTag createTag(NewTagRepository tagRepository, TagBuilder tagBuilder) {
+    return new CreateTagImpl(tagRepository, tagBuilder);
+  }
+
+  @Produces
+  @Singleton
+  public FindTagsByNameCreateIfNotExists findTagsByNameCreateIfNotExists(
+      NewTagRepository tagRepository, CreateTag createTag) {
+    return new FindTagsByNameCreateIfNotExistsImpl(tagRepository, createTag);
   }
 
   @Produces

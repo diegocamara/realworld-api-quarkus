@@ -1,10 +1,8 @@
 package org.example.realworldapi.application.web.resource;
 
 import lombok.AllArgsConstructor;
-import org.example.realworldapi.application.web.model.response.ProfileResponse;
-import org.example.realworldapi.domain.feature.FindUserByUsername;
+import org.example.realworldapi.application.utils.ResourceUtils;
 import org.example.realworldapi.domain.feature.FollowUserByUsername;
-import org.example.realworldapi.domain.feature.IsFollowingUser;
 import org.example.realworldapi.domain.feature.UnfollowUserByUsername;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
 import org.example.realworldapi.infrastructure.web.security.annotation.Secured;
@@ -17,17 +15,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
-import java.util.UUID;
 
 @Path("/profiles")
 @AllArgsConstructor
 public class ProfilesResource {
 
-  private final FindUserByUsername findUserByUsername;
-  private final IsFollowingUser isFollowingUser;
   private final FollowUserByUsername followUserByUsername;
   private final UnfollowUserByUsername unfollowUserByUsername;
+  private final ResourceUtils resourceUtils;
 
   @GET
   @Secured(optional = true)
@@ -37,8 +32,8 @@ public class ProfilesResource {
       @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
           String username,
       @Context SecurityContext securityContext) {
-    final var loggedUserId = getLoggedUserId(securityContext);
-    final var profileResponse = getProfileResponse(username, loggedUserId);
+    final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
+    final var profileResponse = resourceUtils.getProfileResponse(username, loggedUserId);
     return Response.ok(profileResponse).status(Response.Status.OK).build();
   }
 
@@ -51,9 +46,9 @@ public class ProfilesResource {
       @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
           String username,
       @Context SecurityContext securityContext) {
-    final var loggedUserId = getLoggedUserId(securityContext);
+    final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
     followUserByUsername.handle(loggedUserId, username);
-    return Response.ok(getProfileResponse(username, loggedUserId))
+    return Response.ok(resourceUtils.getProfileResponse(username, loggedUserId))
         .status(Response.Status.OK)
         .build();
   }
@@ -67,24 +62,10 @@ public class ProfilesResource {
       @PathParam("username") @NotBlank(message = ValidationMessages.USERNAME_MUST_BE_NOT_BLANK)
           String username,
       @Context SecurityContext securityContext) {
-    final var loggedUserId = getLoggedUserId(securityContext);
+    final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
     unfollowUserByUsername.handle(loggedUserId, username);
-    return Response.ok(getProfileResponse(username, loggedUserId))
+    return Response.ok(resourceUtils.getProfileResponse(username, loggedUserId))
         .status(Response.Status.OK)
         .build();
-  }
-
-  private ProfileResponse getProfileResponse(String username, UUID loggedUserId) {
-    final var user = findUserByUsername.handle(username);
-    final var profileResponse = new ProfileResponse(user);
-    if (loggedUserId != null) {
-      profileResponse.setFollowing(isFollowingUser.handle(loggedUserId, user.getId()));
-    }
-    return profileResponse;
-  }
-
-  private UUID getLoggedUserId(SecurityContext securityContext) {
-    Principal principal = securityContext.getUserPrincipal();
-    return principal != null ? UUID.fromString(principal.getName()) : null;
   }
 }

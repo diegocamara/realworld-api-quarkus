@@ -6,11 +6,12 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.application.data.ArticleData;
-import org.example.realworldapi.application.data.ProfileData;
+import org.example.realworldapi.domain.model.article.Article;
+import org.example.realworldapi.domain.model.tag.Tag;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -33,18 +34,18 @@ public class ArticleResponse {
 
   private boolean favorited;
   private long favoritesCount;
-  private ProfileData author;
+  private ProfileResponse author;
 
-  public ArticleResponse(ArticleData articleData) {
-    this.slug = articleData.getSlug();
-    this.title = articleData.getTitle();
-    this.description = articleData.getDescription();
-    this.body = articleData.getBody();
-    this.tagList = articleData.getTagList();
-    this.createdAt = articleData.getCreatedAt();
-    this.updatedAt = articleData.getUpdatedAt();
-    this.favorited = articleData.isFavorited();
-    this.favoritesCount = articleData.getFavoritesCount();
-    this.author = articleData.getAuthor();
+  public ArticleResponse(
+      Article article, ProfileResponse author, long favoritesCount, List<Tag> tags) {
+    this.slug = article.getSlug();
+    this.title = article.getTitle();
+    this.description = article.getDescription();
+    this.body = article.getBody();
+    this.createdAt = article.getCreatedAt();
+    this.updatedAt = article.getUpdatedAt();
+    this.author = author;
+    this.favoritesCount = favoritesCount;
+    this.tagList = tags.stream().map(Tag::getName).collect(Collectors.toList());
   }
 }
