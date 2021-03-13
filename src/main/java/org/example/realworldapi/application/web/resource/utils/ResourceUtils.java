@@ -1,4 +1,4 @@
-package org.example.realworldapi.application.web.utils;
+package org.example.realworldapi.application.web.resource.utils;
 
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.application.web.model.response.*;

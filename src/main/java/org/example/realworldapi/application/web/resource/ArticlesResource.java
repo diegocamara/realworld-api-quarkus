@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import org.example.realworldapi.application.web.model.request.NewArticleRequest;
 import org.example.realworldapi.application.web.model.request.NewCommentRequest;
 import org.example.realworldapi.application.web.model.request.UpdateArticleRequest;
-import org.example.realworldapi.application.web.utils.ResourceUtils;
+import org.example.realworldapi.application.web.resource.utils.ResourceUtils;
 import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.model.article.ArticleFilter;
 import org.example.realworldapi.domain.model.comment.DeleteCommentInput;
