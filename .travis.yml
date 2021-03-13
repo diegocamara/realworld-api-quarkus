@@ -2,5 +2,10 @@ language: java
 jdk: openjdk11
 node_js:
   - lts/*
+before_install:
+  - node --version
+  - npm --version
+install:
+  - npm install newman
 script:
   - ./ci-build.sh
