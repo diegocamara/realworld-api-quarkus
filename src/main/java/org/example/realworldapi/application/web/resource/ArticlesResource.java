@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.application.utils.ResourceUtils;
 import org.example.realworldapi.application.web.model.request.NewArticleRequest;
+import org.example.realworldapi.application.web.model.request.NewCommentRequest;
 import org.example.realworldapi.application.web.model.request.UpdateArticleRequest;
 import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.model.article.ArticleFilter;
@@ -35,6 +36,7 @@ public class ArticlesResource {
   private final FindArticleBySlug findArticleBySlug;
   private final UpdateArticleBySlug updateArticleBySlug;
   private final DeleteArticleBySlug deleteArticleBySlug;
+  private final CreateComment createComment;
   private final ArticlesService articlesService;
   @NoWrapRootValueObjectMapper ObjectMapper objectMapper;
   private final ResourceUtils resourceUtils;
@@ -154,21 +156,23 @@ public class ArticlesResource {
   //        .build();
   //  }
 
-  //  @POST
-  //  @Path("/{slug}/comments")
-  //  @Secured({Role.ADMIN, Role.USER})
-  //  @Consumes(MediaType.APPLICATION_JSON)
-  //  @Produces(MediaType.APPLICATION_JSON)
-  //  public Response createComment(
-  //      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String
-  // slug,
-  //      @Valid NewCommentRequest newCommentRequest,
-  //      @Context SecurityContext securityContext) {
-  //    Long loggedUserId = getLoggedUserId(securityContext);
-  //    CommentData commentData =
-  //        articlesService.createComment(slug, newCommentRequest.getBody(), loggedUserId);
-  //    return Response.ok(new CommentResponse(commentData)).status(Response.Status.OK).build();
-  //  }
+  @POST
+  @Transactional
+  @Path("/{slug}/comments")
+  @Secured({Role.ADMIN, Role.USER})
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response createComment(
+      @PathParam("slug") @NotBlank(message = ValidationMessages.SLUG_MUST_BE_NOT_BLANK) String slug,
+      @Valid NewCommentRequest newCommentRequest,
+      @Context SecurityContext securityContext) {
+    final var loggedUserId = resourceUtils.getLoggedUserId(securityContext);
+    final var comment =
+        createComment.handle(newCommentRequest.toNewCommentInput(loggedUserId, slug));
+    return Response.ok(resourceUtils.commentResponse(comment, loggedUserId))
+        .status(Response.Status.OK)
+        .build();
+  }
 
   //  @DELETE
   //  @Path("/{slug}/comments/{id}")

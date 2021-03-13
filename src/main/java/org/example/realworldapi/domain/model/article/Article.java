@@ -27,6 +27,6 @@ public class Article {
   private String body;
 
   @NotNull private LocalDateTime createdAt;
-  @NotNull private LocalDateTime updatedAt;
+  private LocalDateTime updatedAt;
   @NotNull private User author;
 }

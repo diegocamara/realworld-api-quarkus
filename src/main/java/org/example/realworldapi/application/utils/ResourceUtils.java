@@ -3,10 +3,12 @@ package org.example.realworldapi.application.utils;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.application.web.model.response.ArticleResponse;
 import org.example.realworldapi.application.web.model.response.ArticlesResponse;
+import org.example.realworldapi.application.web.model.response.CommentResponse;
 import org.example.realworldapi.application.web.model.response.ProfileResponse;
 import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.model.article.Article;
 import org.example.realworldapi.domain.model.article.PageResult;
+import org.example.realworldapi.domain.model.comment.Comment;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.SecurityContext;
@@ -51,6 +53,12 @@ public class ResourceUtils {
             .map(article -> articleResponse(article, loggedUserId))
             .collect(Collectors.toList());
     return new ArticlesResponse(resultResponse, pageResult.getTotal());
+  }
+
+  public CommentResponse commentResponse(Comment comment, UUID loggedUserId) {
+    final var commentAuthor = comment.getAuthor();
+    final var authorResponse = profileResponse(commentAuthor.getUsername(), loggedUserId);
+    return new CommentResponse(comment, authorResponse);
   }
 
   public UUID getLoggedUserId(SecurityContext securityContext) {

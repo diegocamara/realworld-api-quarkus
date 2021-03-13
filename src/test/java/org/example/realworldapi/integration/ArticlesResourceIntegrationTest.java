@@ -5,6 +5,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
 import org.example.realworldapi.application.web.model.request.NewArticleRequest;
+import org.example.realworldapi.application.web.model.request.NewCommentRequest;
 import org.example.realworldapi.application.web.model.request.UpdateArticleRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -518,41 +519,40 @@ public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {
   //            hasKey("author"));
   //  }
   //
-  //  @Test
-  //  public void
-  //
-  // givenExistentArticleWithoutComments_whenExecuteCreateCommentEndpoint_shouldReturnCommentWithStatusCode200()
-  //          throws JsonProcessingException {
-  //
-  //    User loggedUser =
-  //        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
-  //    Article article = createArticle(loggedUser, "Title", "Description", "Body");
-  //
-  //    NewCommentRequest newCommentRequest = new NewCommentRequest();
-  //    newCommentRequest.setBody("comment body");
-  //
-  //    given()
-  //        .contentType(MediaType.APPLICATION_JSON)
-  //        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + loggedUser.getToken())
-  //        .pathParam("slug", article.getSlug())
-  //        .body(objectMapper.writeValueAsString(newCommentRequest))
-  //        .post(ARTICLES_PATH + "/{slug}/comments")
-  //        .then()
-  //        .statusCode(HttpStatus.SC_OK)
-  //        .body(
-  //            "comment.size()",
-  //            is(5),
-  //            "comment",
-  //            hasKey("id"),
-  //            "comment",
-  //            hasKey("createdAt"),
-  //            "comment",
-  //            hasKey("updatedAt"),
-  //            "comment.body",
-  //            is(newCommentRequest.getBody()),
-  //            "comment.author.username",
-  //            is(loggedUser.getUsername()));
-  //  }
+  @Test
+  public void
+      givenExistentArticleWithoutComments_whenExecuteCreateCommentEndpoint_shouldReturnCommentWithStatusCode200()
+          throws JsonProcessingException {
+
+    final var loggedUser =
+        createUserEntity("loggedUser", "loggeduser@mail.com", "bio", "image", "loggeduser123");
+    final var article = createArticleEntity(loggedUser, "Title", "Description", "Body");
+
+    final var newCommentRequest = new NewCommentRequest();
+    newCommentRequest.setBody("comment body");
+
+    given()
+        .contentType(MediaType.APPLICATION_JSON)
+        .header(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER_VALUE_PREFIX + token(loggedUser))
+        .pathParam("slug", article.getSlug())
+        .body(objectMapper.writeValueAsString(newCommentRequest))
+        .post(ARTICLES_PATH + "/{slug}/comments")
+        .then()
+        .statusCode(HttpStatus.SC_OK)
+        .body(
+            "comment.size()",
+            is(5),
+            "comment",
+            hasKey("id"),
+            "comment",
+            hasKey("createdAt"),
+            "comment",
+            hasKey("updatedAt"),
+            "comment.body",
+            is(newCommentRequest.getBody()),
+            "comment.author.username",
+            is(loggedUser.getUsername()));
+  }
   //
   //  @Test
   //  public void

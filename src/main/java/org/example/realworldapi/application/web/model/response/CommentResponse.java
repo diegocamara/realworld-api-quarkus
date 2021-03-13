@@ -6,10 +6,10 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.realworldapi.application.data.CommentData;
-import org.example.realworldapi.application.data.ProfileData;
+import org.example.realworldapi.domain.model.comment.Comment;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @RegisterForReflection
 public class CommentResponse {
 
-  private Long id;
+  private UUID id;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
   private LocalDateTime createdAt;
@@ -27,13 +27,13 @@ public class CommentResponse {
   private LocalDateTime updatedAt;
 
   private String body;
-  private ProfileData author;
+  private ProfileResponse author;
 
-  public CommentResponse(CommentData commentData) {
-    this.id = commentData.getId();
-    this.createdAt = commentData.getCreatedAt();
-    this.updatedAt = commentData.getUpdatedAt();
-    this.body = commentData.getBody();
-    this.author = commentData.getAuthor();
+  public CommentResponse(Comment comment, ProfileResponse author) {
+    this.id = comment.getId();
+    this.createdAt = comment.getCreatedAt();
+    this.updatedAt = comment.getUpdatedAt();
+    this.body = comment.getBody();
+    this.author = author;
   }
 }
