@@ -1,5 +1,5 @@
 language: java
 jdk: openjdk11
-node_js: lts/*
+node_js: "lts/*"
 script:
   - ./ci-build.sh
