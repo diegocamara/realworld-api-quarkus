@@ -1,11 +1,9 @@
 language: java
 jdk: openjdk11
-node_js:
-  - lts/*
-before_install:
-  - node --version
-  - npm --version
+env:
+  - NODE_VERSION=15
 install:
-  - npm install -g n
+  - nvm install $NODE_VERSION
 script:
+  - nvm use $NODE_VERSION
   - ./ci-build.sh
