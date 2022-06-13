@@ -27,6 +27,9 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+      - name: Run integration tests
+        run: ./integrated-tests.sh
+      
 
 #   build:
 #     runs-on: ubuntu-latest
