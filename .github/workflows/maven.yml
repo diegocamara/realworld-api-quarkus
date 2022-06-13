@@ -25,7 +25,8 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: maven
-      - uses: actions/setup-node@v3
+      - name: Set up node
+        uses: actions/setup-node@v3
         with:
           node-version: 14
       - name: Build with Maven
