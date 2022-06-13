@@ -1,5 +1,4 @@
 #!/bin/bash
-./mvnw clean package
 java -jar target/quarkus-app/quarkus-run.jar > service.log &
 SERVICE_PROCESS=$!
 tail -f -n0 service.log | grep -q 'Listening on'

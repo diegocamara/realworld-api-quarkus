@@ -1,0 +1,37 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  container-job:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14.3-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: 123456
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Set up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - name: Run integration tests
+        run: |
+          nohup java -jar target/quarkus-app/quarkus-run.jar & sleep 10s          
+          ./collections/run-api-tests.sh
+        shell: bash
