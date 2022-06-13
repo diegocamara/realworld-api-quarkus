@@ -5,7 +5,7 @@ import com.github.slugify.Slugify;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.*;
 import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
 import org.example.realworldapi.util.UserEntityUtils;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import javax.inject.Inject;
 import java.util.LinkedList;
@@ -18,8 +18,8 @@ public class AbstractIntegrationTest extends DatabaseIntegrationTest {
   @Inject protected TokenProvider tokenProvider;
   @Inject protected Slugify slugify;
 
-  @BeforeEach
-  public void beforeEach() {
+  @AfterEach
+  public void afterEach() {
     clear();
   }
 

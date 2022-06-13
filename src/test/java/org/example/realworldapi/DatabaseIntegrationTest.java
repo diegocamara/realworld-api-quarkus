@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DatabaseIntegrationTest {
 
@@ -58,8 +59,8 @@ public class DatabaseIntegrationTest {
   private static Properties properties() {
     Properties properties = new Properties();
     properties.put(Environment.DRIVER, "org.h2.Driver");
-    properties.put(Environment.DIALECT, "org.hibernate.dialect.H2Dialect");
-    properties.put(Environment.SHOW_SQL, false);
+    properties.put(Environment.DIALECT, "org.example.realworldapi.H2CustomDialect");
+    properties.put(Environment.SHOW_SQL, true);
     properties.put(Environment.FORMAT_SQL, true);
     properties.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
     properties.put(Environment.HBM2DDL_AUTO, "create-drop");
@@ -94,25 +95,24 @@ public class DatabaseIntegrationTest {
                 tableName ->
                     entityManager
                         .createNativeQuery(
-                            "SET FOREIGN_KEY_CHECKS = 0; DELETE FROM "
+                            "SET REFERENTIAL_INTEGRITY FALSE; TRUNCATE TABLE "
                                 + tableName
-                                + "; SET FOREIGN_KEY_CHECKS = 1;")
+                                + "; SET REFERENTIAL_INTEGRITY TRUE;")
                         .executeUpdate()));
   }
 
   public void transaction(Runnable command) {
     entityManager.getTransaction().begin();
     entityManager.flush();
+    entityManager.clear();
     command.run();
     entityManager.getTransaction().commit();
   }
 
   public <T> T transaction(TransactionRunnable<T> command) {
-    entityManager.getTransaction().begin();
-    entityManager.clear();
-    T result = command.run();
-    entityManager.getTransaction().commit();
-    return result;
+    AtomicReference<T> atomicReference = new AtomicReference<>();
+    transaction(() -> atomicReference.set(command.run()));
+    return atomicReference.get();
   }
 
   public interface TransactionRunnable<T> {

@@ -43,7 +43,7 @@ infrastructure/         -> technical details layer
 
 ### Start local server
 
-```bash
+```shell
  ./mvnw compile quarkus:dev
  ```
 
@@ -51,19 +51,19 @@ The server should be running at http://localhost:8080
 
 ### Running the application tests
 
-``` 
+```shell
 ./mvnw test 
 ```
 
 ### Running postman collection tests
 
-```
+```shell
 ./collections/run-api-tests.sh
 ```
 
 ### Building jar file
 
-```
+```shell
 ./mvnw package
 ```
 
@@ -73,7 +73,7 @@ GraalVM is necessary for building native executable, more information about sett
 in [Quarkus guides](https://quarkus.io/guides/)
 and database engine need to be changed.
 
-```
+```shell
 ./mvnw package -Pnative
 ```
 

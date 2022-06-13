@@ -23,6 +23,7 @@ import java.util.UUID;
 public class ArticleEntity {
 
   @Id private UUID id;
+
   private String slug;
   private String title;
   private String description;
