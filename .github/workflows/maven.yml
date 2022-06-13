@@ -35,8 +35,7 @@ jobs:
         run: mvn -B package --file pom.xml
       - name: Run integration tests
         run: |
-          ./collections/run-api-tests.sh
-               
+          java -jar target/quarkus-app/quarkus-run.jar
         shell: bash
 
 
