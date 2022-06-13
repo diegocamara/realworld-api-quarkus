@@ -25,11 +25,14 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: maven
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
       - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: Run integration tests
         run: ./integrated-tests.sh
-      
+
 
 #   build:
 #     runs-on: ubuntu-latest
