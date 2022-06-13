@@ -35,6 +35,7 @@ jobs:
         run: mvn -B package --file pom.xml
       - name: Run integration tests
         run: |
+          chmod +x ./integrated-tests.sh
           ./integrated-tests.sh
         shell: bash
 
