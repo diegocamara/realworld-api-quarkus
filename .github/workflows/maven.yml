@@ -35,11 +35,8 @@ jobs:
         run: mvn -B package --file pom.xml
       - name: Run integration tests
         run: |
-          java -jar target/quarkus-app/quarkus-run.jar > service.log & SERVICE_PROCESS=$! tail -f service.log | grep -q 'Listening on'
-          echo "Application started"
+          nohup java -jar target/quarkus-app/quarkus-run.jar & sleep 10s          
           ./collections/run-api-tests.sh
-          kill $SERVICE_PROCESS
-          rm service.log
         shell: bash
 
 
