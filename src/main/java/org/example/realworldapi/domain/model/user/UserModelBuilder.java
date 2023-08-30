@@ -3,7 +3,7 @@ package org.example.realworldapi.domain.model.user;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.validator.ModelValidator;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.util.UUID;
 
 @Named

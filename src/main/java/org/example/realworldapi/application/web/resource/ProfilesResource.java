@@ -8,13 +8,13 @@ import org.example.realworldapi.domain.model.constants.ValidationMessages;
 import org.example.realworldapi.infrastructure.web.security.annotation.Secured;
 import org.example.realworldapi.infrastructure.web.security.profile.Role;
 
-import javax.transaction.Transactional;
-import javax.validation.constraints.NotBlank;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 @Path("/profiles")
 @AllArgsConstructor

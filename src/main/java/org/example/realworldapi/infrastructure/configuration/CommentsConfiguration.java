@@ -9,9 +9,9 @@ import org.example.realworldapi.domain.model.comment.CommentBuilder;
 import org.example.realworldapi.domain.model.comment.CommentRepository;
 import org.example.realworldapi.domain.validator.ModelValidator;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
-import javax.inject.Singleton;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 
 @Dependent
 public class CommentsConfiguration {

@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
 import org.example.realworldapi.domain.model.user.LoginUserInput;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 @Getter
 @Setter

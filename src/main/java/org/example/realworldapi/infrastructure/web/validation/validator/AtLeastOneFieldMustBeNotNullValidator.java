@@ -2,8 +2,8 @@ package org.example.realworldapi.infrastructure.web.validation.validator;
 
 import org.example.realworldapi.infrastructure.web.validation.constraint.AtLeastOneFieldMustBeNotNull;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.lang.reflect.Field;
 
 public class AtLeastOneFieldMustBeNotNullValidator implements ConstraintValidator<AtLeastOneFieldMustBeNotNull, Object> {

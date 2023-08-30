@@ -5,7 +5,7 @@ import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
 import static org.example.realworldapi.constants.TestConstants.*;

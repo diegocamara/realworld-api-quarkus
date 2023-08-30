@@ -4,7 +4,7 @@ import com.github.slugify.Slugify;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.model.provider.SlugProvider;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 @AllArgsConstructor

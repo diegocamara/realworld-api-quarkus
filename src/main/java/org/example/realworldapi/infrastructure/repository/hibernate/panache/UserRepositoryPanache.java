@@ -6,7 +6,7 @@ import org.example.realworldapi.domain.model.user.UserRepository;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.UserEntity;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 import java.util.UUID;
 

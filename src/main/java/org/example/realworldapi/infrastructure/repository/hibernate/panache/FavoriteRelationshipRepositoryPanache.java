@@ -8,7 +8,7 @@ import org.example.realworldapi.infrastructure.repository.hibernate.entity.Entit
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.FavoriteRelationshipEntity;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.FavoriteRelationshipEntityKey;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 import java.util.UUID;
 

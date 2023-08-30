@@ -7,9 +7,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.slugify.Slugify;
 import org.example.realworldapi.infrastructure.web.qualifiers.NoWrapRootValueObjectMapper;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
-import javax.inject.Singleton;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 
 @Dependent
 public class ApplicationConfiguration {

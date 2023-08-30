@@ -9,7 +9,7 @@ import org.example.realworldapi.util.UserEntityUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;

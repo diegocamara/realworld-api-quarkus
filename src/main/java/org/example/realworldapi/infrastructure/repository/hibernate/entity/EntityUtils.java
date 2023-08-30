@@ -11,7 +11,7 @@ import org.example.realworldapi.domain.model.tag.TagBuilder;
 import org.example.realworldapi.domain.model.user.User;
 import org.example.realworldapi.domain.model.user.UserModelBuilder;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 @AllArgsConstructor

@@ -8,7 +8,7 @@ import org.example.realworldapi.domain.model.comment.CommentRepository;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.CommentEntity;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

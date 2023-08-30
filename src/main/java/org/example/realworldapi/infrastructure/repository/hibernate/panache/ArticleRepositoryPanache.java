@@ -12,7 +12,7 @@ import org.example.realworldapi.infrastructure.repository.hibernate.entity.Artic
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
 import org.example.realworldapi.infrastructure.repository.hibernate.panache.utils.SimpleQueryBuilder;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.*;
 import java.util.stream.Collectors;
 

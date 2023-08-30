@@ -3,7 +3,7 @@ package org.example.realworldapi.infrastructure.provider;
 import org.example.realworldapi.domain.model.provider.HashProvider;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class BCryptHashProvider implements HashProvider {

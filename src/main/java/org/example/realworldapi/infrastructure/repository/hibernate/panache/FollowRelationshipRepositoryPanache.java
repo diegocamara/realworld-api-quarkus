@@ -10,7 +10,7 @@ import org.example.realworldapi.infrastructure.repository.hibernate.entity.Follo
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.FollowRelationshipEntityKey;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.UserEntity;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 import java.util.UUID;
 

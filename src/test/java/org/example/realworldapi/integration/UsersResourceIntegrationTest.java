@@ -9,7 +9,7 @@ import org.example.realworldapi.application.web.model.request.NewUserRequest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
 import static org.example.realworldapi.constants.TestConstants.API_PREFIX;

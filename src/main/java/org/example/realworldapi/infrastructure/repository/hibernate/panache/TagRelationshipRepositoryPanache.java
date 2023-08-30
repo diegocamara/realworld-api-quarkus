@@ -10,7 +10,7 @@ import org.example.realworldapi.infrastructure.repository.hibernate.entity.Entit
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.TagRelationshipEntity;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.TagRelationshipEntityKey;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.stream.Collectors;
 

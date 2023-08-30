@@ -10,7 +10,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
 import org.example.realworldapi.infrastructure.web.security.profile.Role;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;

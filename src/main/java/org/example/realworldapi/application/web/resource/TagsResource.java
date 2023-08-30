@@ -8,11 +8,11 @@ import org.example.realworldapi.domain.feature.FindTags;
 import org.example.realworldapi.domain.model.tag.Tag;
 import org.example.realworldapi.infrastructure.web.qualifiers.NoWrapRootValueObjectMapper;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/tags")

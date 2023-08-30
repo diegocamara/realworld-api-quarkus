@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.example.realworldapi.domain.model.comment.NewCommentInput;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Getter

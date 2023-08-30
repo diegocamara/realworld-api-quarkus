@@ -7,8 +7,8 @@ import org.example.realworldapi.domain.model.article.Article;
 import org.example.realworldapi.domain.model.article.PageResult;
 import org.example.realworldapi.domain.model.comment.Comment;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;

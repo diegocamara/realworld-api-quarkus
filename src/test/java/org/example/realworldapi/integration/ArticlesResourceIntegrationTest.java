@@ -10,7 +10,7 @@ import org.example.realworldapi.application.web.model.request.UpdateArticleReque
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import java.util.Arrays;
 
 import static io.restassured.RestAssured.given;
