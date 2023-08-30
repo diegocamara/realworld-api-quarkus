@@ -59,9 +59,6 @@ public class DatabaseIntegrationTest {
   private static Properties properties() {
     Properties properties = new Properties();
     properties.put(Environment.DRIVER, "org.h2.Driver");
-    properties.put(Environment.DIALECT, "org.example.realworldapi.H2CustomDialect");
-    properties.put(Environment.SHOW_SQL, true);
-    properties.put(Environment.FORMAT_SQL, true);
     properties.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
     properties.put(Environment.HBM2DDL_AUTO, "create-drop");
     properties.put(Environment.DATASOURCE, dataSource);

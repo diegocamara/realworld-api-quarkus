@@ -8,9 +8,9 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class UpdateUserInput {
-  private UUID id;
-  private String username;
-  private String bio;
-  private String image;
-  private String email;
+    private UUID id;
+    private String username;
+    private String bio;
+    private String image;
+    private String email;
 }
