@@ -1,5 +1,6 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.entity;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.model.article.Article;
 import org.example.realworldapi.domain.model.article.ArticleModelBuilder;
@@ -10,8 +11,6 @@ import org.example.realworldapi.domain.model.tag.Tag;
 import org.example.realworldapi.domain.model.tag.TagBuilder;
 import org.example.realworldapi.domain.model.user.User;
 import org.example.realworldapi.domain.model.user.UserModelBuilder;
-
-import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 @AllArgsConstructor

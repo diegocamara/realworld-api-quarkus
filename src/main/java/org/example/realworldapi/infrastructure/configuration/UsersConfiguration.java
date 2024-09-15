@@ -1,5 +1,9 @@
 package org.example.realworldapi.infrastructure.configuration;
 
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
+import jakarta.validation.Validator;
 import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.feature.impl.*;
 import org.example.realworldapi.domain.model.provider.HashProvider;
@@ -7,11 +11,6 @@ import org.example.realworldapi.domain.model.user.FollowRelationshipRepository;
 import org.example.realworldapi.domain.model.user.UserModelBuilder;
 import org.example.realworldapi.domain.model.user.UserRepository;
 import org.example.realworldapi.domain.validator.ModelValidator;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
-import javax.inject.Singleton;
-import javax.validation.Validator;
 
 @Dependent
 public class UsersConfiguration {

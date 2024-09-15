@@ -1,20 +1,19 @@
 package org.example.realworldapi.integration;
 
+import static io.restassured.RestAssured.given;
+import static org.example.realworldapi.constants.TestConstants.*;
+import static org.hamcrest.Matchers.*;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.ws.rs.core.MediaType;
+import java.util.UUID;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
 import org.example.realworldapi.application.web.model.request.UpdateUserRequest;
 import org.example.realworldapi.util.UserEntityUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.core.MediaType;
-import java.util.UUID;
-
-import static io.restassured.RestAssured.given;
-import static org.example.realworldapi.constants.TestConstants.*;
-import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 public class UserResourceIntegrationTest extends AbstractIntegrationTest {

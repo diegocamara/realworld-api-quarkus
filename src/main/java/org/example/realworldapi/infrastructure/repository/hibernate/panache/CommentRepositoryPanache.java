@@ -1,20 +1,19 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.panache;
 
+import static io.quarkus.panache.common.Parameters.with;
+
 import io.quarkus.panache.common.Parameters;
+import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.model.article.Article;
 import org.example.realworldapi.domain.model.comment.Comment;
 import org.example.realworldapi.domain.model.comment.CommentRepository;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.CommentEntity;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static io.quarkus.panache.common.Parameters.with;
 
 @ApplicationScoped
 @AllArgsConstructor

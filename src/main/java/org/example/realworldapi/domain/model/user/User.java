@@ -1,14 +1,13 @@
 package org.example.realworldapi.domain.model.user;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.example.realworldapi.domain.model.constants.ValidationMessages;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor(access = AccessLevel.PROTECTED)

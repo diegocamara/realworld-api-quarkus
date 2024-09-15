@@ -1,16 +1,15 @@
 package org.example.realworldapi.infrastructure.web.mapper;
 
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 import org.example.realworldapi.application.web.model.response.ErrorResponse;
 import org.example.realworldapi.infrastructure.web.exception.ForbiddenException;
 import org.example.realworldapi.infrastructure.web.exception.InfrastructureException;
 import org.example.realworldapi.infrastructure.web.exception.UnauthorizedException;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 
 @Provider
 public class InfrastructureExceptionMapper implements ExceptionMapper<InfrastructureException> {

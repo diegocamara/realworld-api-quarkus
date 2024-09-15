@@ -1,5 +1,10 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.panache;
 
+import static io.quarkus.panache.common.Parameters.with;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.model.article.Article;
 import org.example.realworldapi.domain.model.article.FavoriteRelationship;
@@ -7,12 +12,6 @@ import org.example.realworldapi.domain.model.article.FavoriteRelationshipReposit
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.FavoriteRelationshipEntity;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.FavoriteRelationshipEntityKey;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.Optional;
-import java.util.UUID;
-
-import static io.quarkus.panache.common.Parameters.with;
 
 @ApplicationScoped
 @AllArgsConstructor

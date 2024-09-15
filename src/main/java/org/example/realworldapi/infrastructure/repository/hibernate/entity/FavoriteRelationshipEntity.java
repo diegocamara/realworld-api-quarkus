@@ -1,11 +1,10 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.entity;
 
+import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
-import java.util.Objects;
 
 @Getter
 @Setter
