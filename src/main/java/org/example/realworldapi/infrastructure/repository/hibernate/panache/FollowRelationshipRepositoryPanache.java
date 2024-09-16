@@ -1,6 +1,9 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.panache;
 
 import io.quarkus.panache.common.Parameters;
+import jakarta.enterprise.context.ApplicationScoped;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.model.user.FollowRelationship;
 import org.example.realworldapi.domain.model.user.FollowRelationshipRepository;
@@ -9,10 +12,6 @@ import org.example.realworldapi.infrastructure.repository.hibernate.entity.Entit
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.FollowRelationshipEntity;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.FollowRelationshipEntityKey;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.UserEntity;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.Optional;
-import java.util.UUID;
 
 @ApplicationScoped
 @AllArgsConstructor

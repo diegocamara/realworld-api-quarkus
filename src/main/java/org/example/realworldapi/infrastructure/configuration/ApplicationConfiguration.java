@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.slugify.Slugify;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 import org.example.realworldapi.infrastructure.web.qualifiers.NoWrapRootValueObjectMapper;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
-import javax.inject.Singleton;
 
 @Dependent
 public class ApplicationConfiguration {
@@ -17,7 +16,7 @@ public class ApplicationConfiguration {
   @Produces
   @Singleton
   public Slugify slugify() {
-    return new Slugify();
+    return Slugify.builder().build();
   }
 
   @Singleton

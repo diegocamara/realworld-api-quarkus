@@ -6,14 +6,13 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
-import org.example.realworldapi.infrastructure.web.security.profile.Role;
-
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
+import org.example.realworldapi.infrastructure.web.security.profile.Role;
 
 @ApplicationScoped
 public class JwtTokenProvider implements TokenProvider {

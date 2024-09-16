@@ -1,6 +1,6 @@
 package org.example.realworldapi.infrastructure.web.security.context;
 
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 public class EmptySecurityContext implements SecurityContext {

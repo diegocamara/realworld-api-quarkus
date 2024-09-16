@@ -3,6 +3,9 @@ package org.example.realworldapi.infrastructure.repository.hibernate.panache;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
+import jakarta.enterprise.context.ApplicationScoped;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.domain.model.article.Article;
 import org.example.realworldapi.domain.model.article.ArticleFilter;
@@ -11,10 +14,6 @@ import org.example.realworldapi.domain.model.article.PageResult;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.ArticleEntity;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.EntityUtils;
 import org.example.realworldapi.infrastructure.repository.hibernate.panache.utils.SimpleQueryBuilder;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 @AllArgsConstructor

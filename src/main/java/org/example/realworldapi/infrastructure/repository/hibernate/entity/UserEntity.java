@@ -1,13 +1,12 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.entity;
 
+import jakarta.persistence.*;
+import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.realworldapi.domain.model.user.User;
-
-import javax.persistence.*;
-import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter

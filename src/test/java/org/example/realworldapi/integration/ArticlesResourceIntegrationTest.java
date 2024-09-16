@@ -1,7 +1,14 @@
 package org.example.realworldapi.integration;
 
+import static io.restassured.RestAssured.given;
+import static org.example.realworldapi.constants.TestConstants.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.hasKey;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.ws.rs.core.MediaType;
+import java.util.Arrays;
 import org.apache.http.HttpStatus;
 import org.example.realworldapi.AbstractIntegrationTest;
 import org.example.realworldapi.application.web.model.request.NewArticleRequest;
@@ -9,14 +16,6 @@ import org.example.realworldapi.application.web.model.request.NewCommentRequest;
 import org.example.realworldapi.application.web.model.request.UpdateArticleRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.core.MediaType;
-import java.util.Arrays;
-
-import static io.restassured.RestAssured.given;
-import static org.example.realworldapi.constants.TestConstants.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.hasKey;
 
 @QuarkusTest
 public class ArticlesResourceIntegrationTest extends AbstractIntegrationTest {

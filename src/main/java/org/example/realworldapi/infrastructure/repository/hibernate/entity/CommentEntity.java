@@ -1,15 +1,14 @@
 package org.example.realworldapi.infrastructure.repository.hibernate.entity;
 
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.realworldapi.domain.model.comment.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter

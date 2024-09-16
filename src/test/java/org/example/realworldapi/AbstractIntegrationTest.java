@@ -2,15 +2,14 @@ package org.example.realworldapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.slugify.Slugify;
+import jakarta.inject.Inject;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 import org.example.realworldapi.infrastructure.repository.hibernate.entity.*;
 import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
 import org.example.realworldapi.util.UserEntityUtils;
 import org.junit.jupiter.api.AfterEach;
-
-import javax.inject.Inject;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
 
 public class AbstractIntegrationTest extends DatabaseIntegrationTest {
 

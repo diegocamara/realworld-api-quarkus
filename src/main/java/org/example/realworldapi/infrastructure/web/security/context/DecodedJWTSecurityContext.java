@@ -1,11 +1,10 @@
 package org.example.realworldapi.infrastructure.web.security.context;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.ws.rs.core.SecurityContext;
+import java.security.Principal;
 import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
 import org.example.realworldapi.infrastructure.web.security.profile.Role;
-
-import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
 
 public class DecodedJWTSecurityContext implements SecurityContext {
 

@@ -1,15 +1,14 @@
 package org.example.realworldapi.integration;
 
-import io.quarkus.test.junit.QuarkusTest;
-import org.apache.http.HttpStatus;
-import org.example.realworldapi.AbstractIntegrationTest;
-import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.core.MediaType;
-
 import static io.restassured.RestAssured.given;
 import static org.example.realworldapi.constants.TestConstants.*;
 import static org.hamcrest.Matchers.is;
+
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.ws.rs.core.MediaType;
+import org.apache.http.HttpStatus;
+import org.example.realworldapi.AbstractIntegrationTest;
+import org.junit.jupiter.api.Test;
 
 @QuarkusTest
 public class ProfilesResourceIntegrationTest extends AbstractIntegrationTest {

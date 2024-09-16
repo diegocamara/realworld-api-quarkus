@@ -1,5 +1,14 @@
 package org.example.realworldapi;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Table;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import javax.sql.DataSource;
 import org.h2.jdbcx.JdbcDataSource;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -7,16 +16,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import org.reflections.Reflections;
-
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Table;
-import javax.sql.DataSource;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class DatabaseIntegrationTest {
 
@@ -59,7 +58,7 @@ public class DatabaseIntegrationTest {
   private static Properties properties() {
     Properties properties = new Properties();
     properties.put(Environment.DRIVER, "org.h2.Driver");
-    properties.put(Environment.DIALECT, "org.example.realworldapi.H2CustomDialect");
+    properties.put(Environment.DIALECT, "org.hibernate.dialect.H2Dialect");
     properties.put(Environment.SHOW_SQL, true);
     properties.put(Environment.FORMAT_SQL, true);
     properties.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");

@@ -1,5 +1,8 @@
 package org.example.realworldapi.infrastructure.configuration;
 
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 import org.example.realworldapi.domain.feature.*;
 import org.example.realworldapi.domain.feature.impl.CreateCommentImpl;
 import org.example.realworldapi.domain.feature.impl.DeleteCommentImpl;
@@ -8,10 +11,6 @@ import org.example.realworldapi.domain.feature.impl.FindCommentsByArticleSlugImp
 import org.example.realworldapi.domain.model.comment.CommentBuilder;
 import org.example.realworldapi.domain.model.comment.CommentRepository;
 import org.example.realworldapi.domain.validator.ModelValidator;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
-import javax.inject.Singleton;
 
 @Dependent
 public class CommentsConfiguration {

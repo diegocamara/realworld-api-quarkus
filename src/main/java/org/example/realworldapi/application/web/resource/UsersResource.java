@@ -1,5 +1,15 @@
 package org.example.realworldapi.application.web.resource;
 
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import org.example.realworldapi.application.web.model.request.LoginRequest;
 import org.example.realworldapi.application.web.model.request.NewUserRequest;
@@ -12,17 +22,6 @@ import org.example.realworldapi.domain.model.constants.ValidationMessages;
 import org.example.realworldapi.domain.model.user.User;
 import org.example.realworldapi.infrastructure.web.exception.UnauthorizedException;
 import org.example.realworldapi.infrastructure.web.provider.TokenProvider;
-
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @Path("/users")
 @AllArgsConstructor
