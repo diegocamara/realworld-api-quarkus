@@ -7,20 +7,20 @@
     <artifactId>realworldapiservice</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <compiler-plugin.version>3.13.0</compiler-plugin.version>
+        <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <failsafe.useModulePath>false</failsafe.useModulePath>
-        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.14.4</quarkus.platform.version>
-        <surefire-plugin.version>3.3.1</surefire-plugin.version>
+        <quarkus.platform.version>3.33.2.1</quarkus.platform.version>
+        <surefire-plugin.version>3.5.6</surefire-plugin.version>
         <jbcrypt.version>0.4</jbcrypt.version>
         <reflections.version>0.10.2</reflections.version>
-        <java-jwt.version>4.4.0</java-jwt.version>
-        <lombok.version>1.18.34</lombok.version>
-        <slugify.version>3.0.7</slugify.version>
+        <java-jwt.version>4.5.2</java-jwt.version>
+        <lombok.version>1.18.46</lombok.version>
+        <slugify.version>4.0.0</slugify.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -40,7 +40,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit5</artifactId>
+            <artifactId>quarkus-junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -135,6 +135,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-plugin.version}</version>
                 <configuration>
+                    <argLine>@{argLine} -Duser.language=en -Duser.country=US</argLine>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
@@ -163,9 +164,10 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
+                                    <argLine>@{argLine} -Duser.language=en -Duser.country=US</argLine>
                                     <systemPropertyVariables>
                                         <native.image.path>
-                                            ${project.build.directory}/${project.build.finalName}-runner
+                                            ${project.build.directory}/realworld-api-quarkus-runner
                                         </native.image.path>
                                         <java.util.logging.manager>org.jboss.logmanager.LogManager
                                         </java.util.logging.manager>
@@ -178,7 +180,7 @@
                 </plugins>
             </build>
             <properties>
-                <quarkus.package.type>native</quarkus.package.type>
+                <quarkus.native.enabled>true</quarkus.native.enabled>
             </properties>
         </profile>
     </profiles>
