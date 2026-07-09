@@ -10,7 +10,7 @@ We've gone to great lengths to adhere to the Quarkus community styleguides & bes
 For more information on how to this works with other frontends/backends, head over to
 the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
-[![Java CI with Maven](https://github.com/diegocamara/realworld-api-quarkus/actions/workflows/maven_v2.yml/badge.svg)](https://github.com/diegocamara/realworld-api-quarkus/actions/workflows/maven_v2.yml)
+[![Java CI with Maven](https://github.com/diegocamara/realworld-api-quarkus/actions/workflows/maven.yml/badge.svg)](https://github.com/diegocamara/realworld-api-quarkus/actions/workflows/maven.yml)
 
 # How it works
 
