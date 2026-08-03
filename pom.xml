@@ -126,9 +126,16 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler-plugin.version}</version>
+                <version>${compiler-plugin.version}</version>                
                 <configuration>
-                    <parameters>true</parameters>
+                    <release>${maven.compiler.release}</release>                  
+                    <annotationProcessorPaths>
+                        <path>
+                             <groupId>org.projectlombok</groupId>
+                             <artifactId>lombok</artifactId>
+                             <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
